@@ -23,6 +23,7 @@ Source13:	%{name}.logrotate
 Patch0:		%{name}-pidfile.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-static
+BuildRequires:	automake
 BuildRequires:	glibc-static
 BuildRequires:	libstdc++-static
 BuildRequires:	libwrap-static
@@ -376,7 +377,7 @@ install -d $RPM_BUILD_ROOT{%{_pixmapsdir},%{_mandir},%{_bindir}}
 	DESTDIR=$RPM_BUILD_ROOT
 
 # static daemon
-strip src/filed/static-bacula-fd
+strip -R.comment -R.note src/filed/static-bacula-fd
 install src/filed/static-bacula-fd $RPM_BUILD_ROOT%{_sysconfdir}/rescue/bacula-fd
 
 install %{SOURCE10} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-dir
@@ -387,27 +388,29 @@ install %{SOURCE13} $RPM_BUILD_ROOT/etc/logrotate.d/%{name}-dir
 install scripts/bacula.png $RPM_BUILD_ROOT%{_pixmapsdir}/bacula.png
 
 # install the rescue stuff, these are the rescue scripts
-install rescue/linux/backup.etc.list $RPM_BUILD_ROOT%{_sysconfdir}/rescue/
-install rescue/linux/format_floppy $RPM_BUILD_ROOT%{_sysconfdir}/rescue/
-install rescue/linux/getdiskinfo $RPM_BUILD_ROOT%{_sysconfdir}/rescue/
-install rescue/linux/make_rescue_disk $RPM_BUILD_ROOT%{_sysconfdir}/rescue/
-install rescue/linux/restore_bacula $RPM_BUILD_ROOT%{_sysconfdir}/rescue/
-install rescue/linux/restore_etc $RPM_BUILD_ROOT%{_sysconfdir}/rescue/
-install rescue/linux/run_grub $RPM_BUILD_ROOT%{_sysconfdir}/rescue/
-install rescue/linux/run_lilo $RPM_BUILD_ROOT%{_sysconfdir}/rescue/
-install rescue/linux/sfdisk.bz2 $RPM_BUILD_ROOT%{_sysconfdir}/rescue/
+install rescue/linux/backup.etc.list $RPM_BUILD_ROOT%{_sysconfdir}/rescue
+install rescue/linux/format_floppy $RPM_BUILD_ROOT%{_sysconfdir}/rescue
+install rescue/linux/getdiskinfo $RPM_BUILD_ROOT%{_sysconfdir}/rescue
+install rescue/linux/make_rescue_disk $RPM_BUILD_ROOT%{_sysconfdir}/rescue
+install rescue/linux/restore_bacula $RPM_BUILD_ROOT%{_sysconfdir}/rescue
+install rescue/linux/restore_etc $RPM_BUILD_ROOT%{_sysconfdir}/rescue
+install rescue/linux/run_grub $RPM_BUILD_ROOT%{_sysconfdir}/rescue
+install rescue/linux/run_lilo $RPM_BUILD_ROOT%{_sysconfdir}/rescue
+install rescue/linux/sfdisk.bz2 $RPM_BUILD_ROOT%{_sysconfdir}/rescue
 
+%ifarch %{ix86}
 # this is the tom's root boot disk
-install tomsrtbt-*/* $RPM_BUILD_ROOT%{_sysconfdir}/rescue/tomsrtbt/
+install tomsrtbt-*/* $RPM_BUILD_ROOT%{_sysconfdir}/rescue/tomsrtbt
+%endif
 
 # install the updatedb scripts
-install updatedb/* $RPM_BUILD_ROOT%{_sysconfdir}/updatedb/
+install updatedb/* $RPM_BUILD_ROOT%{_sysconfdir}/updatedb
 
 # manual
 cp -a man1 man8 $RPM_BUILD_ROOT%{_mandir}
 
 install -d html-manual
-cp -a doc/html-manual/*.{html,jpg,gif,css} html-manual/
+cp -a doc/html-manual/*.{html,jpg,gif,css} html-manual
 
 # some file changes
 rm -f $RPM_BUILD_ROOT%{_libexecdir}/%{name}/{gconsole,startmysql,stopmysql,bacula,bconsole,fd}
@@ -430,6 +433,9 @@ SESSION=true
 EOF
 cp -p scripts/gnome-console.pamd $RPM_BUILD_ROOT/etc/pam.d/wx-console
 ln -s consolehelper $RPM_BUILD_ROOT%{_bindir}/wx-console
+
+%clean
+rm -rf $RPM_BUILD_ROOT
 
 %pre common
 if [ -n "`getgid bacula`" ]; then
@@ -537,12 +543,9 @@ fi
 %post updatedb
 echo "The database update scripts were installed to %{_sysconfdir}/updatedb"
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %post rescue
 # link our current installed conf file to the rescue directory
-ln -s %{_sysconfdir}/bacula-fd.conf %{_sysconfdir}/rescue/bacula-fd.conf
+ln -sf %{_sysconfdir}/bacula-fd.conf %{_sysconfdir}/rescue/bacula-fd.conf
 
 # run getdiskinfo
 echo "Creating rescue files for this system..."
@@ -551,13 +554,15 @@ cd %{_sysconfdir}/rescue
 
 %preun rescue
 # remove the files created after the initial rpm installation
-rm -f %{_sysconfdir}/rescue/bacula-fd.conf
-rm -f %{_sysconfdir}/rescue/partition.*
-rm -f %{_sysconfdir}/rescue/format.*
-rm -f %{_sysconfdir}/rescue/mount_drives
-rm -f %{_sysconfdir}/rescue/start_network
-rm -f %{_sysconfdir}/rescue/sfdisk
-rm -rf %{_sysconfdir}/rescue/diskinfo/*
+if [ "$1" = "0" ]; then
+	rm -f %{_sysconfdir}/rescue/bacula-fd.conf
+	rm -f %{_sysconfdir}/rescue/partition.*
+	rm -f %{_sysconfdir}/rescue/format.*
+	rm -f %{_sysconfdir}/rescue/mount_drives
+	rm -f %{_sysconfdir}/rescue/start_network
+	rm -f %{_sysconfdir}/rescue/sfdisk
+	rm -rf %{_sysconfdir}/rescue/diskinfo/*
+fi
 
 %files common
 %defattr(644,root,root,755)
