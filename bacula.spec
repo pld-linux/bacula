@@ -213,18 +213,11 @@ bacula database.
 %patch0 -p1
 sed -i -e 's#wx-config#wxgtk2-2.4-config#g' configure*
 sed -i -e 's#-lreadline -ltermcap#-lreadline#g' configure*
+sed -i -e 's#bindir=.*#bindir=%{_bindir}#g' \
+	src/cats/create_* src/cats/delete_* src/cats/drop_* \
+	src/cats/grant_* src/cats/make_* src/cats/update_*
 
 %build
-# patches for the bundled sqlite scripts
-# patch the make_sqlite_tables script for installation bindir
-patch src/cats/make_sqlite_tables.in src/cats/make_sqlite_tables.in.patch
-# patch the create_sqlite_database script for installation bindir
-patch src/cats/create_sqlite_database.in src/cats/create_sqlite_database.in.patch
-# patch the make_catalog_backup script for installation bindir
-patch src/cats/make_catalog_backup.in src/cats/make_catalog_backup.in.patch
-# patch the update_sqlite_tables script for installation bindir
-patch src/cats/update_sqlite_tables.in src/cats/update_sqlite_tables.in.patch
-
 CPPFLAGS="-I%{_includedir}/ncurses -I%{_includedir}/readline"
 %configure \
 	--with-scriptdir=%{_libexecdir}/%{name} \
