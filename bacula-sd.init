@@ -6,38 +6,34 @@
 # chkconfig: 2345 90 99
 # description: It comes by night and sucks the vital essence from your computers.
 #
-#  For Bacula release @VERSION@ (@DATE@) -- @DISTNAME@
-#
 
 # Source function library
 . /etc/rc.d/init.d/functions
 
 case "$1" in
     start)
-       echo -n "Starting the Bacula Storage daemon: "
-       daemon @sbindir@/bacula-sd $2 -c @sysconfdir@/bacula-sd.conf
+       msg_starting "Bacula Storage daemon"
+       daemon /usr/sbin/bacula-sd $2 -c /etc/bacula/bacula-sd.conf
        RETVAL=$?
-       echo
        [ $RETVAL -eq 0 ] && touch @subsysdir@/bacula-sd
        ;;
     stop)
-       echo -n "Stopping the Bacula Storage daemon: "
-       killproc @sbindir@/bacula-sd
+       msg_stopping "Bacula Storage daemon"
+       killproc /usr/sbin/bacula-sd
        RETVAL=$?
-       echo
-       [ $RETVAL -eq 0 ] && rm -f @subsysdir@/bacula-sd
+       [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/bacula-sd
        ;;
     restart)
-       $0 stop
-       sleep 5
+       $0 stop && sleep 5
        $0 start
+       RETVAL=$?
        ;;
     status)
-       status @sbindir@/bacula-sd
+       status /usr/sbin/bacula-sd
        ;;
     *)
        echo "Usage: $0 {start|stop|restart|status}"
        exit 1
        ;;
 esac
-exit 0
+exit $RETVAL
