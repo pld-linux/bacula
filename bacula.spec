@@ -659,21 +659,20 @@ fi
 %{_mandir}/man8/bacula-dir.8*
 %{_mandir}/man1/dbcheck.1*
 %{_libexecdir}/%{name}/query.sql
-%defattr(755,root,root)
-%{_libexecdir}/%{name}/create_sqlite_database
-%{_libexecdir}/%{name}/drop_sqlite_database
-%{_libexecdir}/%{name}/drop_sqlite_tables
-%{_libexecdir}/%{name}/grant_sqlite_privileges
-%{_libexecdir}/%{name}/make_sqlite_tables
-%{_libexecdir}/%{name}/update_sqlite_tables*
-%{_libexecdir}/%{name}/create_bacula_database
-%{_libexecdir}/%{name}/drop_bacula_database
-%{_libexecdir}/%{name}/drop_bacula_tables
-%{_libexecdir}/%{name}/grant_bacula_privileges
-%{_libexecdir}/%{name}/make_bacula_tables
-%{_libexecdir}/%{name}/update_bacula_tables
-%{_libexecdir}/%{name}/make_catalog_backup
-%{_libexecdir}/%{name}/delete_catalog_backup
+%attr(755,root,root) %{_libexecdir}/%{name}/create_sqlite_database
+%attr(755,root,root) %{_libexecdir}/%{name}/drop_sqlite_database
+%attr(755,root,root) %{_libexecdir}/%{name}/drop_sqlite_tables
+%attr(755,root,root) %{_libexecdir}/%{name}/grant_sqlite_privileges
+%attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite_tables
+%attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite_tables*
+%attr(755,root,root) %{_libexecdir}/%{name}/create_bacula_database
+%attr(755,root,root) %{_libexecdir}/%{name}/drop_bacula_database
+%attr(755,root,root) %{_libexecdir}/%{name}/drop_bacula_tables
+%attr(755,root,root) %{_libexecdir}/%{name}/grant_bacula_privileges
+%attr(755,root,root) %{_libexecdir}/%{name}/make_bacula_tables
+%attr(755,root,root) %{_libexecdir}/%{name}/update_bacula_tables
+%attr(755,root,root) %{_libexecdir}/%{name}/make_catalog_backup
+%attr(755,root,root) %{_libexecdir}/%{name}/delete_catalog_backup
 
 %files fd
 %defattr(644,root,root,755)
