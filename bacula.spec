@@ -1,12 +1,9 @@
-# TODO:
-# - files section
-# - rpm scripts
 #
 Summary:	Bacula - The Network Backup Solution
 Summary(pl):	Bacula - rozwi±zanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	1.34.6
-Release:	2
+Release:	3
 Epoch:		0
 Group:		Networking/Utilities
 License:	GPL v2
@@ -20,6 +17,9 @@ Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
 Source13:	%{name}.logrotate
+Source14:	%{name}-dir.sysconfig
+Source15:	%{name}-fd.sysconfig
+Source16:	%{name}-sd.sysconfig
 Patch0:		%{name}-pidfile.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-static
@@ -369,7 +369,7 @@ CPPFLAGS="-I%{_includedir}/ncurses -I%{_includedir}/readline"
 %install
 rm -rf $RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT/etc/{rc.d/init.d,logrotate.d,pam.d,security/console.apps}
+install -d $RPM_BUILD_ROOT/etc/{rc.d/init.d,logrotate.d,pam.d,security/console.apps,sysconfig}
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/{rescue/tomsrtbt,updatedb}
 install -d $RPM_BUILD_ROOT{%{_pixmapsdir},%{_mandir},%{_bindir}}
 
@@ -384,6 +384,9 @@ install %{SOURCE10} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-dir
 install %{SOURCE11} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-fd
 install %{SOURCE12} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-sd
 install %{SOURCE13} $RPM_BUILD_ROOT/etc/logrotate.d/%{name}-dir
+install %{SOURCE14} $RPM_BUILD_ROOT/etc/sysconfig/bacula-dir
+install %{SOURCE15} $RPM_BUILD_ROOT/etc/sysconfig/bacula-fd
+install %{SOURCE16} $RPM_BUILD_ROOT/etc/sysconfig/bacula-sd
 
 install scripts/bacula.png $RPM_BUILD_ROOT%{_pixmapsdir}/bacula.png
 
@@ -581,6 +584,7 @@ fi
 %ghost %{_sysconfdir}/.pw.sed
 %attr(640,root,root) %config(noreplace) /etc/logrotate.d/bacula-dir
 %attr(754,root,root) /etc/rc.d/init.d/bacula-dir
+%attr(644,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/bacula-dir
 %attr(755,root,root) %{_sbindir}/bacula-dir
 %attr(755,root,root) %{_sbindir}/dbcheck
 %{_mandir}/man8/bacula-dir.8*
@@ -606,6 +610,7 @@ fi
 %defattr(644,root,root,755)
 %attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-fd.conf
 %attr(754,root,root) /etc/rc.d/init.d/bacula-fd
+%attr(644,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/bacula-fd
 %attr(755,root,root) %{_sbindir}/bacula-fd
 %{_mandir}/man8/bacula-fd.8*
 
@@ -614,6 +619,7 @@ fi
 %dir %{_sysconfdir}
 %attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-sd.conf
 %attr(754,root,root) /etc/rc.d/init.d/bacula-sd
+%attr(644,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/bacula-sd
 %attr(755,root,root) %{_sbindir}/bacula-sd
 %attr(755,root,root) %{_sbindir}/bcopy
 %attr(755,root,root) %{_sbindir}/bextract
@@ -649,7 +655,18 @@ fi
 
 %files rescue
 %defattr(644,root,root,755)
-%{_sysconfdir}/rescue
+%dir %{_sysconfdir}/rescue
+%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/tomsrtbt
+%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/backup.etc.list
+%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/bacula-fd
+%attr(755,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/format_floppy
+%attr(755,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/getdiskinfo
+%attr(755,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/make_rescue_disk
+%attr(755,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/restore_bacula
+%attr(755,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/restore_etc
+%attr(755,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/run_grub
+%attr(755,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/run_lilo
+%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/sfdisk.bz2
 
 %files updatedb
 %defattr(644,root,root,755)
