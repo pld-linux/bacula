@@ -30,6 +30,7 @@ case "$1" in
        ;;
     status)
        status /usr/sbin/bacula-sd
+       RETVAL=$?
        ;;
     *)
        echo "Usage: $0 {start|stop|restart|status}"

@@ -16,7 +16,6 @@ case "$1" in
        msg_starting "Bacula Director"
        daemon /usr/sbin//bacula-dir $2 -c /etc/bacula/bacula-dir.conf
        RETVAL=$?
-       echo
        [ $RETVAL -eq 0 ] && touch /var/lock/subsys/bacula-dir
        ;;
     stop)
@@ -32,6 +31,7 @@ case "$1" in
        ;;
     status)
        status /usr/sbin/bacula-dir
+       RETVAL=$?
        ;;
     *)
        echo "Usage: $0 {start|stop|restart|status}"

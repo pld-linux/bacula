@@ -21,7 +21,6 @@ case "$1" in
        msg_stopping "Bacula File daemon"
        killproc /usr/sbin/bacula-fd
        RETVAL=$?
-       echo
        [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/bacula-fd
        ;;
     restart)
@@ -31,6 +30,7 @@ case "$1" in
        ;;
     status)
        status /usr/sbin/bacula-fd
+       RETVAL=$?
        ;;
     *)
        echo "Usage: $0 {start|stop|restart|status}"
