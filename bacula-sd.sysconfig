@@ -1,0 +1,9 @@
+# Customized settings for Bacula Storage services
+
+# Define nice level for Bacula Storage services
+SERVICE_RUN_NICE_LEVEL="+5"
+
+# Define user and group for Bacula Storage services
+# The user/group must be able to access the backup devices used
+BACULA_SD_USER=bacula
+BACULA_SD_GROUP=bacula

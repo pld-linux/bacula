@@ -10,10 +10,15 @@
 # Source function library
 . /etc/rc.d/init.d/functions
 
+BACULA_SD_USER="bacula"
+BACULA_SD_GROUP="bacula"
+[ -f /etc/sysconfig/bacula-sd ] && . /etc/sysconfig/bacula-fd
+
+
 case "$1" in
     start)
        msg_starting "Bacula Storage"
-       daemon /usr/sbin/bacula-sd $2 -c /etc/bacula/bacula-sd.conf
+       daemon /usr/sbin/bacula-sd -u "$BACULA_SD_USER" -g "$BACULA_SD_GROUP" $2 -c /etc/bacula/bacula-sd.conf
        RETVAL=$?
        [ $RETVAL -eq 0 ] && touch /var/lock/subsys/bacula-sd
        ;;

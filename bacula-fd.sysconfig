@@ -1,0 +1,9 @@
+# Customized settings for Bacula File services
+
+# Define nice level for Bacula File services
+SERVICE_RUN_NICE_LEVEL="+5"
+
+# Define user and group for Bacula File services
+# The user/group must be able to access all the data to backup
+BACULA_FD_USER=root
+BACULA_FD_GROUP=root
