@@ -326,7 +326,20 @@ rm -rf %{_sysconfdir}/rescue/diskinfo/*
 %files
 %defattr(644,root,root,755)
 %doc COPYING ChangeLog ReleaseNotes VERIFYING kernstodo doc/bacula.pdf html-manual
-
+%attr(755,root,root) %{_sbindir}/bacula-dir
+%attr(755,root,root) %{_sbindir}/bacula-fd
+%attr(755,root,root) %{_sbindir}/bacula-sd
+%attr(755,root,root) %{_sbindir}/bcopy
+%attr(755,root,root) %{_sbindir}/bextract
+%attr(755,root,root) %{_sbindir}/bls
+%attr(755,root,root) %{_sbindir}/bscan
+%attr(755,root,root) %{_sbindir}/btape
+%attr(755,root,root) %{_sbindir}/btraceback
+%attr(755,root,root) %{_sbindir}/bconsole
+%attr(755,root,root) %{_sbindir}/dbcheck
+%attr(755,root,root) %{_sbindir}/bsmtp
+%attr(755,root,root) %{_sbindir}/static-bacula-fd
+%dir %{_sysconfdir}
 %{_sysconfdir}/bacula
 %{_sysconfdir}/bconsole
 %{_sysconfdir}/fd
@@ -345,51 +358,32 @@ rm -rf %{_sysconfdir}/rescue/diskinfo/*
 %{_sysconfdir}/make_catalog_backup
 %{_sysconfdir}/delete_catalog_backup
 %{_sysconfdir}/mtx-changer
-/etc/rc.d/init.d/bacula-dir
-/etc/rc.d/init.d/bacula-fd
-/etc/rc.d/init.d/bacula-sd
-/etc/logrotate.d/bacula
-
-%config(noreplace) %{_sysconfdir}/bacula-dir.conf
-%config(noreplace) %{_sysconfdir}/bacula-fd.conf
-%config(noreplace) %{_sysconfdir}/bacula-sd.conf
-%config(noreplace) %{_sysconfdir}/bconsole.conf
 %{_sysconfdir}/query.sql
-%dir %{_var}/lib/%{name}
-
-%attr(755,root,root) %{_sbindir}/bacula-dir
-%attr(755,root,root) %{_sbindir}/bacula-fd
-%attr(755,root,root) %{_sbindir}/bacula-sd
-%attr(755,root,root) %{_sbindir}/bcopy
-%attr(755,root,root) %{_sbindir}/bextract
-%attr(755,root,root) %{_sbindir}/bls
-%attr(755,root,root) %{_sbindir}/bscan
-%attr(755,root,root) %{_sbindir}/btape
-%attr(755,root,root) %{_sbindir}/btraceback
-%attr(755,root,root) %{_sbindir}/bconsole
-%attr(755,root,root) %{_sbindir}/dbcheck
-%attr(755,root,root) %{_sbindir}/bsmtp
-%attr(755,root,root) %{_sbindir}/static-bacula-fd
 %{_sysconfdir}/btraceback.gdb
+%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-dir.conf
+%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-fd.conf
+%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-sd.conf
+%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bconsole.conf
+%attr(754,root,root) /etc/rc.d/init.d/bacula-dir
+%attr(754,root,root) /etc/rc.d/init.d/bacula-fd
+%attr(754,root,root) /etc/rc.d/init.d/bacula-sd
+%attr(640,root,root) %config(noreplace) /etc/logrotate.d/bacula
+%dir %{_var}/lib/%{name}
 
 %files client
 %defattr(644,root,root,755)
-
-%{_sysconfdir}/fd
-%{_sysconfdir}/bconsole
-/etc/rc.d/init.d/bacula-fd
-
-/etc/logrotate.d/bacula
-
-%config(noreplace) %{_sysconfdir}/bacula-fd.conf
-%config(noreplace) %{_sysconfdir}/bconsole.conf
-%dir %{_var}/lib/%{name}
-
 %attr(755,root,root) %{_sbindir}/bacula-fd
 %attr(755,root,root) %{_sbindir}/btraceback
-%{_sysconfdir}/btraceback.gdb
 %attr(755,root,root) %{_sbindir}/bsmtp
 %attr(755,root,root) %{_sbindir}/bconsole
+%{_sysconfdir}/fd
+%{_sysconfdir}/bconsole
+%{_sysconfdir}/btraceback.gdb
+%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-fd.conf
+%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bconsole.conf
+%attr(754,root,root) /etc/rc.d/init.d/bacula-fd
+%attr(640,root,root) %config(noreplace) /etc/logrotate.d/bacula
+%dir %{_var}/lib/%{name}
 
 %files rescue
 %defattr(644,root,root,755)
