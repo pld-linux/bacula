@@ -14,7 +14,7 @@ RETVAL=0
 case "$1" in
     start)
        msg_starting "Bacula Director"
-       daemon /usr/sbin//bacula-dir $2 -c /etc/bacula/bacula-dir.conf
+       daemon /usr/sbin/bacula-dir -u bacula -g bacula $2 -c /etc/bacula/bacula-dir.conf
        RETVAL=$?
        [ $RETVAL -eq 0 ] && touch /var/lock/subsys/bacula-dir
        ;;
