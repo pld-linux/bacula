@@ -457,11 +457,11 @@ for f in *-password ; do
 		openssl rand -base64 33 > $f
 	fi
 	p=`cat $f`
-	for cf in *.conf ; do
+	for cf in *.conf *.conf.rpmnew ; do
 		[ -f $cf ] && sed -i -e"s:#FAKE-$f#:$p:" "$cf" || :
 	done
 done
-for cf in *.conf ; do
+for cf in *.conf *.conf.rpmnew ; do
 	[ -f $cf ] && sed -i -e"s:--hostname--:`hostname`:" "$cf" || :
 done
 
@@ -505,9 +505,9 @@ echo "Updating Bacula passwords and names..."
 cd /etc/bacula
 for f in *-password ; do
 	p=`cat $f`
-	sed -i -e"s:#FAKE-$f#:$p:" *.conf
+	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew
 done
-sed -i -e"s:--hostname--:`hostname`:" *.conf
+sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew
 
 /sbin/chkconfig --add bacula-dir
 if [ -f /var/lock/subsys/bacula-dir ]; then
@@ -529,9 +529,9 @@ echo "Updating Bacula passwords and names..."
 cd /etc/bacula
 for f in *-password ; do
 	p=`cat $f`
-	sed -i -e"s:#FAKE-$f#:$p:" *.conf
+	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew
 done
-sed -i -e"s:--hostname--:`hostname`:" *.conf
+sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew
 
 /sbin/chkconfig --add bacula-fd
 if [ -f /var/lock/subsys/bacula-fd ]; then
@@ -553,9 +553,9 @@ echo "Updating Bacula passwords and names..."
 cd /etc/bacula
 for f in *-password ; do
 	p=`cat $f`
-	sed -i -e"s:#FAKE-$f#:$p:" *.conf
+	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew
 done
-sed -i -e"s:--hostname--:`hostname`:" *.conf
+sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew
 
 /sbin/chkconfig --add bacula-sd
 if [ -f /var/lock/subsys/bacula-sd ]; then
@@ -582,36 +582,36 @@ echo "Updating Bacula passwords and names..."
 cd /etc/bacula
 for f in *-password ; do
 	p=`cat $f`
-	sed -i -e"s:#FAKE-$f#:$p:" *.conf
+	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew
 done
-sed -i -e"s:--hostname--:`hostname`:" *.conf
+sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew
 
 %post console-wx
 echo "Updating Bacula passwords and names..."
 cd /etc/bacula
 for f in *-password ; do
 	p=`cat $f`
-	sed -i -e"s:#FAKE-$f#:$p:" *.conf
+	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew
 done
-sed -i -e"s:--hostname--:`hostname`:" *.conf
+sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew
 
 %post console-gnome
 echo "Updating Bacula passwords and names..."
 cd /etc/bacula
 for f in *-password ; do
 	p=`cat $f`
-	sed -i -e"s:#FAKE-$f#:$p:" *.conf
+	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew
 done
-sed -i -e"s:--hostname--:`hostname`:" *.conf
+sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew
 
 %post tray-monitor
 echo "Updating Bacula passwords and names..."
 cd /etc/bacula
 for f in *-password ; do
 	p=`cat $f`
-	sed -i -e"s:#FAKE-$f#:$p:" *.conf
+	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew
 done
-sed -i -e"s:--hostname--:`hostname`:" *.conf
+sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew
 
 %post rescue
 # link our current installed conf file to the rescue directory
