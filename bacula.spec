@@ -6,7 +6,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl):	Bacula - rozwi±zanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	1.34.6
-Release:	0.1
+Release:	1
 Epoch:		0
 Group:		Networking/Utilities
 License:	GPL v2
