@@ -1,18 +1,18 @@
 #
+# TODO:
+#	- update desktop files, think about su-wrappers for console
 Summary:	Bacula - The Network Backup Solution
 Summary(pl):	Bacula - rozwi±zanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	1.34.6
-Release:	3
+Version:	1.36.1
+Release:	0.1
 Epoch:		0
 Group:		Networking/Utilities
-License:	GPL v2
+License:	extended GPL v2
 Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	9de593cb206df126a8e27774281c5bf6
-Source1:	http://www.tux.org/pub/distributions/tinylinux/tomsrtbt/tomsrtbt-2.0.103.tar.gz
-# Source1-md5:	d5ee50efb28986d564547d5da5de2483
-Source2:	%{name}-manpages.tar.bz2
-# Source2-md5:	e4dae86d6574b360e831efd3913e7f4c
+# Source0-md5:	d09ecce1bc9e3a421f7eaf5ad2de5850
+Source1:	%{name}-manpages.tar.bz2
+# Source1-md5:	e4dae86d6574b360e831efd3913e7f4c
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
@@ -20,11 +20,12 @@ Source13:	%{name}.logrotate
 Source14:	%{name}-dir.sysconfig
 Source15:	%{name}-fd.sysconfig
 Source16:	%{name}-sd.sysconfig
-Patch0:		%{name}-pidfile.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-static
 BuildRequires:	automake
 BuildRequires:	glibc-static
+BuildRequires:	libgnome-devel >= 2.0
+BuildRequires:	libgnomeui-devel >= 2.0
 BuildRequires:	libstdc++-static
 BuildRequires:	libwrap-static
 BuildRequires:	mtx
@@ -73,6 +74,8 @@ Conflicts:	bacula-dir < 0:1.34.6
 Conflicts:	bacula-fd < 0:1.34.6
 Conflicts:	bacula-sd < 0:1.34.6
 Conflicts:	bacula-console < 0:1.34.6
+Requires(post):	openssl-tools
+Requires(post):	sed >= 4.0
 
 %description common
 Bacula - It comes by night and sucks the vital essence from your
@@ -102,7 +105,9 @@ plików.
 Summary:	Bacula Director and Catalog services
 Summary(pl):	Us³ugi Bacula Director i Catalog
 Group:		Networking/Utilities
+Obsoletes:	%{name}-updatedb
 PreReq:		bacula-common = %{epoch}:%{version}-%{release}
+Requires(post):	sed >= 4.0
 
 %description dir
 Bacula - It comes by night and sucks the vital essence from your
@@ -139,6 +144,7 @@ Summary:	Bacula Console
 Summary(pl):	Konsola Baculi
 Group:		Networking/Utilities
 PreReq:		bacula-common = %{epoch}:%{version}-%{release}
+Requires(post):	sed >= 4.0
 
 %description console
 Bacula - It comes by night and sucks the vital essence from your
@@ -160,6 +166,7 @@ Summary:	Bacula wxWidgets Console
 Summary(pl):	Konsola Baculi oparta na wxWidgets
 Group:		Networking/Utilities
 PreReq:		bacula-common = %{epoch}:%{version}-%{release}
+Requires(post):	sed >= 4.0
 
 %description console-wx
 Bacula - It comes by night and sucks the vital essence from your
@@ -176,11 +183,49 @@ Bacula Console to program umo¿liwiaj±cy administratorowi lub
 u¿ytkownikowi komunikowanie siê z programem Bacula Director. To jest
 interfejs graficzny oparty na wxWidgets.
 
+%package console-gnome
+Summary:	Bacula GNOME Console
+Summary(pl):	Konsola Baculi oparta dla GNOME
+Group:		Networking/Utilities
+PreReq:		bacula-common = %{epoch}:%{version}-%{release}
+Requires(post):	sed >= 4.0
+
+%description console-gnome
+Bacula - It comes by night and sucks the vital essence from your
+computers.
+
+Bacula Console is the program that allows the administrator or user to
+communicate with the Bacula Director. This is the GNOME GUI
+interface.
+
+%description console-gnome -l pl
+Bacula - przychodzi noc± i wysysa ¿ywotny ekstrakt z komputerów.
+
+Bacula Console to program umo¿liwiaj±cy administratorowi lub
+u¿ytkownikowi komunikowanie siê z programem Bacula Director. To jest
+interfejs graficzny oparty na GNOME.
+
+%package tray-monitor
+Summary:	Bacula Tray Monitor
+Group:		Networking/Utilities
+PreReq:		bacula-common = %{epoch}:%{version}-%{release}
+Requires(post):	sed >= 4.0
+
+%description tray-monitor
+Bacula - It comes by night and sucks the vital essence from your
+computers.
+
+The Monitor program is typically an icon in the system tray. However, once the
+icon is expanded into a full window, the administrator or user can obtain
+status information about the Director or the backup status on the local
+workstation or any other Bacula daemon that is configured.
+
 %package fd
 Summary:	Bacula File services (Client)
 Summary(pl):	Us³ugi Bacula File (klient)
 Group:		Networking/Utilities
 PreReq:		bacula-common = %{epoch}:%{version}-%{release}
+Requires(post):	sed >= 4.0
 
 %description fd
 Bacula - It comes by night and sucks the vital essence from your
@@ -215,6 +260,7 @@ Summary:	Bacula Storage services
 Summary(pl):	Us³ugi Bacula Storage
 Group:		Networking/Utilities
 PreReq:		bacula-common = %{epoch}:%{version}-%{release}
+Requires(post):	sed >= 4.0
 
 %description sd
 Bacula - It comes by night and sucks the vital essence from your
@@ -259,17 +305,11 @@ advanced storage management features that make it easy to find and
 recover lost or damaged files.
 
 This package installs scripts for disaster recovery and builds rescue
-floppy disks for bare metal recovery. This package includes tomsrtbt
-(http://www.toms.net/rb/, by Tom Oehser, Tom@Toms.NET) to provide a
-tool to build a boot floppy disk.
+floppy disk for bare metal recovery. 
 
-To create a boot disk run "./getdiskinfo" from the
-%{_sysconfdir}/rescue directory (this is done when the package is
-first installed), then run "./install.s" from the
-%{_sysconfdir}/rescue/tomsrtbt directory. To make the bacula rescue
-disk run "./make_rescue_disk --copy-static-bacula - --copy-etc-files"
-from the %{_sysconfdir}/rescue directory. To recreate the rescue
-information for this system run ./getdiskinfo again.
+To make the bacula rescue disk run "./make_rescue_disk --copy-static-bacula
+- --copy-etc-files" from the %{_sysconfdir}/rescue directory. To recreate the
+rescue information for this system run ./getdiskinfo again.
 
 %description rescue -l pl
 Bacula - przychodzi noc± i wysysa ¿ywotny ekstrakt z komputerów.
@@ -283,73 +323,33 @@ wiele zaawansowanych mo¿liwo¶ci przy zarz±dzaniu no¶nikami,
 u³atwiaj±cych znalezienie i odzyskanie utraconych lub uszkodzonych
 plików.
 
-Ten pakiet zawiera skrypty do odtwarzania po awarii i tworzy dyskietki
-ratunkowe do odtwarzania systemu od zera. Ten pakiet zawiera tomsrtbt
-(http://www.toms.net/rb/ Toma Oehsera, Tom@Toms.NET), aby dostarczyæ
-narzêdzie do tworzenia bootowalnych dyskietek.
+Ten pakiet zawiera skrypty do odtwarzania po awarii i tworzy dyskietkê
+ratunkowe do odtwarzania systemu od zera. 
 
-Aby utworzyæ bootowaln± dyskietkê nale¿y uruchomiæ "./getdiskinfo" z
-katalogu %{_sysconfdir}/rescue (jest to wykonywane kiedy pakiet jest
-po raz pierwszy instalowany), a nastêpnie uruchomiæ "./install.s" z
-katalogu %{_sysconfdir}/rescue/tomsrtbt. Aby stworzyæ dyskietkê
-ratunkow± Baculi, nale¿y uruchomiæ "./make_rescue_disk
+Aby stworzyæ dyskietkê ratunkow± Baculi, nale¿y uruchomiæ "./make_rescue_disk
 --copy-static-bacula - --copy-etc-files" z katalogu
 %{_sysconfdir}/rescue . Aby ponownie utworzyæ informacje ratunkowe dla
 danego systemu, nale¿y ponownie uruchomiæ ./getdiskinfo .
 
-%package updatedb
-Summary:	Bacula - The Network Backup Solution
-Summary(pl):	Bacula - rozwi±zanie do wykonywania kopii zapasowych po sieci
-Group:		Networking/Utilities
-
-%description updatedb
-Bacula - It comes by night and sucks the vital essence from your
-computers.
-
-Bacula is a set of computer programs that permit you (or the system
-administrator) to manage backup, recovery, and verification of
-computer data across a network of computers of different kinds. In
-technical terms, it is a network client/server based backup program.
-Bacula is relatively easy to use and efficient, while offering many
-advanced storage management features that make it easy to find and
-recover lost or damaged files.
-
-This package installs scripts for updating older versions of the
-bacula database.
-
-%description updatedb -l pl
-Bacula - przychodzi noc± i wysysa ¿ywotny ekstrakt z komputerów.
-
-Bacula to zbiór programów umo¿liwiaj±cych administratorowi na
-zarz±dzanie kopiami zapasowymi, odzyskiwaniem i weryfikacj± danych
-w sieci komputerów ró¿nego rodzaju. W terminologii technicznej jest to
-program do kopii zapasowych pracuj±cy w architekturze klient-serwer.
-Bacula jest stosunkowo ³atwa w u¿yciu i wydajna, oferuj±c przy tym
-wiele zaawansowanych mo¿liwo¶ci przy zarz±dzaniu no¶nikami,
-u³atwiaj±cych znalezienie i odzyskanie utraconych lub uszkodzonych
-plików.
-
-Ten pakiet instaluje skrypty do uaktualniania starszych wersji bazy
-danych Baculi.
-
 %prep
-%setup -q -a 1 -a 2
-%patch0 -p1
+%setup -q -a 1
 sed -i -e 's#wx-config#wxgtk2-2.4-config#g' configure*
 sed -i -e 's#-lreadline -ltermcap#-lreadline#g' configure*
 sed -i -e 's#bindir=.*#bindir=%{_bindir}#g' \
 	src/cats/create_* src/cats/delete_* src/cats/drop_* \
 	src/cats/grant_* src/cats/make_* src/cats/update_*
+sed -i -e 's/@hostname@/--hostname--/' src/*/*.conf.in
 
 %build
 cp -f %{_datadir}/automake/config.sub autoconf
 CPPFLAGS="-I%{_includedir}/ncurses -I%{_includedir}/readline"
 %configure \
 	--with-scriptdir=%{_libexecdir}/%{name} \
-	--disable-gnome \
+	--enable-gnome \
 	--disable-conio \
 	--enable-smartalloc \
 	--enable-wx-console \
+	--enable-tray-monitor \
 	--with-readline \
 	--with-tcp-wrappers \
 	--with-working-dir=%{_var}/lib/%{name} \
@@ -359,19 +359,22 @@ CPPFLAGS="-I%{_includedir}/ncurses -I%{_includedir}/readline"
 	--with-pid-dir=/var/run \
 	--with-subsys-dir=/var/lock/subsys \
 	--with-sqlite \
-	--enable-static-fd \
-	--with-dir-password="#FAKE#DIR#PASSWORD#PLD#" \
-	--with-fd-password="#FAKE#FD#PASSWORD#PLD#" \
-	--with-sd-password="#FAKE#SD#PASSWORD#PLD#"
+	--with-dir-password="#FAKE-dir-password#" \
+	--with-fd-password="#FAKE-fd-password#" \
+	--with-sd-password="#FAKE-sd-password#" \
+	--with-mon-dir-password="#FAKE-mon-dir-password#" \
+	--with-mon-fd-password="#FAKE-mon-fd-password#" \
+	--with-mon-sd-password="#FAKE-mon-sd-password#" \
+	--enable-static-fd
 
 %{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT/etc/{rc.d/init.d,logrotate.d,pam.d,security/console.apps,sysconfig}
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/{rescue/tomsrtbt,updatedb}
-install -d $RPM_BUILD_ROOT{%{_pixmapsdir},%{_mandir},%{_bindir}}
+install -d $RPM_BUILD_ROOT/etc/{rc.d/init.d,logrotate.d,pam.d,sysconfig}
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/rescue
+install -d $RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir},%{_mandir},%{_bindir}}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -379,6 +382,9 @@ install -d $RPM_BUILD_ROOT{%{_pixmapsdir},%{_mandir},%{_bindir}}
 # static daemon
 strip -R.comment -R.note src/filed/static-bacula-fd
 install src/filed/static-bacula-fd $RPM_BUILD_ROOT%{_sysconfdir}/rescue/bacula-fd
+
+# tray-monitor is for regular users
+mv $RPM_BUILD_ROOT%{_sbindir}/bacula-tray-monitor $RPM_BUILD_ROOT%{_bindir}
 
 install %{SOURCE10} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-dir
 install %{SOURCE11} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-fd
@@ -389,53 +395,38 @@ install %{SOURCE15} $RPM_BUILD_ROOT/etc/sysconfig/bacula-fd
 install %{SOURCE16} $RPM_BUILD_ROOT/etc/sysconfig/bacula-sd
 
 install scripts/bacula.png $RPM_BUILD_ROOT%{_pixmapsdir}/bacula.png
+install src/tray-monitor/generic.xpm $RPM_BUILD_ROOT%{_pixmapsdir}/bacula-tray-monitor.xpm
+install scripts/bacula.desktop.gnome2 $RPM_BUILD_ROOT%{_desktopdir}/bacula.desktop
+sed -e 's/gnome-console/wx-console/g;s/Console/Wx Console/g' \
+	scripts/bacula.desktop.gnome2 > $RPM_BUILD_ROOT%{_desktopdir}/bacula-wx.desktop
+sed -e 's#%{_sbindir}#%{_bindir}#' \
+	scripts/bacula-tray-monitor.desktop > $RPM_BUILD_ROOT%{_desktopdir}/bacula-tray-monitor.desktop
 
 # install the rescue stuff, these are the rescue scripts
-install rescue/linux/backup.etc.list $RPM_BUILD_ROOT%{_sysconfdir}/rescue
-install rescue/linux/format_floppy $RPM_BUILD_ROOT%{_sysconfdir}/rescue
-install rescue/linux/getdiskinfo $RPM_BUILD_ROOT%{_sysconfdir}/rescue
-install rescue/linux/make_rescue_disk $RPM_BUILD_ROOT%{_sysconfdir}/rescue
-install rescue/linux/restore_bacula $RPM_BUILD_ROOT%{_sysconfdir}/rescue
-install rescue/linux/restore_etc $RPM_BUILD_ROOT%{_sysconfdir}/rescue
-install rescue/linux/run_grub $RPM_BUILD_ROOT%{_sysconfdir}/rescue
-install rescue/linux/run_lilo $RPM_BUILD_ROOT%{_sysconfdir}/rescue
-install rescue/linux/sfdisk.bz2 $RPM_BUILD_ROOT%{_sysconfdir}/rescue
-
-%ifarch %{ix86}
-# this is the tom's root boot disk
-install tomsrtbt-*/* $RPM_BUILD_ROOT%{_sysconfdir}/rescue/tomsrtbt
-%endif
+install rescue/linux/floppy/backup.etc.list $RPM_BUILD_ROOT%{_sysconfdir}/rescue
+install rescue/linux/floppy/*_* $RPM_BUILD_ROOT%{_sysconfdir}/rescue
+install rescue/linux/floppy/getdiskinfo $RPM_BUILD_ROOT%{_sysconfdir}/rescue
+install rescue/linux/floppy/sfdisk.bz2 $RPM_BUILD_ROOT%{_sysconfdir}/rescue
 
 # install the updatedb scripts
-install updatedb/* $RPM_BUILD_ROOT%{_sysconfdir}/updatedb
+install updatedb/update_sqlite* $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 # manual
 cp -a man1 man8 $RPM_BUILD_ROOT%{_mandir}
 
 install -d html-manual
-cp -a doc/html-manual/*.{html,jpg,gif,css,png} html-manual
+cp -a doc/html-manual/*.{html,jpg,gif,css,png,txt} html-manual
+
+
+# place for site passwords
+touch $RPM_BUILD_ROOT%{_sysconfdir}/{dir-password,fd-password,sd-password}
+touch $RPM_BUILD_ROOT%{_sysconfdir}/{mon-dir-password,mon-fd-password,mon-sd-password}
 
 # some file changes
 rm -f $RPM_BUILD_ROOT%{_libexecdir}/%{name}/{gconsole,startmysql,stopmysql,bacula,bconsole,fd}
 rm -f $RPM_BUILD_ROOT%{_sbindir}/static-bacula-fd
 rm -f $RPM_BUILD_ROOT%{_mandir}/man1/gnome*
 touch $RPM_BUILD_ROOT%{_sysconfdir}/.pw.sed
-
-cat << EOF > $RPM_BUILD_ROOT/etc/security/console.apps/bconsole
-USER=root
-PROGRAM=%{_sbindir}/bconsole
-SESSION=true
-EOF
-install scripts/gnome-console.pamd $RPM_BUILD_ROOT/etc/pam.d/bconsole
-ln -s consolehelper $RPM_BUILD_ROOT%{_bindir}/bconsole
-
-cat << EOF > $RPM_BUILD_ROOT/etc/security/console.apps/wx-console
-USER=root
-PROGRAM=%{_sbindir}/wx-console
-SESSION=true
-EOF
-cp -p scripts/gnome-console.pamd $RPM_BUILD_ROOT/etc/pam.d/wx-console
-ln -s consolehelper $RPM_BUILD_ROOT%{_bindir}/wx-console
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -458,6 +449,22 @@ else
 	/usr/sbin/useradd -u 136 -r -d /var/lib/bacula -s /bin/false -c "Bacula User" -g bacula bacula 1>&2
 fi
 
+%post common
+echo "Updating bacula passwords and names..."
+cd /etc/bacula
+for f in *-password ; do
+	if ! [ -s $f ] ; then
+		openssl rand -base64 33 > $f
+	fi
+	p=`cat $f`
+	for cf in *.conf ; do
+		[ -f $cf ] && sed -i -e"s:#FAKE-$f#:$p:" "$cf" || :
+	done
+done
+for cf in *.conf ; do
+	[ -f $cf ] && sed -i -e"s:--hostname--:`hostname`:" "$cf" || :
+done
+
 %postun common
 if [ "$1" = "0" ]; then
 	%userremove bacula
@@ -474,22 +481,33 @@ if [ -z "$DB_VER" ]; then
 	%{_libexecdir}/%{name}/grant_bacula_privileges > dev/null
 	%{_libexecdir}/%{name}/create_bacula_database > dev/null
 	%{_libexecdir}/%{name}/make_bacula_tables > dev/null
-elif [ "$DB_VER" -lt "7" ]; then
+elif [ "$DB_VER" -lt "8" ]; then
 	echo "Backing up bacula tables"
 	echo ".dump" | sqlite %{_localstatedir}/bacula.db | bzip2 > %{_localstatedir}/bacula_backup.sql.bz2
 	type=sqlite
 	echo "Upgrading bacula tables"
-	if [ "$DB_VER" -lt "6" ]; then
-		if [ "$DB_VER" -lt "5" ]; then
-			%{_libexecdir}/%{name}/update_${type}_tables_4_to_5
+	if [ "$DB_VER" -lt "7" ]; then
+		if [ "$DB_VER" -lt "6" ]; then
+			if [ "$DB_VER" -lt "5" ]; then
+				%{_libexecdir}/%{name}/update_${type}_tables_4_to_5
+			fi
+			%{_libexecdir}/%{name}/update_${type}_tables_5_to_6
 		fi
-		%{_libexecdir}/%{name}/update_${type}_tables_5_to_6
+		%{_libexecdir}/%{name}/update_${type}_tables_6_to_7
 	fi
 	%{_libexecdir}/%{name}/update_bacula_tables
 	echo "If bacula works correctly you can remove the backup file %{_localstatedir}/bacula_backup.sql.bz2"
 fi
 chown -R bacula:bacula %{_localstatedir}
 chmod -R u+rX,go-rwx %{_localstatedir}/*
+
+echo "Updating Bacula passwords and names..."
+cd /etc/bacula
+for f in *-password ; do
+	p=`cat $f`
+	sed -i -e"s:#FAKE-$f#:$p:" *.conf
+done
+sed -i -e"s:--hostname--:`hostname`:" *.conf
 
 /sbin/chkconfig --add bacula-dir
 if [ -f /var/lock/subsys/bacula-dir ]; then
@@ -507,6 +525,14 @@ if [ "$1" = "0" ]; then
 fi
 
 %post fd
+echo "Updating Bacula passwords and names..."
+cd /etc/bacula
+for f in *-password ; do
+	p=`cat $f`
+	sed -i -e"s:#FAKE-$f#:$p:" *.conf
+done
+sed -i -e"s:--hostname--:`hostname`:" *.conf
+
 /sbin/chkconfig --add bacula-fd
 if [ -f /var/lock/subsys/bacula-fd ]; then
 	/etc/rc.d/init.d/bacula-fd restart 1>&2
@@ -523,6 +549,14 @@ if [ "$1" = "0" ]; then
 fi
 
 %post sd
+echo "Updating Bacula passwords and names..."
+cd /etc/bacula
+for f in *-password ; do
+	p=`cat $f`
+	sed -i -e"s:#FAKE-$f#:$p:" *.conf
+done
+sed -i -e"s:--hostname--:`hostname`:" *.conf
+
 /sbin/chkconfig --add bacula-sd
 if [ -f /var/lock/subsys/bacula-sd ]; then
 	/etc/rc.d/init.d/bacula-sd restart 1>&2
@@ -543,8 +577,41 @@ if [ -e %{_sysconfdir}/console.conf -a ! -e %{_sysconfdir}/bconsole.conf ]; then
 	mv %{_sysconfdir}/console.conf %{_sysconfdir}/bconsole.conf
 fi
 
-%post updatedb
-echo "The database update scripts were installed to %{_sysconfdir}/updatedb"
+%post console
+echo "Updating Bacula passwords and names..."
+cd /etc/bacula
+for f in *-password ; do
+	p=`cat $f`
+	sed -i -e"s:#FAKE-$f#:$p:" *.conf
+done
+sed -i -e"s:--hostname--:`hostname`:" *.conf
+
+%post console-wx
+echo "Updating Bacula passwords and names..."
+cd /etc/bacula
+for f in *-password ; do
+	p=`cat $f`
+	sed -i -e"s:#FAKE-$f#:$p:" *.conf
+done
+sed -i -e"s:--hostname--:`hostname`:" *.conf
+
+%post console-gnome
+echo "Updating Bacula passwords and names..."
+cd /etc/bacula
+for f in *-password ; do
+	p=`cat $f`
+	sed -i -e"s:#FAKE-$f#:$p:" *.conf
+done
+sed -i -e"s:--hostname--:`hostname`:" *.conf
+
+%post tray-monitor
+echo "Updating Bacula passwords and names..."
+cd /etc/bacula
+for f in *-password ; do
+	p=`cat $f`
+	sed -i -e"s:#FAKE-$f#:$p:" *.conf
+done
+sed -i -e"s:--hostname--:`hostname`:" *.conf
 
 %post rescue
 # link our current installed conf file to the rescue directory
@@ -569,7 +636,9 @@ fi
 
 %files common
 %defattr(644,root,root,755)
+%doc LICENSE
 %dir %{_sysconfdir}
+%attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/*-password
 %attr(755,root,root) %{_sbindir}/btraceback
 %attr(755,root,root) %{_sbindir}/bsmtp
 %dir %{_libexecdir}/%{name}
@@ -578,7 +647,7 @@ fi
 
 %files dir
 %defattr(644,root,root,755)
-%doc ChangeLog CheckList ReleaseNotes kernstodo
+%doc ChangeLog CheckList ReleaseNotes kernstodo LICENSE
 %doc doc/*.pdf html-manual examples
 %attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-dir.conf
 %ghost %{_sysconfdir}/.pw.sed
@@ -608,6 +677,7 @@ fi
 
 %files fd
 %defattr(644,root,root,755)
+%doc LICENSE
 %attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-fd.conf
 %attr(754,root,root) /etc/rc.d/init.d/bacula-fd
 %attr(644,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/bacula-fd
@@ -616,6 +686,7 @@ fi
 
 %files sd
 %defattr(644,root,root,755)
+%doc LICENSE
 %dir %{_sysconfdir}
 %attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-sd.conf
 %attr(754,root,root) /etc/rc.d/init.d/bacula-sd
@@ -636,27 +707,43 @@ fi
 
 %files console
 %defattr(644,root,root,755)
+%doc LICENSE
 %attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bconsole.conf
 %attr(755,root,root) %{_sbindir}/bconsole
-%config(noreplace) /etc/security/console.apps/bconsole
-%config(noreplace) /etc/pam.d/bconsole
-%verify(link) %{_bindir}/bconsole
 %{_mandir}/man1/bconsole.1*
 
 %files console-wx
 %defattr(644,root,root,755)
+%doc LICENSE
 %{_pixmapsdir}/%{name}.png
+%{_desktopdir}/bacula-wx.desktop
 %attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/wx-console.conf
 %attr(755,root,root) %{_sbindir}/wx-console
-%config(noreplace) /etc/security/console.apps/wx-console
-%config(noreplace) %verify(not md5 size mtime) /etc/pam.d/wx-console
-%verify(link) %{_bindir}/wx-console
 %{_mandir}/man1/wx-console.1*
 
+%files console-gnome
+%defattr(644,root,root,755)
+%doc LICENSE
+%{_pixmapsdir}/%{name}.png
+%{_desktopdir}/bacula.desktop
+%attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/gnome-console.conf
+%attr(755,root,root) %{_sbindir}/gnome-console
+#%{_mandir}/man1/gnome-console.1*
+
+%files tray-monitor
+%defattr(644,root,root,755)
+%doc LICENSE
+%{_pixmapsdir}/%{name}-tray-monitor.xpm
+%{_desktopdir}/%{name}-tray-monitor.desktop
+%attr(644,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/tray-monitor.conf
+%attr(755,root,root) %{_bindir}/bacula-tray-monitor
+#%{_mandir}/man1/bacula-tray-monitor.1*
+
+
 %files rescue
+%doc LICENSE
 %defattr(644,root,root,755)
 %dir %{_sysconfdir}/rescue
-%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/tomsrtbt
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/backup.etc.list
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/bacula-fd
 %attr(755,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/format_floppy
@@ -667,7 +754,3 @@ fi
 %attr(755,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/run_grub
 %attr(755,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/run_lilo
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/sfdisk.bz2
-
-%files updatedb
-%defattr(644,root,root,755)
-%{_sysconfdir}/updatedb
