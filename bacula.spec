@@ -413,7 +413,7 @@ install updatedb/* $RPM_BUILD_ROOT%{_sysconfdir}/updatedb
 cp -a man1 man8 $RPM_BUILD_ROOT%{_mandir}
 
 install -d html-manual
-cp -a doc/html-manual/*.{html,jpg,gif,css} html-manual
+cp -a doc/html-manual/*.{html,jpg,gif,css,png} html-manual
 
 # some file changes
 rm -f $RPM_BUILD_ROOT%{_libexecdir}/%{name}/{gconsole,startmysql,stopmysql,bacula,bconsole,fd}
