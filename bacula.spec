@@ -341,6 +341,7 @@ sed -i -e 's#bindir=.*#bindir=%{_bindir}#g' \
 	src/cats/grant_* src/cats/make_* src/cats/update_*
 
 %build
+cp -f %{_datadir}/automake/config.sub autoconf
 CPPFLAGS="-I%{_includedir}/ncurses -I%{_includedir}/readline"
 %configure \
 	--with-scriptdir=%{_libexecdir}/%{name} \
