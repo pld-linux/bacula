@@ -36,7 +36,7 @@ BuildRequires:	glibc-static
 BuildRequires:	acl-static
 BuildRequires:	libwrap-static
 BuildRequires:	libstdc++-static
-BuildRequires:  sed >= 4.0
+BuildRequires:	sed >= 4.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/%{name}
@@ -237,8 +237,8 @@ CPPFLAGS="-I%{_includedir}/ncurses -I%{_includedir}/readline"
 	--with-sqlite \
 	--enable-static-fd \
 	--with-dir-password="#FAKE#DIR#PASSWORD#PLD#" \
-        --with-fd-password="#FAKE#FD#PASSWORD#PLD#" \
-        --with-sd-password="#FAKE#SD#PASSWORD#PLD#"
+	--with-fd-password="#FAKE#FD#PASSWORD#PLD#" \
+	--with-sd-password="#FAKE#SD#PASSWORD#PLD#"
 
 %{__make}
 
@@ -310,20 +310,20 @@ ln -s consolehelper $RPM_BUILD_ROOT%{_bindir}/wx-console
 
 %pre common
 if [ -n "`getgid bacula`" ]; then
-        if [ "`getgid bacula`" != "136" ]; then
-                echo "Error: group bacula doesn't have gid=136. Correct this before installing bacula." 1>&2
-                exit 1
-        fi
+	if [ "`getgid bacula`" != "136" ]; then
+		echo "Error: group bacula doesn't have gid=136. Correct this before installing bacula." 1>&2
+		exit 1
+	fi
 else
-        /usr/sbin/groupadd -g 136 -r -f bacula
+	/usr/sbin/groupadd -g 136 -r -f bacula
 fi
 if [ -n "`id -u bacula 2>/dev/null`" ]; then
-        if [ "`id -u bacula`" != "136" ]; then
-                echo "Error: user bacula doesn't have uid=136. Correct this before installing bacula." 1>&2
-                exit 1
-        fi
+	if [ "`id -u bacula`" != "136" ]; then
+		echo "Error: user bacula doesn't have uid=136. Correct this before installing bacula." 1>&2
+		exit 1
+	fi
 else
-        /usr/sbin/useradd -u 136 -r -d /var/lib/bacula -s /bin/false -c "Bacula User" -g bacula bacula 1>&2
+	/usr/sbin/useradd -u 136 -r -d /var/lib/bacula -s /bin/false -c "Bacula User" -g bacula bacula 1>&2
 fi
 
 %postun common
@@ -335,80 +335,80 @@ fi
 %post dir
 umask 077
 [ -s %{_localstatedir}/bacula.db ] && \
-        DB_VER=`echo "select * from Version;" | \
-                %{_bindir}/sqlite %{_localstatedir}/bacula.db | tail -n 1 2>/dev/null`
+	DB_VER=`echo "select * from Version;" | \
+	%{_bindir}/sqlite %{_localstatedir}/bacula.db | tail -n 1 2>/dev/null`
 if [ -z "$DB_VER" ]; then
 # grant privileges and create tables
-        %{_libexecdir}/%{name}/grant_bacula_privileges > dev/null
-        %{_libexecdir}/%{name}/create_bacula_database > dev/null
-        %{_libexecdir}/%{name}/make_bacula_tables > dev/null
+	%{_libexecdir}/%{name}/grant_bacula_privileges > dev/null
+	%{_libexecdir}/%{name}/create_bacula_database > dev/null
+	%{_libexecdir}/%{name}/make_bacula_tables > dev/null
 elif [ "$DB_VER" -lt "7" ]; then
-        echo "Backing up bacula tables"
-        echo ".dump" | sqlite %{_localstatedir}/bacula.db | bzip2 > %{_localstatedir}/bacula_backup.sql.bz2
-        type=sqlite
-        echo "Upgrading bacula tables"
-        if [ "$DB_VER" -lt "6" ]; then
-                if [ "$DB_VER" -lt "5" ]; then
-                        %{_libexecdir}/%{name}/update_${type}_tables_4_to_5
-                fi
-                %{_libexecdir}/%{name}/update_${type}_tables_5_to_6
-        fi
-        %{_libexecdir}/%{name}/update_bacula_tables
-        echo "If bacula works correctly you can remove the backup file %{_localstatedir}/bacula_backup.sql.bz2"
+	echo "Backing up bacula tables"
+	echo ".dump" | sqlite %{_localstatedir}/bacula.db | bzip2 > %{_localstatedir}/bacula_backup.sql.bz2
+	type=sqlite
+	echo "Upgrading bacula tables"
+	if [ "$DB_VER" -lt "6" ]; then
+		if [ "$DB_VER" -lt "5" ]; then
+			%{_libexecdir}/%{name}/update_${type}_tables_4_to_5
+		fi
+		%{_libexecdir}/%{name}/update_${type}_tables_5_to_6
+	fi
+	%{_libexecdir}/%{name}/update_bacula_tables
+	echo "If bacula works correctly you can remove the backup file %{_localstatedir}/bacula_backup.sql.bz2"
 fi
 chown -R bacula:bacula %{_localstatedir}
 chmod -R u+rX,go-rwx %{_localstatedir}/*
 
 /sbin/chkconfig --add bacula-dir
 if [ -f /var/lock/subsys/bacula-dir ]; then
-        /etc/rc.d/init.d/bacula-dir restart 1>&2
+	/etc/rc.d/init.d/bacula-dir restart 1>&2
 else
-        echo "Run \"/etc/rc.d/init.d/bacula-dir start\" to start Bacula Director daemon."
+	echo "Run \"/etc/rc.d/init.d/bacula-dir start\" to start Bacula Director daemon."
 fi
 
 %preun dir
 if [ "$1" = "0" ]; then
-        if [ -f /var/lock/subsys/bacula-dir ]; then
-                /etc/rc.d/init.d/bacula-dir stop 1>&2
-        fi
-        /sbin/chkconfig --del bacula-dir
+	if [ -f /var/lock/subsys/bacula-dir ]; then
+		/etc/rc.d/init.d/bacula-dir stop 1>&2
+	fi
+	/sbin/chkconfig --del bacula-dir
 fi
 
 %post fd
 /sbin/chkconfig --add bacula-fd
 if [ -f /var/lock/subsys/bacula-fd ]; then
-        /etc/rc.d/init.d/bacula-fd restart 1>&2
+	/etc/rc.d/init.d/bacula-fd restart 1>&2
 else
-        echo "Run \"/etc/rc.d/init.d/bacula-fd start\" to start Bacula File daemon."
+	echo "Run \"/etc/rc.d/init.d/bacula-fd start\" to start Bacula File daemon."
 fi
 
 %preun fd
 if [ "$1" = "0" ]; then
-        if [ -f /var/lock/subsys/bacula-fd ]; then
-                /etc/rc.d/init.d/bacula-fd stop 1>&2
-        fi
-        /sbin/chkconfig --del bacula-fd
+	if [ -f /var/lock/subsys/bacula-fd ]; then
+		/etc/rc.d/init.d/bacula-fd stop 1>&2
+	fi
+	/sbin/chkconfig --del bacula-fd
 fi
 
 %post sd
 /sbin/chkconfig --add bacula-sd
 if [ -f /var/lock/subsys/bacula-sd ]; then
-        /etc/rc.d/init.d/bacula-sd restart 1>&2
+	/etc/rc.d/init.d/bacula-sd restart 1>&2
 else
-        echo "Run \"/etc/rc.d/init.d/bacula-sd start\" to start Bacula Storage daemon."
+	echo "Run \"/etc/rc.d/init.d/bacula-sd start\" to start Bacula Storage daemon."
 fi
 
 %preun sd
 if [ "$1" = "0" ]; then
-        if [ -f /var/lock/subsys/bacula-sd ]; then
-                /etc/rc.d/init.d/bacula-sd stop 1>&2
-        fi
-        /sbin/chkconfig --del bacula-sd
+	if [ -f /var/lock/subsys/bacula-sd ]; then
+		/etc/rc.d/init.d/bacula-sd stop 1>&2
+	fi
+	/sbin/chkconfig --del bacula-sd
 fi
 
 %pre console
 if [ -e %{_sysconfdir}/console.conf -a ! -e %{_sysconfdir}/bconsole.conf ]; then
-        mv %{_sysconfdir}/console.conf %{_sysconfdir}/bconsole.conf
+	mv %{_sysconfdir}/console.conf %{_sysconfdir}/bconsole.conf
 fi
 
 %post updatedb
