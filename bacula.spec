@@ -6,16 +6,19 @@ Summary:	Bacula - The Network Backup Solution
 Name:		bacula
 Version:	1.34.6
 Release:	0.1
+Epoch:		0
 Group:		Networking/Utilities
 License:	GPL v2
 Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
 # Source0-md5:	9de593cb206df126a8e27774281c5bf6
 Source1:	http://www.tux.org/pub/distributions/tinylinux/tomsrtbt/tomsrtbt-2.0.103.tar.gz
 # Source1-md5:	d5ee50efb28986d564547d5da5de2483
-Source2:	%{name}-dir.init
-Source3:	%{name}-fd.init
-Source4:	%{name}-sd.init
-Source5:	%{name}.logrotate
+Source2:	%{name}-manpages.tar.bz2
+# Source2-md5:	e4dae86d6574b360e831efd3913e7f4c
+Source10:	%{name}-dir.init
+Source11:	%{name}-fd.init
+Source12:	%{name}-sd.init
+Source13:	%{name}.logrotate
 URL:		http://www.bacula.org/
 BuildRequires:	mtx
 BuildRequires:	wxGTK2-devel
@@ -32,11 +35,6 @@ BuildRequires:	glibc-static
 BuildRequires:	acl-static
 BuildRequires:	libwrap-static
 BuildRequires:	libstdc++-static
-Provides:	bacula-dir
-Provides:	bacula-sd
-Provides:	bacula-fd
-Provides:	bacula-server
-Conflicts:	bacula-client
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/%{name}
@@ -51,15 +49,17 @@ computer data across a network of computers of different kinds. In
 technical terms, it is a network client/server based backup program.
 Bacula is relatively easy to use and efficient, while offering many
 advanced storage management features that make it easy to find and
-recover lost or damaged files. Bacula source code has been released
-under the GPL version 2 license.
+recover lost or damaged files.
 
-%package client
-Summary:	Bacula - The Network Backup Solution
+%package common
+Summary:	Common files for bacula package
 Group:		Networking/Utilities
-Provides:	bacula-fd
+Conflicts:	bacula-dir < %{epoch}:%{version}-%{release}
+Conflicts:	bacula-fd < %{epoch}:%{version}-%{release}
+Conflicts:	bacula-sd < %{epoch}:%{version}-%{release}
+Conflicts:	bacula-console < %{epoch}:%{version}-%{release}
 
-%description client
+%description common
 Bacula - It comes by night and sucks the vital essence from your
 computers.
 
@@ -69,19 +69,94 @@ computer data across a network of computers of different kinds. In
 technical terms, it is a network client/server based backup program.
 Bacula is relatively easy to use and efficient, while offering many
 advanced storage management features that make it easy to find and
-recover lost or damaged files. Bacula source code has been released
-under the GPL version 2 license.
+recover lost or damaged files.
 
-This is the File daemon (Client) only package. It includes the command
-line console program.
+%package dir
+Summary:	Bacula Director and Catalog services
+Group:		Networking/Utilities
+Prereq:		bacula-common = %{epoch}:%{version}-%{release}
+
+%description dir
+Bacula - It comes by night and sucks the vital essence from your
+computers.
+
+Bacula Director is the program that supervises all the backup,
+restore, verify and archive operations. The system administrator uses
+the Bacula Director to schedule backups and to recover files. Catalog
+services are comprised of the software programs responsible for
+maintaining the file indexes and volume databases for all files backed
+up. The Catalog services permit the System Administrator or user to
+quickly locate and restore any desired file, since it maintains a
+record of all Volumes used, all Jobs run, and all Files saved. This
+build requires sqlite to be installed separately as the catalog
+database.
+
+%package console
+Summary:	Bacula Console
+Group:		Networking/Utilities
+Prereq:		bacula-common = %{epoch}:%{version}-%{release}
+
+%description console
+Bacula - It comes by night and sucks the vital essence from your
+computers.
+
+Bacula Console is the program that allows the administrator or user to
+communicate with the Bacula Director. This is the text only console
+interface.
+
+%package console-wx
+Summary:	Bacula wxWindows Console
+Group:		Networking/Utilities
+Prereq:		bacula-common = %{epoch}:%{version}-%{release}
+
+%description console-wx
+Bacula - It comes by night and sucks the vital essence from your
+computers.
+
+Bacula Console is the program that allows the administrator or user to
+communicate with the Bacula Director. This is the wxWindows GUI
+interface.
+
+%package fd
+Summary:	Bacula File services (Client)
+Group:		Networking/Utilities
+Prereq:		bacula-common = %{epoch}:%{version}-%{release}
+
+%description fd
+Bacula - It comes by night and sucks the vital essence from your
+computers.
+
+Bacula File services (or Client program) is the software program that
+is installed on the machine to be backed up. It is specific to the
+operating system on which it runs and is responsible for providing the
+file attributes and data when requested by the Director. The File
+services are also responsible for the file system dependent part of
+restoring the file attributes and data during a recovery operation.
+This program runs as a daemon on the machine to be backed up, and in
+some of the documentation, the File daemon is referred to as the
+Client (for example in Bacula configuration file).
+
+%package sd
+Summary:	Bacula Storage services
+Group:		Networking/Utilities
+Prereq:		bacula-common = %{epoch}:%{version}-%{release}
+
+%description sd
+Bacula - It comes by night and sucks the vital essence from your
+computers.
+
+Bacula Storage services consist of the software programs that perform
+the storage and recovery of the file attributes and data to the
+physical backup media or volumes. In other words, the Storage daemon
+is responsible for reading and writing your tapes (or other storage
+media, e.g. files). The Storage services runs as a daemon on the
+machine that has the backup device (usually a tape drive).
 
 %package rescue
-
 Summary:	Bacula - The Network Backup Solution
 Group:		Networking/Utilities
 Requires:	coreutils
 Requires:	util-linux
-Requires:	libc5
 Requires:	bacula-fd
 
 %description rescue
@@ -131,29 +206,8 @@ under the GPL version 2 license.
 This package installs scripts for updating older versions of the
 bacula database.
 
-%package wxconsole
-Summary:	Bacula - The Network Backup Solution
-Group:		Networking/Utilities
-Requires:	bacula-fd
-
-%description wxconsole
-Bacula - It comes by night and sucks the vital essence from your
-computers.
-
-Bacula is a set of computer programs that permit you (or the system
-administrator) to manage backup, recovery, and verification of
-computer data across a network of computers of different kinds. In
-technical terms, it is a network client/server based backup program.
-Bacula is relatively easy to use and efficient, while offering many
-advanced storage management features that make it easy to find and
-recover lost or damaged files. Bacula source code has been released
-under the GPL version 2 license.
-
-This is the WX Console package. It is an add-on to the client or
-server packages.
-
 %prep
-%setup -q -a 1
+%setup -q -a 1 -a 2
 sed -i -e 's#wx-config#wxgtk2-2.4-config#g' configure*
 sed -i -e 's#-lreadline -ltermcap#-lreadline#g' configure*
 
@@ -170,8 +224,10 @@ patch src/cats/update_sqlite_tables.in src/cats/update_sqlite_tables.in.patch
 
 CPPFLAGS="-I%{_includedir}/ncurses -I%{_includedir}/readline"
 %configure \
+	--with-scriptdir=%{_libexecdir}/%{name} \
 	--disable-gnome \
 	--disable-conio \
+	--enable-smartalloc \
 	--enable-wx-console \
 	--with-readline \
 	--with-tcp-wrappers \
@@ -182,7 +238,11 @@ CPPFLAGS="-I%{_includedir}/ncurses -I%{_includedir}/readline"
 	--with-pid-dir=/var/run \
 	--with-subsys-dir=/var/lock/subsys \
 	--with-sqlite \
-	--enable-static-fd
+	--enable-static-fd \
+	--with-dir-password="#FAKE#DIR#PASSWORD#" \
+        --with-fd-password="#FAKE#FD#PASSWORD#" \
+        --with-sd-password="#FAKE#SD#PASSWORD#"
+
 %{__make}
 
 %install
@@ -199,10 +259,10 @@ install -d $RPM_BUILD_ROOT%{_pixmapsdir}
 strip src/filed/static-bacula-fd
 install src/filed/static-bacula-fd $RPM_BUILD_ROOT%{_sysconfdir}/rescue/bacula-fd
 
-install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-dir
-install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-fd
-install %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-sd
-install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/%{name}
+install %{SOURCE10} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-dir
+install %{SOURCE11} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-fd
+install %{SOURCE12} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-sd
+install %{SOURCE13} $RPM_BUILD_ROOT/etc/logrotate.d/%{name}
 
 install scripts/bacula.png $RPM_BUILD_ROOT%{_pixmapsdir}/bacula.png
 
@@ -230,73 +290,66 @@ cp -a doc/html-manual/*.{html,jpg,gif,css} html-manual/
 # drop some files
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/{gconsole,startmysql,stopmysql}
 
-%pre
-# test for bacula database older than version 6
-if [ -s %{_var}/lib/%{name}/bacula.db ];then
-	DB_VER=`echo "select * from Version;" | %{_bindir}/sqlite %{_var}/lib/%{name}/bacula.db | tail -n 1 2>/dev/null`
-	if [ -n "$DB_VER" ] && [ "$DB_VER" -lt "6" ]; then
-		echo "This bacula upgrade will update a bacula database from version 6 to 7."
-		echo "You appear to be running database version $DB_VER. You must first update"
-		echo "your database to version 6 and then install this upgrade. The alternative"
-		echo "is to use %{_sysconfdir}/drop_sqlite_tables to delete all your your current"
-		echo "catalog information, then do the upgrade. Information on updating a"
-		echo "database older than version 6 can be found in the release notes."
-		exit 1
-	fi
+%pre common
+# FIXME: dodawanie usera bacula /var/lib/bacula /bin/false
+
+%postun common
+# FIXME: del usera bacula
+
+%post dir
+umask 077
+[ -s %{_localstatedir}/%{name}/bacula.db ] && \
+        DB_VER=`echo "select * from Version;" | \
+                sqlite %{_localstatedir}/%{name}/bacula.db | tail -n 1 2>/dev/null`
+if [ -z "$DB_VER" ]; then
+# grant privileges and create tables
+        %{_libexecdir}/%{name}/grant_bacula_privileges > dev/null
+        %{_libexecdir}/%{name}/create_bacula_database > dev/null
+        %{_libexecdir}/%{name}/make_bacula_tables > dev/null
+elif [ "$DB_VER" -lt "7" ]; then
+        echo "Backing up bacula tables"
+        echo ".dump" | sqlite %{_localstatedir}/%{name}/bacula.db | bzip2 > %{_localstatedir}/%{name}/bacula_backup.sql.bz2
+        type=sqlite
+        echo "Upgrading bacula tables"
+        if [ "$DB_VER" -lt "6" ]; then
+                if [ "$DB_VER" -lt "5" ]; then
+                        %{_libexecdir}/%{name}/update_${type}_tables_4_to_5
+                fi
+                %{_libexecdir}/%{name}/update_${type}_tables_5_to_6
+        fi
+        %{_libexecdir}/%{name}/update_bacula_tables
+        echo "If bacula works correctly you can remove the backup file %{_localstatedir}/%{name}/bacula_backup.sql.bz2"
 fi
-# check for and copy %{_sysconfdir}/console.conf to bconsole.conf
-if [ -s %{_sysconfdir}/console.conf ];then
-	cp -a %{_sysconfdir}/console.conf %{_sysconfdir}/bconsole.conf
+chown -R bacula:bacula %{_localstatedir}/%{name}
+chmod -R u+rX,go-rwx %{_localstatedir}/%{name}
+
+#%_post_service bacula-dir
+
+%preun dir
+#%_preun_service bacula-dir
+
+%post fd
+#%post_fix_config bacula-fd
+#%_post_service bacula-fd
+
+%preun fd
+#%_preun_service bacula-fd
+
+%post sd
+#%post_fix_config bacula-sd
+#%_post_service bacula-sd
+
+%preun sd
+#%_preun_service bacula-sd
+
+%pre console
+if [ -e %{_sysconfdir}/console.conf -a ! -e %{_sysconfdir}/bconsole.conf ]; then
+        mv %{_sysconfdir}/console.conf %{_sysconfdir}/bconsole.conf
 fi
 
-%post
-# add our links
-if [ "$1" -ge 1 ] ; then
-	/sbin/chkconfig --add bacula-dir
-	/sbin/chkconfig --add bacula-fd
-	/sbin/chkconfig --add bacula-sd
-fi
+#%post console
+#%post_fix_config bconsole
 
-# test for an existing database
-if [ -s %{_var}/lib/%{name}/bacula.db ]; then
-	DB_VER=`echo "select * from Version;" | %{_bindir}/sqlite %{_var}/lib/%{name}/bacula.db | tail -n 1 2>/dev/null`
-	# check to see if we need to upgrade a 1.32 or lower database
-	if [ "$DB_VER" -lt "7" ]; then
-		echo "This release requires an upgrade to your bacula database."
-		echo "Backing up your current database..."
-		echo ".dump" | %{_bindir}/sqlite %{_var}/lib/%{name}/bacula.db | bzip2 > %{_var}/lib/%{name}/bacula_backup.sql.bz2
-		echo "Upgrading bacula database ..."
-		%{_sysconfdir}/update_sqlite_tables
-		echo "If bacula works correctly you can remove the backup file %{_var}/lib/%{name}/bacula_backup.sql.bz2"
-	fi
-else
-	# create the database and tables
-	echo "Hmm, doesn't look like you have an existing database."
-	echo "Creating SQLite database..."
-	%{_sysconfdir}/create_sqlite_database
-	echo "Creating the SQLite tables..."
-	%{_sysconfdir}/make_sqlite_tables
-fi
-
-%preun
-# delete our links
-if [ $1 = 0 ]; then
-	/sbin/chkconfig --del bacula-dir
-	/sbin/chkconfig --del bacula-fd
-	/sbin/chkconfig --del bacula-sd
-fi
-
-%post client
-# add our link
-if [ "$1" -ge 1 ] ; then
-	/sbin/chkconfig --add bacula-fd
-fi
-
-%preun client
-# delete our link
-if [ $1 = 0 ]; then
-	/sbin/chkconfig --del bacula-fd
-fi
 
 %post updatedb
 echo "The database update scripts were installed to %{_sysconfdir}/updatedb"
@@ -323,67 +376,93 @@ rm -f %{_sysconfdir}/rescue/start_network
 rm -f %{_sysconfdir}/rescue/sfdisk
 rm -rf %{_sysconfdir}/rescue/diskinfo/*
 
-%files
+%files common
 %defattr(644,root,root,755)
-%doc COPYING ChangeLog ReleaseNotes VERIFYING kernstodo doc/bacula.pdf html-manual
+%dir %{_sysconfdir}/%{name}
+%attr(755, root, root) %{_sbindir}/btraceback
+%attr(755, root, root) %{_sbindir}/bsmtp
+%dir %{_libexecdir}/%{name}
+%{_libexecdir}/%{name}/btraceback.gdb
+%attr(700, bacula, bacula) %dir %{_localstatedir}/%{name}
+
+%files dir
+%defattr(644,root,root,755)
+%doc ChangeLog CheckList ReleaseNotes kernstodo
+%doc doc/*.pdf doc/manual examples
+%attr(600, root, root) %config(noreplace) %{_sysconfdir}/%{name}/bacula-dir.conf
+%ghost %{_sysconfdir}/%{name}/.pw.sed
+%config(noreplace) %{_sysconfdir}/logrotate.d/bacula-dir
+%{_mandir}/man8/bacula-dir.8*
+%{_mandir}/man1/dbcheck.1*
+%defattr (755, root, root)
+%config(noreplace) %{_initrddir}/bacula-dir
 %attr(755,root,root) %{_sbindir}/bacula-dir
+%attr(755,root,root) %{_sbindir}/dbcheck
+%{_libexecdir}/%{name}/create_sqlite_database
+%{_libexecdir}/%{name}/drop_sqlite_database
+%{_libexecdir}/%{name}/drop_sqlite_tables
+%{_libexecdir}/%{name}/grant_sqlite_privileges
+%{_libexecdir}/%{name}/make_sqlite_tables
+%{_libexecdir}/%{name}/update_sqlite_tables*
+%{_libexecdir}/%{name}/create_bacula_database
+%{_libexecdir}/%{name}/drop_bacula_database
+%{_libexecdir}/%{name}/drop_bacula_tables
+%{_libexecdir}/%{name}/grant_bacula_privileges
+%{_libexecdir}/%{name}/make_bacula_tables
+%{_libexecdir}/%{name}/update_bacula_tables
+%{_libexecdir}/%{name}/make_catalog_backup
+%{_libexecdir}/%{name}/delete_catalog_backup
+%attr(644, root, root) %{_libexecdir}/%{name}/query.sql
+
+%files fd
+%defattr(644,root,root,755)
+%attr(600, root, root) %config(noreplace) %{_sysconfdir}/%{name}/bacula-fd.conf
+%config(noreplace) %{_initrddir}/bacula-fd
 %attr(755,root,root) %{_sbindir}/bacula-fd
+%attr(644, root, root) %{_mandir}/man8/bacula-fd.8*
+
+%files sd
+%defattr(644,root,root,755)
+%dir %{_sysconfdir}/%{name}
+%attr(600, root, root) %config(noreplace) %{_sysconfdir}/%{name}/bacula-sd.conf
+%config(noreplace) %{_initrddir}/bacula-sd
 %attr(755,root,root) %{_sbindir}/bacula-sd
 %attr(755,root,root) %{_sbindir}/bcopy
 %attr(755,root,root) %{_sbindir}/bextract
 %attr(755,root,root) %{_sbindir}/bls
 %attr(755,root,root) %{_sbindir}/bscan
 %attr(755,root,root) %{_sbindir}/btape
-%attr(755,root,root) %{_sbindir}/btraceback
-%attr(755,root,root) %{_sbindir}/bconsole
-%attr(755,root,root) %{_sbindir}/dbcheck
-%attr(755,root,root) %{_sbindir}/bsmtp
-%attr(755,root,root) %{_sbindir}/static-bacula-fd
-%dir %{_sysconfdir}
-%{_sysconfdir}/bacula
-%{_sysconfdir}/bconsole
-%{_sysconfdir}/fd
-%{_sysconfdir}/create_bacula_database
-%{_sysconfdir}/drop_bacula_database
-%{_sysconfdir}/grant_bacula_privileges
-%{_sysconfdir}/make_bacula_tables
-%{_sysconfdir}/drop_bacula_tables
-%{_sysconfdir}/update_bacula_tables
-%{_sysconfdir}/create_sqlite_database
-%{_sysconfdir}/drop_sqlite_database
-%{_sysconfdir}/grant_sqlite_privileges
-%{_sysconfdir}/make_sqlite_tables
-%{_sysconfdir}/drop_sqlite_tables
-%{_sysconfdir}/update_sqlite_tables
-%{_sysconfdir}/make_catalog_backup
-%{_sysconfdir}/delete_catalog_backup
-%{_sysconfdir}/mtx-changer
-%{_sysconfdir}/query.sql
-%{_sysconfdir}/btraceback.gdb
-%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-dir.conf
-%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-fd.conf
-%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-sd.conf
-%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bconsole.conf
-%attr(754,root,root) /etc/rc.d/init.d/bacula-dir
-%attr(754,root,root) /etc/rc.d/init.d/bacula-fd
-%attr(754,root,root) /etc/rc.d/init.d/bacula-sd
-%attr(640,root,root) %config(noreplace) /etc/logrotate.d/bacula
-%dir %{_var}/lib/%{name}
+%{_libexecdir}/%{name}/mtx-changer
+%defattr(644, root,root, 755)
+%{_mandir}/man8/bacula-sd.8*
+%{_mandir}/man1/bcopy.1*
+%{_mandir}/man1/bextract.1*
+%{_mandir}/man1/bls.1*
+%{_mandir}/man1/bscan.1*
+%{_mandir}/man1/btape.1*
 
-%files client
+%files console
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_sbindir}/bacula-fd
-%attr(755,root,root) %{_sbindir}/btraceback
-%attr(755,root,root) %{_sbindir}/bsmtp
-%attr(755,root,root) %{_sbindir}/bconsole
-%{_sysconfdir}/fd
-%{_sysconfdir}/bconsole
-%{_sysconfdir}/btraceback.gdb
-%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-fd.conf
-%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bconsole.conf
-%attr(754,root,root) /etc/rc.d/init.d/bacula-fd
-%attr(640,root,root) %config(noreplace) /etc/logrotate.d/bacula
-%dir %{_var}/lib/%{name}
+%attr(600, root, root) %config(noreplace) %{_sysconfdir}/%{name}/bconsole.conf
+%attr(755, root, root) %{_sbindir}/bconsole
+%config(noreplace) %{_sysconfdir}/security/console.apps/bconsole
+%config(noreplace) %{_sysconfdir}/pam.d/bconsole
+%verify(link) %{_bindir}/bconsole
+%{_mandir}/man1/bconsole.1*
+
+
+%files console-wx
+%defattr(644,root,root,755)
+%{_iconsdir}/%{name}.png
+%{_miconsdir}/%{name}.png
+%{_liconsdir}/%{name}.png
+%{_menudir}/bacula-console-wx
+%attr(600, root, root) %config(noreplace) %{_sysconfdir}/%{name}/wx-console.conf
+%attr(755, root, root) %{_sbindir}/wx-console
+%config(noreplace) %{_sysconfdir}/security/console.apps/wx-console
+%config(noreplace) %{_sysconfdir}/pam.d/wx-console
+%verify(link) %{_bindir}/wx-console
+%{_mandir}/man1/wx-console.1*
 
 %files rescue
 %defattr(644,root,root,755)
@@ -392,9 +471,3 @@ rm -rf %{_sysconfdir}/rescue/diskinfo/*
 %files updatedb
 %defattr(644,root,root,755)
 %{_sysconfdir}/updatedb
-
-%files wxconsole
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_sbindir}/wx-console
-%config(noreplace) %{_sysconfdir}/wx-console.conf
-%{_pixmapsdir}/bacula.png
