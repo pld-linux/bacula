@@ -12,7 +12,7 @@
 
 BACULA_SD_USER="bacula"
 BACULA_SD_GROUP="bacula"
-[ -f /etc/sysconfig/bacula-sd ] && . /etc/sysconfig/bacula-fd
+[ -f /etc/sysconfig/bacula-sd ] && . /etc/sysconfig/bacula-sd
 
 
 case "$1" in
