@@ -9,7 +9,7 @@ Release:	0.1
 Group:		Networking/Utilities
 License:	GPL v2
 Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	c8aaef1429f9b37efce381f49f7bccb8
+# Source0-md5:	9de593cb206df126a8e27774281c5bf6
 Source1:	http://www.tux.org/pub/distributions/tinylinux/tomsrtbt/tomsrtbt-2.0.103.tar.gz
 # Source1-md5:	d5ee50efb28986d564547d5da5de2483
 Source2:	%{name}-dir.init
