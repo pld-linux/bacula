@@ -19,6 +19,7 @@ Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
 Source13:	%{name}.logrotate
+Patch0:		%{name}-pidfile.patch
 URL:		http://www.bacula.org/
 BuildRequires:	mtx
 BuildRequires:	wxGTK2-devel
@@ -38,6 +39,7 @@ BuildRequires:	libstdc++-static
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/%{name}
+%define		_localstatedir	/var/lib/%{name}
 
 %description
 Bacula - It comes by night and sucks the vital essence from your
@@ -208,6 +210,7 @@ bacula database.
 
 %prep
 %setup -q -a 1 -a 2
+%patch0 -p1
 sed -i -e 's#wx-config#wxgtk2-2.4-config#g' configure*
 sed -i -e 's#-lreadline -ltermcap#-lreadline#g' configure*
 
@@ -239,9 +242,9 @@ CPPFLAGS="-I%{_includedir}/ncurses -I%{_includedir}/readline"
 	--with-subsys-dir=/var/lock/subsys \
 	--with-sqlite \
 	--enable-static-fd \
-	--with-dir-password="#FAKE#DIR#PASSWORD#" \
-        --with-fd-password="#FAKE#FD#PASSWORD#" \
-        --with-sd-password="#FAKE#SD#PASSWORD#"
+	--with-dir-password="#FAKE#DIR#PASSWORD#PLD#" \
+        --with-fd-password="#FAKE#FD#PASSWORD#PLD#" \
+        --with-sd-password="#FAKE#SD#PASSWORD#PLD#"
 
 %{__make}
 
@@ -250,7 +253,7 @@ rm -rf $RPM_BUILD_ROOT
 
 install -d $RPM_BUILD_ROOT/etc/{rc.d/init.d,logrotate.d,pam.d,security/console.apps}
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/{rescue/tomsrtbt,updatedb}
-install -d $RPM_BUILD_ROOT%{_pixmapsdir}
+install -d $RPM_BUILD_ROOT{%{_pixmapsdir},%{_mandir},%{_bindir}}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -262,7 +265,7 @@ install src/filed/static-bacula-fd $RPM_BUILD_ROOT%{_sysconfdir}/rescue/bacula-f
 install %{SOURCE10} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-dir
 install %{SOURCE11} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-fd
 install %{SOURCE12} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-sd
-install %{SOURCE13} $RPM_BUILD_ROOT/etc/logrotate.d/%{name}
+install %{SOURCE13} $RPM_BUILD_ROOT/etc/logrotate.d/%{name}-dir
 
 install scripts/bacula.png $RPM_BUILD_ROOT%{_pixmapsdir}/bacula.png
 
@@ -284,11 +287,32 @@ install tomsrtbt-*/* $RPM_BUILD_ROOT%{_sysconfdir}/rescue/tomsrtbt/
 install updatedb/* $RPM_BUILD_ROOT%{_sysconfdir}/updatedb/
 
 # manual
+cp -a man1 man8 $RPM_BUILD_ROOT%{_mandir}
+
 install -d html-manual
 cp -a doc/html-manual/*.{html,jpg,gif,css} html-manual/
 
-# drop some files
-rm -f $RPM_BUILD_ROOT%{_sysconfdir}/{gconsole,startmysql,stopmysql}
+# some file changes
+rm -f $RPM_BUILD_ROOT%{_libexecdir}/%{name}/{gconsole,startmysql,stopmysql,bacula,bconsole,fd}
+rm -f $RPM_BUILD_ROOT%{_sbindir}/static-bacula-fd
+rm -f $RPM_BUILD_ROOT%{_mandir}/man1/gnome*
+touch $RPM_BUILD_ROOT%{_sysconfdir}/.pw.sed
+
+cat << EOF > $RPM_BUILD_ROOT/etc/security/console.apps/bconsole
+USER=root
+PROGRAM=%{_sbindir}/bconsole
+SESSION=true
+EOF
+install scripts/gnome-console.pamd $RPM_BUILD_ROOT/etc/pam.d/bconsole
+ln -s consolehelper $RPM_BUILD_ROOT%{_bindir}/bconsole
+
+cat << EOF > $RPM_BUILD_ROOT/etc/security/console.apps/wx-console
+USER=root
+PROGRAM=%{_sbindir}/wx-console
+SESSION=true
+EOF
+cp -p scripts/gnome-console.pamd $RPM_BUILD_ROOT/etc/pam.d/wx-console
+ln -s consolehelper $RPM_BUILD_ROOT%{_bindir}/wx-console
 
 %pre common
 # FIXME: dodawanie usera bacula /var/lib/bacula /bin/false
@@ -298,9 +322,9 @@ rm -f $RPM_BUILD_ROOT%{_sysconfdir}/{gconsole,startmysql,stopmysql}
 
 %post dir
 umask 077
-[ -s %{_localstatedir}/%{name}/bacula.db ] && \
+[ -s %{_localstatedir}/bacula.db ] && \
         DB_VER=`echo "select * from Version;" | \
-                sqlite %{_localstatedir}/%{name}/bacula.db | tail -n 1 2>/dev/null`
+                %{_bindir}/sqlite %{_localstatedir}/bacula.db | tail -n 1 2>/dev/null`
 if [ -z "$DB_VER" ]; then
 # grant privileges and create tables
         %{_libexecdir}/%{name}/grant_bacula_privileges > dev/null
@@ -308,7 +332,7 @@ if [ -z "$DB_VER" ]; then
         %{_libexecdir}/%{name}/make_bacula_tables > dev/null
 elif [ "$DB_VER" -lt "7" ]; then
         echo "Backing up bacula tables"
-        echo ".dump" | sqlite %{_localstatedir}/%{name}/bacula.db | bzip2 > %{_localstatedir}/%{name}/bacula_backup.sql.bz2
+        echo ".dump" | sqlite %{_localstatedir}/bacula.db | bzip2 > %{_localstatedir}/bacula_backup.sql.bz2
         type=sqlite
         echo "Upgrading bacula tables"
         if [ "$DB_VER" -lt "6" ]; then
@@ -318,38 +342,62 @@ elif [ "$DB_VER" -lt "7" ]; then
                 %{_libexecdir}/%{name}/update_${type}_tables_5_to_6
         fi
         %{_libexecdir}/%{name}/update_bacula_tables
-        echo "If bacula works correctly you can remove the backup file %{_localstatedir}/%{name}/bacula_backup.sql.bz2"
+        echo "If bacula works correctly you can remove the backup file %{_localstatedir}/bacula_backup.sql.bz2"
 fi
 chown -R bacula:bacula %{_localstatedir}/%{name}
 chmod -R u+rX,go-rwx %{_localstatedir}/%{name}
 
-#%_post_service bacula-dir
+/sbin/chkconfig --add bacula-dir
+if [ -f /var/lock/subsys/bacula-dir ]; then
+        /etc/rc.d/init.d/bacula-dir restart 1>&2
+else
+        echo "Run \"/etc/rc.d/init.d/bacula-dir start\" to start Bacula Director daemon."
+fi
 
 %preun dir
-#%_preun_service bacula-dir
+if [ "$1" = "0" ]; then
+        if [ -f /var/lock/subsys/bacula-dir ]; then
+                /etc/rc.d/init.d/bacula-dir stop 1>&2
+        fi
+        /sbin/chkconfig --del bacula-dir
+fi
 
 %post fd
-#%post_fix_config bacula-fd
-#%_post_service bacula-fd
+/sbin/chkconfig --add bacula-fd
+if [ -f /var/lock/subsys/bacula-fd ]; then
+        /etc/rc.d/init.d/bacula-fd restart 1>&2
+else
+        echo "Run \"/etc/rc.d/init.d/bacula-fd start\" to start Bacula File daemon."
+fi
 
 %preun fd
-#%_preun_service bacula-fd
+if [ "$1" = "0" ]; then
+        if [ -f /var/lock/subsys/bacula-fd ]; then
+                /etc/rc.d/init.d/bacula-fd stop 1>&2
+        fi
+        /sbin/chkconfig --del bacula-fd
+fi
 
 %post sd
-#%post_fix_config bacula-sd
-#%_post_service bacula-sd
+/sbin/chkconfig --add bacula-sd
+if [ -f /var/lock/subsys/bacula-sd ]; then
+        /etc/rc.d/init.d/bacula-sd restart 1>&2
+else
+        echo "Run \"/etc/rc.d/init.d/bacula-sd start\" to start Bacula Storage daemon."
+fi
 
 %preun sd
-#%_preun_service bacula-sd
+if [ "$1" = "0" ]; then
+        if [ -f /var/lock/subsys/bacula-sd ]; then
+                /etc/rc.d/init.d/bacula-sd stop 1>&2
+        fi
+        /sbin/chkconfig --del bacula-sd
+fi
 
 %pre console
 if [ -e %{_sysconfdir}/console.conf -a ! -e %{_sysconfdir}/bconsole.conf ]; then
         mv %{_sysconfdir}/console.conf %{_sysconfdir}/bconsole.conf
 fi
-
-#%post console
-#%post_fix_config bconsole
-
 
 %post updatedb
 echo "The database update scripts were installed to %{_sysconfdir}/updatedb"
@@ -378,24 +426,24 @@ rm -rf %{_sysconfdir}/rescue/diskinfo/*
 
 %files common
 %defattr(644,root,root,755)
-%dir %{_sysconfdir}/%{name}
+%dir %{_sysconfdir}
 %attr(755, root, root) %{_sbindir}/btraceback
 %attr(755, root, root) %{_sbindir}/bsmtp
 %dir %{_libexecdir}/%{name}
 %{_libexecdir}/%{name}/btraceback.gdb
-%attr(700, bacula, bacula) %dir %{_localstatedir}/%{name}
+%attr(700, bacula, bacula) %dir %{_localstatedir}
 
 %files dir
 %defattr(644,root,root,755)
 %doc ChangeLog CheckList ReleaseNotes kernstodo
-%doc doc/*.pdf doc/manual examples
-%attr(600, root, root) %config(noreplace) %{_sysconfdir}/%{name}/bacula-dir.conf
-%ghost %{_sysconfdir}/%{name}/.pw.sed
-%config(noreplace) %{_sysconfdir}/logrotate.d/bacula-dir
+%doc doc/*.pdf html-manual examples
+%attr(600, root, root) %config(noreplace) %{_sysconfdir}/bacula-dir.conf
+%ghost %{_sysconfdir}/.pw.sed
+%config(noreplace) /etc/logrotate.d/bacula-dir
 %{_mandir}/man8/bacula-dir.8*
 %{_mandir}/man1/dbcheck.1*
 %defattr (755, root, root)
-%config(noreplace) %{_initrddir}/bacula-dir
+%attr(754,root,root) /etc/rc.d/init.d/bacula-dir
 %attr(755,root,root) %{_sbindir}/bacula-dir
 %attr(755,root,root) %{_sbindir}/dbcheck
 %{_libexecdir}/%{name}/create_sqlite_database
@@ -416,16 +464,16 @@ rm -rf %{_sysconfdir}/rescue/diskinfo/*
 
 %files fd
 %defattr(644,root,root,755)
-%attr(600, root, root) %config(noreplace) %{_sysconfdir}/%{name}/bacula-fd.conf
-%config(noreplace) %{_initrddir}/bacula-fd
+%attr(600, root, root) %config(noreplace) %{_sysconfdir}/bacula-fd.conf
+%attr(754,root,root) /etc/rc.d/init.d/bacula-fd
 %attr(755,root,root) %{_sbindir}/bacula-fd
 %attr(644, root, root) %{_mandir}/man8/bacula-fd.8*
 
 %files sd
 %defattr(644,root,root,755)
-%dir %{_sysconfdir}/%{name}
-%attr(600, root, root) %config(noreplace) %{_sysconfdir}/%{name}/bacula-sd.conf
-%config(noreplace) %{_initrddir}/bacula-sd
+%dir %{_sysconfdir}
+%attr(600, root, root) %config(noreplace) %{_sysconfdir}/bacula-sd.conf
+%attr(754,root,root) /etc/rc.d/init.d/bacula-sd
 %attr(755,root,root) %{_sbindir}/bacula-sd
 %attr(755,root,root) %{_sbindir}/bcopy
 %attr(755,root,root) %{_sbindir}/bextract
@@ -443,24 +491,20 @@ rm -rf %{_sysconfdir}/rescue/diskinfo/*
 
 %files console
 %defattr(644,root,root,755)
-%attr(600, root, root) %config(noreplace) %{_sysconfdir}/%{name}/bconsole.conf
-%attr(755, root, root) %{_sbindir}/bconsole
-%config(noreplace) %{_sysconfdir}/security/console.apps/bconsole
-%config(noreplace) %{_sysconfdir}/pam.d/bconsole
+%attr(600,root,root) %config(noreplace) %{_sysconfdir}/bconsole.conf
+%attr(755,root,root) %{_sbindir}/bconsole
+%config(noreplace) /etc/security/console.apps/bconsole
+%config(noreplace) /etc/pam.d/bconsole
 %verify(link) %{_bindir}/bconsole
 %{_mandir}/man1/bconsole.1*
 
-
 %files console-wx
 %defattr(644,root,root,755)
-%{_iconsdir}/%{name}.png
-%{_miconsdir}/%{name}.png
-%{_liconsdir}/%{name}.png
-%{_menudir}/bacula-console-wx
-%attr(600, root, root) %config(noreplace) %{_sysconfdir}/%{name}/wx-console.conf
-%attr(755, root, root) %{_sbindir}/wx-console
-%config(noreplace) %{_sysconfdir}/security/console.apps/wx-console
-%config(noreplace) %{_sysconfdir}/pam.d/wx-console
+%{_pixmapsdir}/%{name}.png
+%attr(600,root,root) %config(noreplace) %{_sysconfdir}/wx-console.conf
+%attr(755,root,root) %{_sbindir}/wx-console
+%config(noreplace) /etc/security/console.apps/wx-console
+%config(noreplace) /etc/pam.d/wx-console
 %verify(link) %{_bindir}/wx-console
 %{_mandir}/man1/wx-console.1*
 
