@@ -571,7 +571,7 @@ fi
 %attr(755,root,root) %{_sbindir}/bsmtp
 %dir %{_libexecdir}/%{name}
 %{_libexecdir}/%{name}/btraceback.gdb
-%attr(700,bacula,bacula) %dir %{_localstatedir}
+%attr(770,root,bacula) %dir %{_localstatedir}
 
 %files dir
 %defattr(644,root,root,755)
