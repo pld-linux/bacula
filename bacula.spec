@@ -561,25 +561,26 @@ rm -rf %{_sysconfdir}/rescue/diskinfo/*
 %files common
 %defattr(644,root,root,755)
 %dir %{_sysconfdir}
-%attr(755, root, root) %{_sbindir}/btraceback
-%attr(755, root, root) %{_sbindir}/bsmtp
+%attr(755,root,root) %{_sbindir}/btraceback
+%attr(755,root,root) %{_sbindir}/bsmtp
 %dir %{_libexecdir}/%{name}
 %{_libexecdir}/%{name}/btraceback.gdb
-%attr(700, bacula, bacula) %dir %{_localstatedir}
+%attr(700,bacula,bacula) %dir %{_localstatedir}
 
 %files dir
 %defattr(644,root,root,755)
 %doc ChangeLog CheckList ReleaseNotes kernstodo
 %doc doc/*.pdf html-manual examples
-%attr(600, root, root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-dir.conf
+%attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-dir.conf
 %ghost %{_sysconfdir}/.pw.sed
 %attr(640,root,root) %config(noreplace) /etc/logrotate.d/bacula-dir
-%{_mandir}/man8/bacula-dir.8*
-%{_mandir}/man1/dbcheck.1*
-%defattr (755, root, root)
 %attr(754,root,root) /etc/rc.d/init.d/bacula-dir
 %attr(755,root,root) %{_sbindir}/bacula-dir
 %attr(755,root,root) %{_sbindir}/dbcheck
+%{_mandir}/man8/bacula-dir.8*
+%{_mandir}/man1/dbcheck.1*
+%{_libexecdir}/%{name}/query.sql
+%defattr(755,root,root)
 %{_libexecdir}/%{name}/create_sqlite_database
 %{_libexecdir}/%{name}/drop_sqlite_database
 %{_libexecdir}/%{name}/drop_sqlite_tables
@@ -594,19 +595,18 @@ rm -rf %{_sysconfdir}/rescue/diskinfo/*
 %{_libexecdir}/%{name}/update_bacula_tables
 %{_libexecdir}/%{name}/make_catalog_backup
 %{_libexecdir}/%{name}/delete_catalog_backup
-%attr(644, root, root) %{_libexecdir}/%{name}/query.sql
 
 %files fd
 %defattr(644,root,root,755)
-%attr(600, root, root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-fd.conf
+%attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-fd.conf
 %attr(754,root,root) /etc/rc.d/init.d/bacula-fd
 %attr(755,root,root) %{_sbindir}/bacula-fd
-%attr(644, root, root) %{_mandir}/man8/bacula-fd.8*
+%{_mandir}/man8/bacula-fd.8*
 
 %files sd
 %defattr(644,root,root,755)
 %dir %{_sysconfdir}
-%attr(600, root, root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-sd.conf
+%attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-sd.conf
 %attr(754,root,root) /etc/rc.d/init.d/bacula-sd
 %attr(755,root,root) %{_sbindir}/bacula-sd
 %attr(755,root,root) %{_sbindir}/bcopy
@@ -615,7 +615,6 @@ rm -rf %{_sysconfdir}/rescue/diskinfo/*
 %attr(755,root,root) %{_sbindir}/bscan
 %attr(755,root,root) %{_sbindir}/btape
 %{_libexecdir}/%{name}/mtx-changer
-%defattr(644, root,root, 755)
 %{_mandir}/man8/bacula-sd.8*
 %{_mandir}/man1/bcopy.1*
 %{_mandir}/man1/bextract.1*
