@@ -739,10 +739,9 @@ fi
 %attr(755,root,root) %{_bindir}/bacula-tray-monitor
 #%{_mandir}/man1/bacula-tray-monitor.1*
 
-
 %files rescue
-%doc LICENSE
 %defattr(644,root,root,755)
+%doc LICENSE
 %dir %{_sysconfdir}/rescue
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/backup.etc.list
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/bacula-fd
