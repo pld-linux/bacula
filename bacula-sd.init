@@ -15,7 +15,7 @@ case "$1" in
        msg_starting "Bacula Storage daemon"
        daemon /usr/sbin/bacula-sd $2 -c /etc/bacula/bacula-sd.conf
        RETVAL=$?
-       [ $RETVAL -eq 0 ] && touch @subsysdir@/bacula-sd
+       [ $RETVAL -eq 0 ] && touch /var/lock/subsys/bacula-sd
        ;;
     stop)
        msg_stopping "Bacula Storage daemon"
