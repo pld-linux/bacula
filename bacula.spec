@@ -315,10 +315,28 @@ cp -p scripts/gnome-console.pamd $RPM_BUILD_ROOT/etc/pam.d/wx-console
 ln -s consolehelper $RPM_BUILD_ROOT%{_bindir}/wx-console
 
 %pre common
-# FIXME: dodawanie usera bacula /var/lib/bacula /bin/false
+if [ -n "`getgid bacula`" ]; then
+        if [ "`getgid bacula`" != "136" ]; then
+                echo "Error: group bacula doesn't have gid=136. Correct this before installing bacula." 1>&2
+                exit 1
+        fi
+else
+        /usr/sbin/groupadd -g 136 -r -f bacula
+fi
+if [ -n "`id -u bacula 2>/dev/null`" ]; then
+        if [ "`id -u bacula`" != "136" ]; then
+                echo "Error: user bacula doesn't have uid=136. Correct this before installing bacula." 1>&2
+                exit 1
+        fi
+else
+        /usr/sbin/useradd -u 136 -r -d /var/lib/bacula -s /bin/false -c "Bacula User" -g bacula bacula 1>&2
+fi
 
 %postun common
-# FIXME: del usera bacula
+if [ "$1" = "0" ]; then
+	%userremove bacula
+	%groupremove bacula
+fi
 
 %post dir
 umask 077
@@ -344,8 +362,8 @@ elif [ "$DB_VER" -lt "7" ]; then
         %{_libexecdir}/%{name}/update_bacula_tables
         echo "If bacula works correctly you can remove the backup file %{_localstatedir}/bacula_backup.sql.bz2"
 fi
-chown -R bacula:bacula %{_localstatedir}/%{name}
-chmod -R u+rX,go-rwx %{_localstatedir}/%{name}
+chown -R bacula:bacula %{_localstatedir}
+chmod -R u+rX,go-rwx %{_localstatedir}/*
 
 /sbin/chkconfig --add bacula-dir
 if [ -f /var/lock/subsys/bacula-dir ]; then
@@ -437,9 +455,9 @@ rm -rf %{_sysconfdir}/rescue/diskinfo/*
 %defattr(644,root,root,755)
 %doc ChangeLog CheckList ReleaseNotes kernstodo
 %doc doc/*.pdf html-manual examples
-%attr(600, root, root) %config(noreplace) %{_sysconfdir}/bacula-dir.conf
+%attr(600, root, root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-dir.conf
 %ghost %{_sysconfdir}/.pw.sed
-%config(noreplace) /etc/logrotate.d/bacula-dir
+%attr(640,root,root) %config(noreplace) /etc/logrotate.d/bacula-dir
 %{_mandir}/man8/bacula-dir.8*
 %{_mandir}/man1/dbcheck.1*
 %defattr (755, root, root)
@@ -464,7 +482,7 @@ rm -rf %{_sysconfdir}/rescue/diskinfo/*
 
 %files fd
 %defattr(644,root,root,755)
-%attr(600, root, root) %config(noreplace) %{_sysconfdir}/bacula-fd.conf
+%attr(600, root, root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-fd.conf
 %attr(754,root,root) /etc/rc.d/init.d/bacula-fd
 %attr(755,root,root) %{_sbindir}/bacula-fd
 %attr(644, root, root) %{_mandir}/man8/bacula-fd.8*
@@ -472,7 +490,7 @@ rm -rf %{_sysconfdir}/rescue/diskinfo/*
 %files sd
 %defattr(644,root,root,755)
 %dir %{_sysconfdir}
-%attr(600, root, root) %config(noreplace) %{_sysconfdir}/bacula-sd.conf
+%attr(600, root, root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-sd.conf
 %attr(754,root,root) /etc/rc.d/init.d/bacula-sd
 %attr(755,root,root) %{_sbindir}/bacula-sd
 %attr(755,root,root) %{_sbindir}/bcopy
@@ -491,7 +509,7 @@ rm -rf %{_sysconfdir}/rescue/diskinfo/*
 
 %files console
 %defattr(644,root,root,755)
-%attr(600,root,root) %config(noreplace) %{_sysconfdir}/bconsole.conf
+%attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bconsole.conf
 %attr(755,root,root) %{_sbindir}/bconsole
 %config(noreplace) /etc/security/console.apps/bconsole
 %config(noreplace) /etc/pam.d/bconsole
@@ -501,10 +519,10 @@ rm -rf %{_sysconfdir}/rescue/diskinfo/*
 %files console-wx
 %defattr(644,root,root,755)
 %{_pixmapsdir}/%{name}.png
-%attr(600,root,root) %config(noreplace) %{_sysconfdir}/wx-console.conf
+%attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/wx-console.conf
 %attr(755,root,root) %{_sbindir}/wx-console
 %config(noreplace) /etc/security/console.apps/wx-console
-%config(noreplace) /etc/pam.d/wx-console
+%config(noreplace) %verify(not md5 size mtime) /etc/pam.d/wx-console
 %verify(link) %{_bindir}/wx-console
 %{_mandir}/man1/wx-console.1*
 
