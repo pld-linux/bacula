@@ -12,13 +12,13 @@
 
 case "$1" in
     start)
-       msg_starting "Bacula File daemon"
+       msg_starting "Bacula File"
        daemon /usr/sbin/bacula-fd $2 -c /etc/bacula/bacula-fd.conf
        RETVAL=$?
        [ $RETVAL -eq 0 ] && touch /var/lock/subsys/bacula-fd
        ;;
     stop)
-       msg_stopping "Bacula File daemon"
+       msg_stopping "Bacula File"
        killproc /usr/sbin/bacula-fd
        RETVAL=$?
        [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/bacula-fd

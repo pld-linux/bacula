@@ -19,7 +19,7 @@ case "$1" in
        [ $RETVAL -eq 0 ] && touch /var/lock/subsys/bacula-dir
        ;;
     stop)
-       msg_stopping "Director daemon"
+       msg_stopping "Bacula Director"
        killproc /usr/sbin//bacula-dir
        RETVAL=$?
        [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/bacula-dir
