@@ -36,6 +36,7 @@ BuildRequires:	glibc-static
 BuildRequires:	acl-static
 BuildRequires:	libwrap-static
 BuildRequires:	libstdc++-static
+BuildRequires:  sed >= 4.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/%{name}
