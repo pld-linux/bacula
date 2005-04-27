@@ -4,15 +4,17 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl):	Bacula - rozwi±zanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	1.36.2
+Version:	1.36.3
 Release:	1
 Epoch:		0
 Group:		Networking/Utilities
 License:	extended GPL v2
 Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	55a9ab6d211913fa8c73e3d07eabc189
+# Source0-md5:	9499d6277b8673ae7c24dcdbf89ee026
 Source1:	%{name}-manpages.tar.bz2
 # Source1-md5:	e4dae86d6574b360e831efd3913e7f4c
+Source2:	http://dl.sourceforge.net/bacula/%{name}-doc-%{version}.tar.gz
+# Source2-md5:	db08859bc193e777c76bcbf5e60f0c7e
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
@@ -333,7 +335,7 @@ Aby stworzyæ dyskietkê ratunkow± Baculi, nale¿y uruchomiæ "./make_rescue_disk
 danego systemu, nale¿y ponownie uruchomiæ ./getdiskinfo .
 
 %prep
-%setup -q -a 1
+%setup -q -a 1 -a 2
 sed -i -e 's#wx-config#wxgtk2-2.4-config#g' configure*
 sed -i -e 's#-lreadline -ltermcap#-lreadline#g' configure*
 sed -i -e 's#bindir=.*#bindir=%{_bindir}#g' \
@@ -415,8 +417,6 @@ install updatedb/update_sqlite* $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 # manual
 cp -a man1 man8 $RPM_BUILD_ROOT%{_mandir}
 
-install -d html-manual
-cp -a doc/html-manual/*.{html,jpg,gif,css,png,txt} html-manual
 
 
 # place for site passwords
@@ -649,7 +649,7 @@ fi
 %files dir
 %defattr(644,root,root,755)
 %doc ChangeLog CheckList ReleaseNotes kernstodo LICENSE
-%doc doc/*.pdf html-manual examples
+%doc doc/*.pdf examples %{name}-doc-%{version}/html-manual
 %attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-dir.conf
 %ghost %{_sysconfdir}/.pw.sed
 %attr(640,root,root) %config(noreplace) /etc/logrotate.d/bacula-dir
