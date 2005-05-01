@@ -35,6 +35,7 @@ BuildRequires:	ncurses-devel
 BuildRequires:	openssl-devel
 BuildRequires:	pkgconfig
 BuildRequires:	readline-devel
+BuildRequires:	rpmbuild(macros) >= 1.202
 BuildRequires:	sed >= 4.0
 BuildRequires:	sqlite-devel
 BuildRequires:	wxGTK2-devel >= 2.4.0
@@ -433,28 +434,14 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/.pw.sed
 rm -rf $RPM_BUILD_ROOT
 
 %pre common
-if [ -n "`getgid bacula`" ]; then
-	if [ "`getgid bacula`" != "136" ]; then
-		echo "Error: group bacula doesn't have gid=136. Correct this before installing bacula." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/groupadd -g 136 -r -f bacula
-fi
-if [ -n "`id -u bacula 2>/dev/null`" ]; then
-	if [ "`id -u bacula`" != "136" ]; then
-		echo "Error: user bacula doesn't have uid=136. Correct this before installing bacula." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/useradd -u 136 -r -d /var/lib/bacula -s /bin/false -c "Bacula User" -g bacula bacula 1>&2
-fi
+%groupadd -P %{name}-common -g 136 -r -f bacula
+%useradd -P %{name}-common -u 136 -r -d /var/lib/bacula -s /bin/false -c "Bacula User" -g bacula bacula
 
 %post common
 echo "Updating bacula passwords and names..."
 cd /etc/bacula
 for f in *-password ; do
-	if ! [ -s $f ] ; then
+	if [ ! -s $f ] ; then
 		openssl rand -base64 33 > $f
 	fi
 	p=`cat $f`
