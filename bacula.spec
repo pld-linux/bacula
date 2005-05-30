@@ -1,11 +1,13 @@
 #
 # TODO:
 #	- update desktop files, think about su-wrappers for console
+%bcond_with	console_wx	#Enable console-wx program
+
 Summary:	Bacula - The Network Backup Solution
 Summary(pl):	Bacula - rozwi±zanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	1.36.3
-Release:	1
+Release:	2
 Epoch:		0
 Group:		Networking/Utilities
 License:	extended GPL v2
@@ -38,9 +40,12 @@ BuildRequires:	readline-devel
 BuildRequires:	rpmbuild(macros) >= 1.202
 BuildRequires:	sed >= 4.0
 BuildRequires:	sqlite-devel
+%if %{with console_wx}
 BuildRequires:	wxGTK2-devel >= 2.4.0
 BuildRequires:	wxGTK2-devel < 2.5.0
+%endif
 BuildRequires:	zlib-devel
+BuildRequires:	zlib-static
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/%{name}
@@ -352,7 +357,7 @@ CPPFLAGS="-I%{_includedir}/ncurses -I%{_includedir}/readline"
 	--enable-gnome \
 	--disable-conio \
 	--enable-smartalloc \
-	--enable-wx-console \
+	%{?with_console_wx:--enable-wx-console} \
 	--enable-tray-monitor \
 	--with-readline \
 	--with-tcp-wrappers \
@@ -428,6 +433,10 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/{mon-dir-password,mon-fd-password,mon-sd-pas
 rm -f $RPM_BUILD_ROOT%{_libexecdir}/%{name}/{gconsole,startmysql,stopmysql,bacula,bconsole,fd}
 rm -f $RPM_BUILD_ROOT%{_sbindir}/static-bacula-fd
 rm -f $RPM_BUILD_ROOT%{_mandir}/man1/gnome*
+%if !%{with console_wx}
+rm -f $RPM_BUILD_ROOT%{_desktopdir}/bacula-wx.desktop
+rm -f $RPM_BUILD_ROOT%{_mandir}/man1/wx-console*
+%endif
 touch $RPM_BUILD_ROOT%{_sysconfdir}/.pw.sed
 
 %clean
@@ -630,6 +639,7 @@ fi
 %attr(755,root,root) %{_sbindir}/btraceback
 %attr(755,root,root) %{_sbindir}/bsmtp
 %dir %{_libexecdir}/%{name}
+%{_libexecdir}/%{name}/btraceback.dbx
 %{_libexecdir}/%{name}/btraceback.gdb
 %attr(770,root,bacula) %dir %{_localstatedir}
 
@@ -699,6 +709,7 @@ fi
 %attr(755,root,root) %{_sbindir}/bconsole
 %{_mandir}/man1/bconsole.1*
 
+%if %{with console_wx}
 %files console-wx
 %defattr(644,root,root,755)
 %doc LICENSE
@@ -707,6 +718,7 @@ fi
 %attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/wx-console.conf
 %attr(755,root,root) %{_sbindir}/wx-console
 %{_mandir}/man1/wx-console.1*
+%endif
 
 %files console-gnome
 %defattr(644,root,root,755)
