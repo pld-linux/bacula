@@ -2,6 +2,7 @@
 # TODO:
 #	- update desktop files, think about su-wrappers for console
 %bcond_with	console_wx	#Enable console-wx program
+%bcond_without	gnome		#Enable gnome console program
 
 Summary:	Bacula - The Network Backup Solution
 Summary(pl):	Bacula - rozwi±zanie do wykonywania kopii zapasowych po sieci
@@ -28,8 +29,10 @@ URL:		http://www.bacula.org/
 BuildRequires:	acl-static
 BuildRequires:	automake
 BuildRequires:	glibc-static
+%if %{with gnome}
 BuildRequires:	libgnome-devel >= 2.0
 BuildRequires:	libgnomeui-devel >= 2.0
+%endif
 BuildRequires:	libstdc++-static
 BuildRequires:	libwrap-static
 BuildRequires:	mtx
@@ -354,7 +357,7 @@ cp -f %{_datadir}/automake/config.sub autoconf
 CPPFLAGS="-I%{_includedir}/ncurses -I%{_includedir}/readline"
 %configure \
 	--with-scriptdir=%{_libexecdir}/%{name} \
-	--enable-gnome \
+	--%{!?with_gnome:dis}%{?with_gnome:en}able-gnome \
 	--disable-conio \
 	--enable-smartalloc \
 	%{?with_console_wx:--enable-wx-console} \
@@ -720,6 +723,7 @@ fi
 %{_mandir}/man1/wx-console.1*
 %endif
 
+%if %{with gnome}
 %files console-gnome
 %defattr(644,root,root,755)
 %doc LICENSE
@@ -728,6 +732,7 @@ fi
 %attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/gnome-console.conf
 %attr(755,root,root) %{_sbindir}/gnome-console
 #%{_mandir}/man1/gnome-console.1*
+%endif
 
 %files tray-monitor
 %defattr(644,root,root,755)
