@@ -1,9 +1,10 @@
 #
 # TODO:
 #	- update desktop files, think about su-wrappers for console
-%bcond_with	console_wx	#Enable console-wx program
-%bcond_without	gnome		#Enable gnome console program
-
+# Conditional build:
+%bcond_with	console_wx	# build wx-console program
+%bcond_without	gnome		# don't build gnome-console program
+#
 Summary:	Bacula - The Network Backup Solution
 Summary(pl):	Bacula - rozwi±zanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
@@ -425,8 +426,6 @@ install updatedb/update_sqlite* $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 # manual
 cp -a man1 man8 $RPM_BUILD_ROOT%{_mandir}
-
-
 
 # place for site passwords
 touch $RPM_BUILD_ROOT%{_sysconfdir}/{dir-password,fd-password,sd-password}
