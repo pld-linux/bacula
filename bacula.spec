@@ -89,6 +89,9 @@ Conflicts:	bacula-sd < 0:1.34.6
 Conflicts:	bacula-console < 0:1.34.6
 Requires(post):	openssl-tools
 Requires(post):	sed >= 4.0
+Requires(pre):  /usr/sbin/groupadd
+Requires(pre):  /usr/sbin/useradd
+Requires(post,preun):   /sbin/chkconfig
 
 %description common
 Bacula - It comes by night and sucks the vital essence from your
