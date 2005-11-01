@@ -1,24 +1,32 @@
 #
 # TODO:
 #	- update desktop files, think about su-wrappers for console
+#	- package web admin
+#
 # Conditional build:
-%bcond_with	console_wx	# build wx-console program
-%bcond_without	gnome		# don't build gnome-console program
+%bcond_without	console_wx	# wx-console program
+%bcond_without	gnome		# gnome-console program
+%bcond_with	python
+%bcond_with	rescue
 #
 Summary:	Bacula - The Network Backup Solution
 Summary(pl):	Bacula - rozwi±zanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	1.36.3
-Release:	2
+Version:	1.38.0
+Release:	0.1
 Epoch:		0
 Group:		Networking/Utilities
 License:	extended GPL v2
 Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	9499d6277b8673ae7c24dcdbf89ee026
+# Source0-md5:	872f5b86404e5c9b47bd56b9ffcb107c
 Source1:	%{name}-manpages.tar.bz2
 # Source1-md5:	e4dae86d6574b360e831efd3913e7f4c
-Source2:	http://dl.sourceforge.net/bacula/%{name}-doc-%{version}.tar.gz
-# Source2-md5:	db08859bc193e777c76bcbf5e60f0c7e
+Source2:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.gz
+# Source2-md5:	b8b10ca59a23c132cf4658c55103b85e
+Source3:	http://dl.sourceforge.net/bacula/%{name}-gui-%{version}.tar.gz
+# Source3-md5:	a8671ae6a26299c4f987c5b35157b0e9
+Source4:        http://dl.sourceforge.net/bacula/%{name}-rescue-1.8.1.tar.gz
+# Source4-md5:	a5833354917125127b4a1f5e68521834
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
@@ -29,6 +37,7 @@ Source16:	%{name}-sd.sysconfig
 URL:		http://www.bacula.org/
 BuildRequires:	acl-static
 BuildRequires:	automake
+%{?with_rescue:BuildRequires:	fakeroot}
 BuildRequires:	glibc-static
 %if %{with gnome}
 BuildRequires:	libgnome-devel >= 2.0
@@ -40,14 +49,16 @@ BuildRequires:	mtx
 BuildRequires:	ncurses-devel
 BuildRequires:	openssl-devel
 BuildRequires:	pkgconfig
+%{?with_python:BuildRequires:	python-static}
 BuildRequires:	readline-devel
 BuildRequires:	rpmbuild(macros) >= 1.202
 BuildRequires:	sed >= 4.0
 BuildRequires:	sqlite-devel
 %if %{with console_wx}
 BuildRequires:	wxGTK2-devel >= 2.4.0
-BuildRequires:	wxGTK2-devel < 2.5.0
 %endif
+BuildRequires:	tetex-latex
+BuildRequires:	tetex-makeindex
 BuildRequires:	zlib-devel
 BuildRequires:	zlib-static
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -349,8 +360,10 @@ danego systemu, nale¿y ponownie uruchomiæ ./getdiskinfo .
 
 %prep
 %setup -q -a 1 -a 2
-sed -i -e 's#wx-config#wxgtk2-2.4-config#g' configure*
-sed -i -e 's#-lreadline -ltermcap#-lreadline#g' configure*
+tar -xf %{SOURCE3}
+tar -xf %{SOURCE4} && ln -s bacula-rescue-* rescue
+sed -i -e 's#wx-config#wx-gtk2-ansi-config#g' configure*
+sed -i -e 's#-lreadline -lhistory -ltermcap#-lreadline -lhistory#g' configure*
 sed -i -e 's#bindir=.*#bindir=%{_bindir}#g' \
 	src/cats/create_* src/cats/delete_* src/cats/drop_* \
 	src/cats/grant_* src/cats/make_* src/cats/update_*
@@ -381,9 +394,24 @@ CPPFLAGS="-I%{_includedir}/ncurses -I%{_includedir}/readline"
 	--with-mon-dir-password="#FAKE-mon-dir-password#" \
 	--with-mon-fd-password="#FAKE-mon-fd-password#" \
 	--with-mon-sd-password="#FAKE-mon-sd-password#" \
-	--enable-static-fd
+	--enable-static-fd \
+	--with-openssl
 
 %{__make}
+
+cd %{name}-docs-%{version}
+%configure \
+	--with-bacula=../
+%{__make}
+cd ..
+
+%if %{with rescue}
+cd rescue
+%configure \
+	--with-bacula=../
+cd linux/cdrom
+fakeroot %{__make}
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -418,11 +446,13 @@ sed -e 's/gnome-console/wx-console/g;s/Console/Wx Console/g' \
 sed -e 's#%{_sbindir}#%{_bindir}#' \
 	scripts/bacula-tray-monitor.desktop > $RPM_BUILD_ROOT%{_desktopdir}/bacula-tray-monitor.desktop
 
+%if %{with rescue}
 # install the rescue stuff, these are the rescue scripts
 install rescue/linux/floppy/backup.etc.list $RPM_BUILD_ROOT%{_sysconfdir}/rescue
 install rescue/linux/floppy/*_* $RPM_BUILD_ROOT%{_sysconfdir}/rescue
 install rescue/linux/floppy/getdiskinfo $RPM_BUILD_ROOT%{_sysconfdir}/rescue
 install rescue/linux/floppy/sfdisk.bz2 $RPM_BUILD_ROOT%{_sysconfdir}/rescue
+%endif
 
 # install the updatedb scripts
 install updatedb/update_sqlite* $RPM_BUILD_ROOT%{_libexecdir}/%{name}
@@ -438,7 +468,7 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/{mon-dir-password,mon-fd-password,mon-sd-pas
 rm -f $RPM_BUILD_ROOT%{_libexecdir}/%{name}/{gconsole,startmysql,stopmysql,bacula,bconsole,fd}
 rm -f $RPM_BUILD_ROOT%{_sbindir}/static-bacula-fd
 rm -f $RPM_BUILD_ROOT%{_mandir}/man1/gnome*
-%if !%{with console_wx}
+%if %{without console_wx}
 rm -f $RPM_BUILD_ROOT%{_desktopdir}/bacula-wx.desktop
 rm -f $RPM_BUILD_ROOT%{_mandir}/man1/wx-console*
 %endif
@@ -488,14 +518,17 @@ elif [ "$DB_VER" -lt "8" ]; then
 	echo ".dump" | sqlite %{_localstatedir}/bacula.db | bzip2 > %{_localstatedir}/bacula_backup.sql.bz2
 	type=sqlite
 	echo "Upgrading bacula tables"
-	if [ "$DB_VER" -lt "7" ]; then
-		if [ "$DB_VER" -lt "6" ]; then
-			if [ "$DB_VER" -lt "5" ]; then
-				%{_libexecdir}/%{name}/update_${type}_tables_4_to_5
+	if [ "$DB_VER" -lt "8" ]; then
+		if [ "$DB_VER" -lt "7" ]; then
+			if [ "$DB_VER" -lt "6" ]; then
+				if [ "$DB_VER" -lt "5" ]; then
+					%{_libexecdir}/%{name}/update_${type}_tables_4_to_5
+				fi
+				%{_libexecdir}/%{name}/update_${type}_tables_5_to_6
 			fi
-			%{_libexecdir}/%{name}/update_${type}_tables_5_to_6
+			%{_libexecdir}/%{name}/update_${type}_tables_6_to_7
 		fi
-		%{_libexecdir}/%{name}/update_${type}_tables_6_to_7
+		%{_libexecdir}/%{name}/update_${type}_tables_7_to_8
 	fi
 	%{_libexecdir}/%{name}/update_bacula_tables
 	echo "If bacula works correctly you can remove the backup file %{_localstatedir}/bacula_backup.sql.bz2"
@@ -651,7 +684,7 @@ fi
 %files dir
 %defattr(644,root,root,755)
 %doc ChangeLog CheckList ReleaseNotes kernstodo LICENSE
-%doc doc/*.pdf examples %{name}-doc-%{version}/html-manual
+%doc doc/*.pdf examples %{name}-docs-%{version}/html-manual
 %attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-dir.conf
 %ghost %{_sysconfdir}/.pw.sed
 %attr(640,root,root) %config(noreplace) /etc/logrotate.d/bacula-dir
@@ -745,6 +778,7 @@ fi
 %attr(755,root,root) %{_bindir}/bacula-tray-monitor
 #%{_mandir}/man1/bacula-tray-monitor.1*
 
+%if %{with rescue}
 %files rescue
 %defattr(644,root,root,755)
 %doc LICENSE
@@ -759,3 +793,4 @@ fi
 %attr(755,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/run_grub
 %attr(755,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/run_lilo
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/sfdisk.bz2
+%endif
