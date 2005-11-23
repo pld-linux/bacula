@@ -12,19 +12,19 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl):	Bacula - rozwi±zanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	1.38.0
+Version:	1.38.1
 Release:	0.1
 Epoch:		0
 Group:		Networking/Utilities
 License:	extended GPL v2
 Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	872f5b86404e5c9b47bd56b9ffcb107c
+# Source0-md5:	3bbf805b873716ef782ae12c92a778b4
 Source1:	%{name}-manpages.tar.bz2
 # Source1-md5:	e4dae86d6574b360e831efd3913e7f4c
 Source2:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.gz
-# Source2-md5:	b8b10ca59a23c132cf4658c55103b85e
+# Source2-md5:	523ce33d8f038e9b16cdf03f5c2b66f0
 Source3:	http://dl.sourceforge.net/bacula/%{name}-gui-%{version}.tar.gz
-# Source3-md5:	a8671ae6a26299c4f987c5b35157b0e9
+# Source3-md5:	5fb575ceed9dee0cdf8bc7f81ef60f54
 Source4:        http://dl.sourceforge.net/bacula/%{name}-rescue-1.8.1.tar.gz
 # Source4-md5:	a5833354917125127b4a1f5e68521834
 Source10:	%{name}-dir.init
@@ -48,6 +48,7 @@ BuildRequires:	libwrap-static
 BuildRequires:	mtx
 BuildRequires:	ncurses-devel
 BuildRequires:	openssl-devel
+BuildRequires:	openssl-static
 BuildRequires:	pkgconfig
 %{?with_python:BuildRequires:	python-static}
 BuildRequires:	readline-devel
@@ -57,8 +58,6 @@ BuildRequires:	sqlite-devel
 %if %{with console_wx}
 BuildRequires:	wxGTK2-devel >= 2.4.0
 %endif
-BuildRequires:	tetex-latex
-BuildRequires:	tetex-makeindex
 BuildRequires:	zlib-devel
 BuildRequires:	zlib-static
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -399,12 +398,6 @@ CPPFLAGS="-I%{_includedir}/ncurses -I%{_includedir}/readline"
 
 %{__make}
 
-cd %{name}-docs-%{version}
-%configure \
-	--with-bacula=../
-%{__make}
-cd ..
-
 %if %{with rescue}
 cd rescue
 %configure \
@@ -676,6 +669,7 @@ fi
 %attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/*-password
 %attr(755,root,root) %{_sbindir}/btraceback
 %attr(755,root,root) %{_sbindir}/bsmtp
+%{_mandir}/man8/bacula.8*
 %dir %{_libexecdir}/%{name}
 %{_libexecdir}/%{name}/btraceback.dbx
 %{_libexecdir}/%{name}/btraceback.gdb
@@ -684,7 +678,7 @@ fi
 %files dir
 %defattr(644,root,root,755)
 %doc ChangeLog CheckList ReleaseNotes kernstodo LICENSE
-%doc doc/*.pdf examples %{name}-docs-%{version}/html-manual
+%doc examples %{name}-docs-%{version}/manual/{*.pdf,bacula}
 %attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-dir.conf
 %ghost %{_sysconfdir}/.pw.sed
 %attr(640,root,root) %config(noreplace) /etc/logrotate.d/bacula-dir
@@ -700,7 +694,7 @@ fi
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_sqlite_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/grant_sqlite_privileges
 %attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite_tables
-%attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite_tables*
+%attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite*
 %attr(755,root,root) %{_libexecdir}/%{name}/create_bacula_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_bacula_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_bacula_tables
