@@ -25,7 +25,7 @@ Source2:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.gz
 # Source2-md5:	523ce33d8f038e9b16cdf03f5c2b66f0
 Source3:	http://dl.sourceforge.net/bacula/%{name}-gui-%{version}.tar.gz
 # Source3-md5:	5fb575ceed9dee0cdf8bc7f81ef60f54
-Source4:        http://dl.sourceforge.net/bacula/%{name}-rescue-1.8.1.tar.gz
+Source4:	http://dl.sourceforge.net/bacula/%{name}-rescue-1.8.1.tar.gz
 # Source4-md5:	a5833354917125127b4a1f5e68521834
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
@@ -99,9 +99,9 @@ Conflicts:	bacula-sd < 0:1.34.6
 Conflicts:	bacula-console < 0:1.34.6
 Requires(post):	openssl-tools
 Requires(post):	sed >= 4.0
-Requires(pre):  /usr/sbin/groupadd
-Requires(pre):  /usr/sbin/useradd
-Requires(post,preun):   /sbin/chkconfig
+Requires(pre):	/usr/sbin/groupadd
+Requires(pre):	/usr/sbin/useradd
+Requires(post,preun):	/sbin/chkconfig
 
 %description common
 Bacula - It comes by night and sucks the vital essence from your
@@ -241,10 +241,11 @@ Requires(post):	sed >= 4.0
 Bacula - It comes by night and sucks the vital essence from your
 computers.
 
-The Monitor program is typically an icon in the system tray. However, once the
-icon is expanded into a full window, the administrator or user can obtain
-status information about the Director or the backup status on the local
-workstation or any other Bacula daemon that is configured.
+The Monitor program is typically an icon in the system tray. However,
+once the icon is expanded into a full window, the administrator or
+user can obtain status information about the Director or the backup
+status on the local workstation or any other Bacula daemon that is
+configured.
 
 %package fd
 Summary:	Bacula File services (Client)
@@ -331,7 +332,7 @@ advanced storage management features that make it easy to find and
 recover lost or damaged files.
 
 This package installs scripts for disaster recovery and builds rescue
-floppy disk for bare metal recovery. 
+floppy disk for bare metal recovery.
 
 To make the bacula rescue disk run "./make_rescue_disk --copy-static-bacula
 - --copy-etc-files" from the %{_sysconfdir}/rescue directory. To recreate the
@@ -350,7 +351,7 @@ u³atwiaj±cych znalezienie i odzyskanie utraconych lub uszkodzonych
 plików.
 
 Ten pakiet zawiera skrypty do odtwarzania po awarii i tworzy dyskietkê
-ratunkowe do odtwarzania systemu od zera. 
+ratunkowe do odtwarzania systemu od zera.
 
 Aby stworzyæ dyskietkê ratunkow± Baculi, nale¿y uruchomiæ "./make_rescue_disk
 --copy-static-bacula - --copy-etc-files" z katalogu
@@ -666,7 +667,7 @@ fi
 %defattr(644,root,root,755)
 %doc LICENSE
 %dir %{_sysconfdir}
-%attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/*-password
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/*-password
 %attr(755,root,root) %{_sbindir}/btraceback
 %attr(755,root,root) %{_sbindir}/bsmtp
 %{_mandir}/man8/bacula.8*
@@ -679,11 +680,11 @@ fi
 %defattr(644,root,root,755)
 %doc ChangeLog CheckList ReleaseNotes kernstodo LICENSE
 %doc examples %{name}-docs-%{version}/manual/{*.pdf,bacula}
-%attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-dir.conf
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bacula-dir.conf
 %ghost %{_sysconfdir}/.pw.sed
 %attr(640,root,root) %config(noreplace) /etc/logrotate.d/bacula-dir
 %attr(754,root,root) /etc/rc.d/init.d/bacula-dir
-%attr(644,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/bacula-dir
+%attr(644,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/bacula-dir
 %attr(755,root,root) %{_sbindir}/bacula-dir
 %attr(755,root,root) %{_sbindir}/dbcheck
 %{_mandir}/man8/bacula-dir.8*
@@ -707,9 +708,9 @@ fi
 %files fd
 %defattr(644,root,root,755)
 %doc LICENSE
-%attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-fd.conf
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bacula-fd.conf
 %attr(754,root,root) /etc/rc.d/init.d/bacula-fd
-%attr(644,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/bacula-fd
+%attr(644,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/bacula-fd
 %attr(755,root,root) %{_sbindir}/bacula-fd
 %{_mandir}/man8/bacula-fd.8*
 
@@ -717,9 +718,9 @@ fi
 %defattr(644,root,root,755)
 %doc LICENSE
 %dir %{_sysconfdir}
-%attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bacula-sd.conf
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bacula-sd.conf
 %attr(754,root,root) /etc/rc.d/init.d/bacula-sd
-%attr(644,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/bacula-sd
+%attr(644,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/bacula-sd
 %attr(755,root,root) %{_sbindir}/bacula-sd
 %attr(755,root,root) %{_sbindir}/bcopy
 %attr(755,root,root) %{_sbindir}/bextract
@@ -737,7 +738,7 @@ fi
 %files console
 %defattr(644,root,root,755)
 %doc LICENSE
-%attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/bconsole.conf
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bconsole.conf
 %attr(755,root,root) %{_sbindir}/bconsole
 %{_mandir}/man1/bconsole.1*
 
@@ -747,7 +748,7 @@ fi
 %doc LICENSE
 %{_pixmapsdir}/%{name}.png
 %{_desktopdir}/bacula-wx.desktop
-%attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/wx-console.conf
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/wx-console.conf
 %attr(755,root,root) %{_sbindir}/wx-console
 %{_mandir}/man1/wx-console.1*
 %endif
@@ -758,7 +759,7 @@ fi
 %doc LICENSE
 %{_pixmapsdir}/%{name}.png
 %{_desktopdir}/bacula.desktop
-%attr(600,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/gnome-console.conf
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/gnome-console.conf
 %attr(755,root,root) %{_sbindir}/gnome-console
 #%{_mandir}/man1/gnome-console.1*
 %endif
@@ -768,7 +769,7 @@ fi
 %doc LICENSE
 %{_pixmapsdir}/%{name}-tray-monitor.xpm
 %{_desktopdir}/%{name}-tray-monitor.desktop
-%attr(644,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/tray-monitor.conf
+%attr(644,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/tray-monitor.conf
 %attr(755,root,root) %{_bindir}/bacula-tray-monitor
 #%{_mandir}/man1/bacula-tray-monitor.1*
 
@@ -777,14 +778,14 @@ fi
 %defattr(644,root,root,755)
 %doc LICENSE
 %dir %{_sysconfdir}/rescue
-%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/backup.etc.list
-%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/bacula-fd
-%attr(755,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/format_floppy
-%attr(755,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/getdiskinfo
-%attr(755,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/make_rescue_disk
-%attr(755,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/restore_bacula
-%attr(755,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/restore_etc
-%attr(755,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/run_grub
-%attr(755,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/run_lilo
-%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/rescue/sfdisk.bz2
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rescue/backup.etc.list
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rescue/bacula-fd
+%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rescue/format_floppy
+%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rescue/getdiskinfo
+%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rescue/make_rescue_disk
+%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rescue/restore_bacula
+%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rescue/restore_etc
+%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rescue/run_grub
+%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rescue/run_lilo
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rescue/sfdisk.bz2
 %endif
