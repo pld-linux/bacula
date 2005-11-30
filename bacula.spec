@@ -12,18 +12,18 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl):	Bacula - rozwi±zanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	1.38.1
+Version:	1.38.2
 Release:	0.1
 Epoch:		0
 Group:		Networking/Utilities
 License:	extended GPL v2
 Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	3bbf805b873716ef782ae12c92a778b4
+# Source0-md5:	898a9ce05dc6b3e3312de4fa62aacb06
 Source1:	%{name}-manpages.tar.bz2
 # Source1-md5:	e4dae86d6574b360e831efd3913e7f4c
 Source2:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.gz
-# Source2-md5:	523ce33d8f038e9b16cdf03f5c2b66f0
-Source3:	http://dl.sourceforge.net/bacula/%{name}-gui-%{version}.tar.gz
+## Source2-md5:	6b4b6fba135e554687103340f07a31b2
+#Source3:	http://dl.sourceforge.net/bacula/%{name}-gui-%{version}.tar.gz
 # Source3-md5:	5fb575ceed9dee0cdf8bc7f81ef60f54
 Source4:	http://dl.sourceforge.net/bacula/%{name}-rescue-1.8.1.tar.gz
 # Source4-md5:	a5833354917125127b4a1f5e68521834
@@ -34,6 +34,7 @@ Source13:	%{name}.logrotate
 Source14:	%{name}-dir.sysconfig
 Source15:	%{name}-fd.sysconfig
 Source16:	%{name}-sd.sysconfig
+Patch0:		%{name}-dvd-handler_path.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-static
 BuildRequires:	automake
@@ -288,6 +289,7 @@ Summary(pl):	Us³ugi Bacula Storage
 Group:		Networking/Utilities
 PreReq:		bacula-common = %{epoch}:%{version}-%{release}
 Requires(post):	sed >= 4.0
+Conflicts:	dvd+rw-tools <= 5.21.4.10.8-1
 
 %description sd
 Bacula - It comes by night and sucks the vital essence from your
@@ -360,7 +362,8 @@ danego systemu, nale¿y ponownie uruchomiæ ./getdiskinfo .
 
 %prep
 %setup -q -a 1 -a 2
-tar -xf %{SOURCE3}
+%patch0 -p1
+#tar -xf %{SOURCE3}
 tar -xf %{SOURCE4} && ln -s bacula-rescue-* rescue
 sed -i -e 's#wx-config#wx-gtk2-ansi-config#g' configure*
 sed -i -e 's#-lreadline -lhistory -ltermcap#-lreadline -lhistory#g' configure*
@@ -534,9 +537,9 @@ echo "Updating Bacula passwords and names..."
 cd /etc/bacula
 for f in *-password ; do
 	p=`cat $f`
-	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew
+	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew 2>/dev/null || :
 done
-sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew
+sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew 2>/dev/null || :
 
 /sbin/chkconfig --add bacula-dir
 if [ -f /var/lock/subsys/bacula-dir ]; then
@@ -558,9 +561,9 @@ echo "Updating Bacula passwords and names..."
 cd /etc/bacula
 for f in *-password ; do
 	p=`cat $f`
-	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew
+	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew 2>/dev/null || :
 done
-sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew
+sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew 2>/dev/null || :
 
 /sbin/chkconfig --add bacula-fd
 if [ -f /var/lock/subsys/bacula-fd ]; then
@@ -582,9 +585,9 @@ echo "Updating Bacula passwords and names..."
 cd /etc/bacula
 for f in *-password ; do
 	p=`cat $f`
-	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew
+	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew 2>/dev/null || :
 done
-sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew
+sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew 2>/dev/null || :
 
 /sbin/chkconfig --add bacula-sd
 if [ -f /var/lock/subsys/bacula-sd ]; then
@@ -611,36 +614,36 @@ echo "Updating Bacula passwords and names..."
 cd /etc/bacula
 for f in *-password ; do
 	p=`cat $f`
-	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew
+	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew 2>/dev/null || :
 done
-sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew
+sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew 2>/dev/null || :
 
 %post console-wx
 echo "Updating Bacula passwords and names..."
 cd /etc/bacula
 for f in *-password ; do
 	p=`cat $f`
-	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew
+	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew 2>/dev/null || :
 done
-sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew
+sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew 2>/dev/null || :
 
 %post console-gnome
 echo "Updating Bacula passwords and names..."
 cd /etc/bacula
 for f in *-password ; do
 	p=`cat $f`
-	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew
+	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew 2>/dev/null || :
 done
-sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew
+sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew 2>/dev/null || :
 
 %post tray-monitor
 echo "Updating Bacula passwords and names..."
 cd /etc/bacula
 for f in *-password ; do
 	p=`cat $f`
-	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew
+	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew 2>/dev/null || :
 done
-sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew
+sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew 2>/dev/null || :
 
 %post rescue
 # link our current installed conf file to the rescue directory
@@ -727,7 +730,8 @@ fi
 %attr(755,root,root) %{_sbindir}/bls
 %attr(755,root,root) %{_sbindir}/bscan
 %attr(755,root,root) %{_sbindir}/btape
-%{_libexecdir}/%{name}/mtx-changer
+%attr(755,root,root) %{_libexecdir}/%{name}/mtx-changer
+%attr(755,root,root) %{_libexecdir}/%{name}/dvd-handler
 %{_mandir}/man8/bacula-sd.8*
 %{_mandir}/man1/bcopy.1*
 %{_mandir}/man1/bextract.1*
