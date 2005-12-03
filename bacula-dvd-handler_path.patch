@@ -1,0 +1,14 @@
+diff -dur -x '*~' bacula-1.38.1.orig/src/stored/bacula-sd.conf.in bacula-1.38.1/src/stored/bacula-sd.conf.in
+--- bacula-1.38.1.orig/src/stored/bacula-sd.conf.in	2005-11-29 12:03:06.000000000 +0100
++++ bacula-1.38.1/src/stored/bacula-sd.conf.in	2005-11-29 12:05:54.000000000 +0100
+@@ -164,8 +164,8 @@
+ #  MountCommand = "/bin/mount -t iso9660 -o ro %a %m";
+ #  UnmountCommand = "/bin/umount %m";
+ #  SpoolDirectory = /tmp/backup;
+-#  WritePartCommand = "/etc/bacula/dvd-handler %a write %e %v"
+-#  FreeSpaceCommand = "/etc/bacula/dvd-handler %a free"
++#  WritePartCommand = "/usr/lib/bacula/dvd-handler %a write %e %v"
++#  FreeSpaceCommand = "/usr/lib/bacula/dvd-handler %a free"
+ #}
+ 
+ #
