@@ -82,8 +82,8 @@ recover lost or damaged files.
 Bacula - przychodzi noc± i wysysa ¿ywotny ekstrakt z komputerów.
 
 Bacula to zbiór programów umo¿liwiaj±cych administratorowi na
-zarz±dzanie kopiami zapasowymi, odzyskiwaniem i weryfikacj± danych
-w sieci komputerów ró¿nego rodzaju. W terminologii technicznej jest to
+zarz±dzanie kopiami zapasowymi, odzyskiwaniem i weryfikacj± danych w
+sieci komputerów ró¿nego rodzaju. W terminologii technicznej jest to
 program do kopii zapasowych pracuj±cy w architekturze klient-serwer.
 Bacula jest stosunkowo ³atwa w u¿yciu i wydajna, oferuj±c przy tym
 wiele zaawansowanych mo¿liwo¶ci przy zarz±dzaniu no¶nikami,
@@ -100,9 +100,9 @@ Conflicts:	bacula-sd < 0:1.34.6
 Conflicts:	bacula-console < 0:1.34.6
 Requires(post):	openssl-tools
 Requires(post):	sed >= 4.0
+Requires(post,preun):	/sbin/chkconfig
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
-Requires(post,preun):	/sbin/chkconfig
 
 %description common
 Bacula - It comes by night and sucks the vital essence from your
@@ -120,8 +120,8 @@ recover lost or damaged files.
 Bacula - przychodzi noc± i wysysa ¿ywotny ekstrakt z komputerów.
 
 Bacula to zbiór programów umo¿liwiaj±cych administratorowi na
-zarz±dzanie kopiami zapasowymi, odzyskiwaniem i weryfikacj± danych
-w sieci komputerów ró¿nego rodzaju. W terminologii technicznej jest to
+zarz±dzanie kopiami zapasowymi, odzyskiwaniem i weryfikacj± danych w
+sieci komputerów ró¿nego rodzaju. W terminologii technicznej jest to
 program do kopii zapasowych pracuj±cy w architekturze klient-serwer.
 Bacula jest stosunkowo ³atwa w u¿yciu i wydajna, oferuj±c przy tym
 wiele zaawansowanych mo¿liwo¶ci przy zarz±dzaniu no¶nikami,
@@ -133,8 +133,8 @@ Summary:	Bacula Director and Catalog services
 Summary(pl):	Us³ugi Bacula Director i Catalog
 Group:		Networking/Utilities
 Obsoletes:	%{name}-updatedb
-PreReq:		bacula-common = %{epoch}:%{version}-%{release}
 Requires(post):	sed >= 4.0
+Requires:	bacula-common = %{epoch}:%{version}-%{release}
 
 %description dir
 Bacula - It comes by night and sucks the vital essence from your
@@ -170,8 +170,8 @@ danych dla katalogu.
 Summary:	Bacula Console
 Summary(pl):	Konsola Baculi
 Group:		Networking/Utilities
-PreReq:		bacula-common = %{epoch}:%{version}-%{release}
 Requires(post):	sed >= 4.0
+Requires:	bacula-common = %{epoch}:%{version}-%{release}
 
 %description console
 Bacula - It comes by night and sucks the vital essence from your
@@ -192,8 +192,8 @@ interfejs czysto tekstowy.
 Summary:	Bacula wxWidgets Console
 Summary(pl):	Konsola Baculi oparta na wxWidgets
 Group:		Networking/Utilities
-PreReq:		bacula-common = %{epoch}:%{version}-%{release}
 Requires(post):	sed >= 4.0
+Requires:	bacula-common = %{epoch}:%{version}-%{release}
 
 %description console-wx
 Bacula - It comes by night and sucks the vital essence from your
@@ -214,16 +214,15 @@ interfejs graficzny oparty na wxWidgets.
 Summary:	Bacula GNOME Console
 Summary(pl):	Konsola Baculi oparta dla GNOME
 Group:		Networking/Utilities
-PreReq:		bacula-common = %{epoch}:%{version}-%{release}
 Requires(post):	sed >= 4.0
+Requires:	bacula-common = %{epoch}:%{version}-%{release}
 
 %description console-gnome
 Bacula - It comes by night and sucks the vital essence from your
 computers.
 
 Bacula Console is the program that allows the administrator or user to
-communicate with the Bacula Director. This is the GNOME GUI
-interface.
+communicate with the Bacula Director. This is the GNOME GUI interface.
 
 %description console-gnome -l pl
 Bacula - przychodzi noc± i wysysa ¿ywotny ekstrakt z komputerów.
@@ -235,8 +234,8 @@ interfejs graficzny oparty na GNOME.
 %package tray-monitor
 Summary:	Bacula Tray Monitor
 Group:		Networking/Utilities
-PreReq:		bacula-common = %{epoch}:%{version}-%{release}
 Requires(post):	sed >= 4.0
+Requires:	bacula-common = %{epoch}:%{version}-%{release}
 
 %description tray-monitor
 Bacula - It comes by night and sucks the vital essence from your
@@ -252,8 +251,8 @@ configured.
 Summary:	Bacula File services (Client)
 Summary(pl):	Us³ugi Bacula File (klient)
 Group:		Networking/Utilities
-PreReq:		bacula-common = %{epoch}:%{version}-%{release}
 Requires(post):	sed >= 4.0
+Requires:	bacula-common = %{epoch}:%{version}-%{release}
 
 %description fd
 Bacula - It comes by night and sucks the vital essence from your
@@ -287,8 +286,8 @@ Baculi).
 Summary:	Bacula Storage services
 Summary(pl):	Us³ugi Bacula Storage
 Group:		Networking/Utilities
-PreReq:		bacula-common = %{epoch}:%{version}-%{release}
 Requires(post):	sed >= 4.0
+Requires:	bacula-common = %{epoch}:%{version}-%{release}
 Conflicts:	dvd+rw-tools <= 5.21.4.10.8-1
 
 %description sd
@@ -374,7 +373,7 @@ sed -i -e 's/@hostname@/--hostname--/' src/*/*.conf.in
 
 %build
 cp -f %{_datadir}/automake/config.sub autoconf
-CPPFLAGS="-I%{_includedir}/ncurses -I%{_includedir}/readline"
+CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
 %configure \
 	--with-scriptdir=%{_libexecdir}/%{name} \
 	--%{!?with_gnome:dis}%{?with_gnome:en}able-gnome \
