@@ -94,15 +94,15 @@ plików.
 Summary:	Common files for bacula package
 Summary(pl):	Pliki wspólne dla pakietu bacula
 Group:		Networking/Utilities
-Conflicts:	bacula-dir < 0:1.34.6
-Conflicts:	bacula-fd < 0:1.34.6
-Conflicts:	bacula-sd < 0:1.34.6
-Conflicts:	bacula-console < 0:1.34.6
 Requires(post):	openssl-tools
 Requires(post):	sed >= 4.0
 Requires(post,preun):	/sbin/chkconfig
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
+Conflicts:	bacula-console < 0:1.34.6
+Conflicts:	bacula-dir < 0:1.34.6
+Conflicts:	bacula-fd < 0:1.34.6
+Conflicts:	bacula-sd < 0:1.34.6
 
 %description common
 Bacula - It comes by night and sucks the vital essence from your
@@ -132,9 +132,9 @@ plików.
 Summary:	Bacula Director and Catalog services
 Summary(pl):	Us³ugi Bacula Director i Catalog
 Group:		Networking/Utilities
-Obsoletes:	%{name}-updatedb
 Requires(post):	sed >= 4.0
-Requires:	bacula-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Obsoletes:	bacula-updatedb
 
 %description dir
 Bacula - It comes by night and sucks the vital essence from your
@@ -171,7 +171,7 @@ Summary:	Bacula Console
 Summary(pl):	Konsola Baculi
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
-Requires:	bacula-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 
 %description console
 Bacula - It comes by night and sucks the vital essence from your
@@ -193,7 +193,7 @@ Summary:	Bacula wxWidgets Console
 Summary(pl):	Konsola Baculi oparta na wxWidgets
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
-Requires:	bacula-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 
 %description console-wx
 Bacula - It comes by night and sucks the vital essence from your
@@ -215,7 +215,7 @@ Summary:	Bacula GNOME Console
 Summary(pl):	Konsola Baculi oparta dla GNOME
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
-Requires:	bacula-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 
 %description console-gnome
 Bacula - It comes by night and sucks the vital essence from your
@@ -235,7 +235,7 @@ interfejs graficzny oparty na GNOME.
 Summary:	Bacula Tray Monitor
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
-Requires:	bacula-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 
 %description tray-monitor
 Bacula - It comes by night and sucks the vital essence from your
@@ -252,7 +252,7 @@ Summary:	Bacula File services (Client)
 Summary(pl):	Us³ugi Bacula File (klient)
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
-Requires:	bacula-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 
 %description fd
 Bacula - It comes by night and sucks the vital essence from your
@@ -287,7 +287,7 @@ Summary:	Bacula Storage services
 Summary(pl):	Us³ugi Bacula Storage
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
-Requires:	bacula-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Conflicts:	dvd+rw-tools <= 5.21.4.10.8-1
 
 %description sd
