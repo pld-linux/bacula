@@ -12,21 +12,21 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl):	Bacula - rozwi±zanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	1.38.3
+Version:	1.38.4
 Release:	0.1
 Epoch:		0
 Group:		Networking/Utilities
 License:	extended GPL v2
 Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	e67f63cd19f1a2e2800f9f07aaaeb580
+# Source0-md5:	29d4d31ddfeb1d6c5d1342447d98bdfb
 Source1:	%{name}-manpages.tar.bz2
 # Source1-md5:	e4dae86d6574b360e831efd3913e7f4c
 Source2:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.gz
-# Source2-md5:	7649a8dedd55f1cb3e40d9a706bfbc0d
+# Source2-md5:	d4ec5ceb5a0a971167194610aaa772f9
 #Source3:	http://dl.sourceforge.net/bacula/%{name}-gui-%{version}.tar.gz
 ## Source3-md5:	5fb575ceed9dee0cdf8bc7f81ef60f54
-Source4:	http://dl.sourceforge.net/bacula/%{name}-rescue-1.8.1.tar.gz
-# Source4-md5:	a5833354917125127b4a1f5e68521834
+Source4:	http://dl.sourceforge.net/bacula/%{name}-rescue-1.8.2.tar.gz
+# Source4-md5:	f43bf291f6b8296593f27022e5373d18
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
