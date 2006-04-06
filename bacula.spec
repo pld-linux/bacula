@@ -12,17 +12,17 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl):	Bacula - rozwi±zanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	1.38.5
+Version:	1.38.6
 Release:	0.1
 Epoch:		0
 Group:		Networking/Utilities
 License:	extended GPL v2
 Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	7f8f0f642b22dc2089ef7b42eb08f826
+# Source0-md5:	219382ae85671c8ff13f375b6d9aa079
 Source1:	%{name}-manpages.tar.bz2
 # Source1-md5:	e4dae86d6574b360e831efd3913e7f4c
 Source2:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.gz
-# Source2-md5:	11035d75fdd9d10801f0b3dda1f09440
+# Source2-md5:	1d62608a1a0d2fa7776277f80fa29c61
 #Source3:	http://dl.sourceforge.net/bacula/%{name}-gui-%{version}.tar.gz
 ## Source3-md5:	5fb575ceed9dee0cdf8bc7f81ef60f54
 Source4:	http://dl.sourceforge.net/bacula/%{name}-rescue-1.8.2.tar.gz
@@ -730,6 +730,7 @@ fi
 %attr(755,root,root) %{_sbindir}/bscan
 %attr(755,root,root) %{_sbindir}/btape
 %attr(755,root,root) %{_libexecdir}/%{name}/mtx-changer
+%attr(755,root,root) %{_libexecdir}/%{name}/disk-changer
 %attr(755,root,root) %{_libexecdir}/%{name}/dvd-handler
 %{_mandir}/man8/bacula-sd.8*
 %{_mandir}/man1/bcopy.1*
