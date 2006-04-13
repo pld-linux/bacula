@@ -2,6 +2,7 @@
 # TODO:
 #	- update desktop files, think about su-wrappers for console
 #	- package web admin
+#	- fix log file permissions
 #
 # Conditional build:
 %bcond_without	console_wx	# wx-console program
@@ -12,21 +13,21 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl):	Bacula - rozwi±zanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	1.38.6
+Version:	1.38.7
 Release:	0.1
 Epoch:		0
 Group:		Networking/Utilities
 License:	extended GPL v2
 Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	219382ae85671c8ff13f375b6d9aa079
+# Source0-md5:	6273f45bfbcddd66e179bc6cb7e28ad1
 Source1:	%{name}-manpages.tar.bz2
 # Source1-md5:	e4dae86d6574b360e831efd3913e7f4c
 Source2:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.gz
-# Source2-md5:	1d62608a1a0d2fa7776277f80fa29c61
+# Source2-md5:	da29daa9027c402f5d6b55a4c7982fdb
 #Source3:	http://dl.sourceforge.net/bacula/%{name}-gui-%{version}.tar.gz
 ## Source3-md5:	5fb575ceed9dee0cdf8bc7f81ef60f54
-Source4:	http://dl.sourceforge.net/bacula/%{name}-rescue-1.8.2.tar.gz
-# Source4-md5:	f43bf291f6b8296593f27022e5373d18
+Source4:	http://dl.sourceforge.net/bacula/%{name}-rescue-1.8.3.tar.gz
+# Source4-md5:	61e97e011e8d939bb15e47b6c8f0797d
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
@@ -35,6 +36,7 @@ Source14:	%{name}-dir.sysconfig
 Source15:	%{name}-fd.sysconfig
 Source16:	%{name}-sd.sysconfig
 Patch0:		%{name}-dvd-handler_path.patch
+Patch1:		%{name}-dvd_append.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-static
 BuildRequires:	automake
@@ -362,6 +364,7 @@ danego systemu, nale¿y ponownie uruchomiæ ./getdiskinfo .
 %prep
 %setup -q -a 1 -a 2
 %patch0 -p1
+%patch1 -p1
 #tar -xf %{SOURCE3}
 tar -xf %{SOURCE4} && ln -s bacula-rescue-* rescue
 sed -i -e 's#wx-config#wx-gtk2-ansi-config#g' configure*
@@ -381,6 +384,7 @@ CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
 	--enable-smartalloc \
 	%{?with_console_wx:--enable-wx-console} \
 	--enable-tray-monitor \
+	%{?with_python:--with-python} \
 	--with-readline \
 	--with-tcp-wrappers \
 	--with-working-dir=%{_var}/lib/%{name} \
@@ -509,22 +513,25 @@ if [ -z "$DB_VER" ]; then
 	%{_libexecdir}/%{name}/grant_bacula_privileges > dev/null
 	%{_libexecdir}/%{name}/create_bacula_database > dev/null
 	%{_libexecdir}/%{name}/make_bacula_tables > dev/null
-elif [ "$DB_VER" -lt "8" ]; then
+elif [ "$DB_VER" -lt "9" ]; then
 	echo "Backing up bacula tables"
 	echo ".dump" | sqlite %{_localstatedir}/bacula.db | bzip2 > %{_localstatedir}/bacula_backup.sql.bz2
 	type=sqlite
 	echo "Upgrading bacula tables"
-	if [ "$DB_VER" -lt "8" ]; then
-		if [ "$DB_VER" -lt "7" ]; then
-			if [ "$DB_VER" -lt "6" ]; then
-				if [ "$DB_VER" -lt "5" ]; then
-					%{_libexecdir}/%{name}/update_${type}_tables_4_to_5
+	if [ "$DB_VER" -lt "9" ]; then
+		if [ "$DB_VER" -lt "8" ]; then
+			if [ "$DB_VER" -lt "7" ]; then
+				if [ "$DB_VER" -lt "6" ]; then
+					if [ "$DB_VER" -lt "5" ]; then
+						%{_libexecdir}/%{name}/update_${type}_tables_4_to_5
+					fi
+					%{_libexecdir}/%{name}/update_${type}_tables_5_to_6
 				fi
-				%{_libexecdir}/%{name}/update_${type}_tables_5_to_6
+				%{_libexecdir}/%{name}/update_${type}_tables_6_to_7
 			fi
-			%{_libexecdir}/%{name}/update_${type}_tables_6_to_7
+			%{_libexecdir}/%{name}/update_${type}_tables_7_to_8
 		fi
-		%{_libexecdir}/%{name}/update_${type}_tables_7_to_8
+		%{_libexecdir}/%{name}/update_${type}_tables_8_to_9
 	fi
 	%{_libexecdir}/%{name}/update_bacula_tables
 	echo "If bacula works correctly you can remove the backup file %{_localstatedir}/bacula_backup.sql.bz2"
