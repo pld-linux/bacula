@@ -1,4 +1,3 @@
-#
 # TODO:
 #	- update desktop files, think about su-wrappers for console
 #	- package web admin
@@ -16,8 +15,8 @@ Name:		bacula
 Version:	1.38.7
 Release:	0.1
 Epoch:		0
-Group:		Networking/Utilities
 License:	extended GPL v2
+Group:		Networking/Utilities
 Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
 # Source0-md5:	6273f45bfbcddd66e179bc6cb7e28ad1
 Source1:	%{name}-manpages.tar.bz2
@@ -55,7 +54,7 @@ BuildRequires:	openssl-static
 BuildRequires:	pkgconfig
 %{?with_python:BuildRequires:	python-static}
 BuildRequires:	readline-devel
-BuildRequires:	rpmbuild(macros) >= 1.202
+BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	sed >= 4.0
 BuildRequires:	sqlite-devel
 %if %{with console_wx}
@@ -548,17 +547,11 @@ done
 sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew 2>/dev/null || :
 
 /sbin/chkconfig --add bacula-dir
-if [ -f /var/lock/subsys/bacula-dir ]; then
-	/etc/rc.d/init.d/bacula-dir restart 1>&2
-else
-	echo "Run \"/etc/rc.d/init.d/bacula-dir start\" to start Bacula Director daemon."
-fi
+%service bacula-dir restart "Bacula Director daemon"
 
 %preun dir
 if [ "$1" = "0" ]; then
-	if [ -f /var/lock/subsys/bacula-dir ]; then
-		/etc/rc.d/init.d/bacula-dir stop 1>&2
-	fi
+	%service bacula-dir stop
 	/sbin/chkconfig --del bacula-dir
 fi
 
@@ -572,17 +565,11 @@ done
 sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew 2>/dev/null || :
 
 /sbin/chkconfig --add bacula-fd
-if [ -f /var/lock/subsys/bacula-fd ]; then
-	/etc/rc.d/init.d/bacula-fd restart 1>&2
-else
-	echo "Run \"/etc/rc.d/init.d/bacula-fd start\" to start Bacula File daemon."
-fi
+%service bacula-fd restart "Bacula File daemon"
 
 %preun fd
 if [ "$1" = "0" ]; then
-	if [ -f /var/lock/subsys/bacula-fd ]; then
-		/etc/rc.d/init.d/bacula-fd stop 1>&2
-	fi
+	%service bacula-fd stop
 	/sbin/chkconfig --del bacula-fd
 fi
 
@@ -596,17 +583,11 @@ done
 sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew 2>/dev/null || :
 
 /sbin/chkconfig --add bacula-sd
-if [ -f /var/lock/subsys/bacula-sd ]; then
-	/etc/rc.d/init.d/bacula-sd restart 1>&2
-else
-	echo "Run \"/etc/rc.d/init.d/bacula-sd start\" to start Bacula Storage daemon."
-fi
+%service bacula-sd restart "Bacula Storage daemon"
 
 %preun sd
 if [ "$1" = "0" ]; then
-	if [ -f /var/lock/subsys/bacula-sd ]; then
-		/etc/rc.d/init.d/bacula-sd stop 1>&2
-	fi
+	%service bacula-sd stop
 	/sbin/chkconfig --del bacula-sd
 fi
 
