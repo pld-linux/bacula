@@ -13,7 +13,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl):	Bacula - rozwi±zanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	1.38.9
-Release:	0.1
+Release:	0.2
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
@@ -36,6 +36,7 @@ Source15:	%{name}-fd.sysconfig
 Source16:	%{name}-sd.sysconfig
 Patch0:		%{name}-dvd-handler_path.patch
 Patch1:		%{name}-dvd_append.patch
+Patch2:		%{name}-dvd_restore.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-static
 BuildRequires:	automake
@@ -364,6 +365,7 @@ danego systemu, nale¿y ponownie uruchomiæ ./getdiskinfo .
 %setup -q -a 1 -a 2
 %patch0 -p1
 %patch1 -p1
+%patch2 -p0
 #tar -xf %{SOURCE3}
 tar -xf %{SOURCE4} && ln -s bacula-rescue-* rescue
 sed -i -e 's#wx-config#wx-gtk2-ansi-config#g' configure*
