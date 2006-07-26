@@ -337,16 +337,18 @@ recover lost or damaged files.
 This package installs scripts for disaster recovery and builds rescue
 floppy disk for bare metal recovery.
 
-To make the bacula rescue disk run "./make_rescue_disk --copy-static-bacula
-- --copy-etc-files" from the %{_sysconfdir}/rescue directory. To recreate the
-rescue information for this system run ./getdiskinfo again.
+To make the bacula rescue disk run "./make_rescue_disk
+--copy-static-bacula
+- --copy-etc-files" from the %{_sysconfdir}/rescue directory. To
+  recreate the rescue information for this system run ./getdiskinfo
+  again.
 
 %description rescue -l pl
 Bacula - przychodzi noc± i wysysa ¿ywotny ekstrakt z komputerów.
 
 Bacula to zbiór programów umo¿liwiaj±cych administratorowi na
-zarz±dzanie kopiami zapasowymi, odzyskiwaniem i weryfikacj± danych
-w sieci komputerów ró¿nego rodzaju. W terminologii technicznej jest to
+zarz±dzanie kopiami zapasowymi, odzyskiwaniem i weryfikacj± danych w
+sieci komputerów ró¿nego rodzaju. W terminologii technicznej jest to
 program do kopii zapasowych pracuj±cy w architekturze klient-serwer.
 Bacula jest stosunkowo ³atwa w u¿yciu i wydajna, oferuj±c przy tym
 wiele zaawansowanych mo¿liwo¶ci przy zarz±dzaniu no¶nikami,
@@ -676,7 +678,7 @@ fi
 %ghost %{_sysconfdir}/.pw.sed
 %attr(640,root,root) %config(noreplace) /etc/logrotate.d/bacula-dir
 %attr(754,root,root) /etc/rc.d/init.d/bacula-dir
-%attr(644,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/bacula-dir
+%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/bacula-dir
 %attr(755,root,root) %{_sbindir}/bacula-dir
 %attr(755,root,root) %{_sbindir}/dbcheck
 %{_mandir}/man8/bacula-dir.8*
@@ -702,7 +704,7 @@ fi
 %doc LICENSE
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bacula-fd.conf
 %attr(754,root,root) /etc/rc.d/init.d/bacula-fd
-%attr(644,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/bacula-fd
+%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/bacula-fd
 %attr(755,root,root) %{_sbindir}/bacula-fd
 %{_mandir}/man8/bacula-fd.8*
 
@@ -712,7 +714,7 @@ fi
 %dir %{_sysconfdir}
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bacula-sd.conf
 %attr(754,root,root) /etc/rc.d/init.d/bacula-sd
-%attr(644,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/bacula-sd
+%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/bacula-sd
 %attr(755,root,root) %{_sbindir}/bacula-sd
 %attr(755,root,root) %{_sbindir}/bcopy
 %attr(755,root,root) %{_sbindir}/bextract
@@ -763,7 +765,7 @@ fi
 %doc LICENSE
 %{_pixmapsdir}/%{name}-tray-monitor.xpm
 %{_desktopdir}/%{name}-tray-monitor.desktop
-%attr(644,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/tray-monitor.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/tray-monitor.conf
 %attr(755,root,root) %{_bindir}/bacula-tray-monitor
 #%{_mandir}/man1/bacula-tray-monitor.1*
 
