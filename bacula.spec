@@ -12,21 +12,21 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl):	Bacula - rozwi±zanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	1.38.9
-Release:	0.2
+Version:	1.38.11
+Release:	0.1
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
 Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	9378c7d9996d8e9d3506adb2570a33ac
+# Source0-md5:	0d6d6614afdc468d214de4e66f9f5a26
 Source1:	%{name}-manpages.tar.bz2
 # Source1-md5:	e4dae86d6574b360e831efd3913e7f4c
-Source2:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.gz
-# Source2-md5:	f56a5dae13f99557486be70c44cc1aae
+Source2:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}-1.tar.gz
+# Source2-md5:	ea827e52b24787edcb04bfd073434501
 #Source3:	http://dl.sourceforge.net/bacula/%{name}-gui-%{version}.tar.gz
 ## Source3-md5:	5fb575ceed9dee0cdf8bc7f81ef60f54
-Source4:	http://dl.sourceforge.net/bacula/%{name}-rescue-1.8.3.tar.gz
-# Source4-md5:	61e97e011e8d939bb15e47b6c8f0797d
+Source4:	http://dl.sourceforge.net/bacula/%{name}-rescue-1.8.6.tar.gz
+# Source4-md5:	15485f3c9c51dcdb1b2abd8c5ec194c5
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
@@ -367,7 +367,7 @@ danego systemu, nale¿y ponownie uruchomiæ ./getdiskinfo .
 %setup -q -a 1 -a 2
 %patch0 -p1
 %patch1 -p1
-%patch2 -p0
+#%patch2 -p0
 #tar -xf %{SOURCE3}
 tar -xf %{SOURCE4} && ln -s bacula-rescue-* rescue
 sed -i -e 's#wx-config#wx-gtk2-ansi-config#g' configure*
@@ -430,9 +430,6 @@ install -d $RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir},%{_mandir},%{_bindir}}
 strip -R.comment -R.note src/filed/static-bacula-fd
 install src/filed/static-bacula-fd $RPM_BUILD_ROOT%{_sysconfdir}/rescue/bacula-fd
 
-# tray-monitor is for regular users
-mv $RPM_BUILD_ROOT%{_sbindir}/bacula-tray-monitor $RPM_BUILD_ROOT%{_bindir}
-
 install %{SOURCE10} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-dir
 install %{SOURCE11} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-fd
 install %{SOURCE12} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-sd
@@ -441,6 +438,10 @@ install %{SOURCE14} $RPM_BUILD_ROOT/etc/sysconfig/bacula-dir
 install %{SOURCE15} $RPM_BUILD_ROOT/etc/sysconfig/bacula-fd
 install %{SOURCE16} $RPM_BUILD_ROOT/etc/sysconfig/bacula-sd
 
+%if %{with console_wx}
+# tray-monitor is for regular users
+mv $RPM_BUILD_ROOT%{_sbindir}/bacula-tray-monitor $RPM_BUILD_ROOT%{_bindir}
+
 install scripts/bacula.png $RPM_BUILD_ROOT%{_pixmapsdir}/bacula.png
 install src/tray-monitor/generic.xpm $RPM_BUILD_ROOT%{_pixmapsdir}/bacula-tray-monitor.xpm
 install scripts/bacula.desktop.gnome2 $RPM_BUILD_ROOT%{_desktopdir}/bacula.desktop
@@ -448,6 +449,7 @@ sed -e 's/gnome-console/wx-console/g;s/Console/Wx Console/g' \
 	scripts/bacula.desktop.gnome2 > $RPM_BUILD_ROOT%{_desktopdir}/bacula-wx.desktop
 sed -e 's#%{_sbindir}#%{_bindir}#' \
 	scripts/bacula-tray-monitor.desktop > $RPM_BUILD_ROOT%{_desktopdir}/bacula-tray-monitor.desktop
+%endif
 
 %if %{with rescue}
 # install the rescue stuff, these are the rescue scripts
@@ -673,13 +675,15 @@ fi
 %files dir
 %defattr(644,root,root,755)
 %doc ChangeLog CheckList ReleaseNotes kernstodo LICENSE
-%doc examples %{name}-docs-%{version}/manual/{*.pdf,bacula}
+%doc examples %{name}-docs-%{version}-1/manual/{*.pdf,bacula}
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bacula-dir.conf
 %ghost %{_sysconfdir}/.pw.sed
 %attr(640,root,root) %config(noreplace) /etc/logrotate.d/bacula-dir
 %attr(754,root,root) /etc/rc.d/init.d/bacula-dir
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/bacula-dir
 %attr(755,root,root) %{_sbindir}/bacula-dir
+%attr(755,root,root) %{_sbindir}/bregex
+%attr(755,root,root) %{_sbindir}/bwild
 %attr(755,root,root) %{_sbindir}/dbcheck
 %{_mandir}/man8/bacula-dir.8*
 %{_mandir}/man1/dbcheck.1*
@@ -760,6 +764,7 @@ fi
 #%{_mandir}/man1/gnome-console.1*
 %endif
 
+%if %{with console_wx}
 %files tray-monitor
 %defattr(644,root,root,755)
 %doc LICENSE
@@ -768,6 +773,7 @@ fi
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/tray-monitor.conf
 %attr(755,root,root) %{_bindir}/bacula-tray-monitor
 #%{_mandir}/man1/bacula-tray-monitor.1*
+%endif
 
 %if %{with rescue}
 %files rescue
