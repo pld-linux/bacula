@@ -1,0 +1,24 @@
+--- bacula-1.38.11/src/tray-monitor/Makefile.in.orig	2006-10-20 01:35:19.000000000 +0000
++++ bacula-1.38.11/src/tray-monitor/Makefile.in	2006-10-20 01:39:22.000000000 +0000
+@@ -46,8 +46,8 @@
+ 	@echo " "
+ 
+ bacula-tray-monitor: $(MONITOROBJS) ../lib/libbac.a
+-	$(CXX) $(LDFLAGS) $(MONITOR_LDFLAGS) -L../lib -L../cats -o $@ \
+- $(MONITOROBJS) $(DLIB) -lbac -lm $(LIBS) $(OPENSSL_LIBS)
++	$(CXX) $(LDFLAGS) -L../lib -L../cats -o $@ \
++ $(MONITOROBJS) $(DLIB) $(MONITOR_LDFLAGS) -lbac -lm $(LIBS) $(OPENSSL_LIBS)
+ 
+ 
+ Makefile: $(srcdir)/Makefile.in $(topdir)/config.status
+--- bacula-1.38.9/src/filed/Makefile.in.orig	2006-06-26 13:39:07.000000000 +0000
++++ bacula-1.38.9/src/filed/Makefile.in	2006-06-26 13:39:35.000000000 +0000
+@@ -86,7 +86,7 @@
+ static-bacula-fd:  $(SVROBJS) ../findlib/libfind.a ../lib/libbac.a @WIN32@
+ 	$(CXX) $(WLDFLAGS) $(LDFLAGS) -static -L../lib -L../findlib -o $@ $(SVROBJS) \
+ 	   $(WIN32LIBS) $(FDLIBS) -lfind -lbac -lm $(PYTHON_LIBS) $(LIBS) \
+-	   $(DLIB) $(WRAPLIBS) $(GETTEXT_LIBS) $(OPENSSL_LIBS)
++	   $(DLIB) $(WRAPLIBS) $(GETTEXT_LIBS) $(OPENSSL_LIBS) -ldl
+ 	strip $@
+ 
+ 

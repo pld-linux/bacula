@@ -1,0 +1,11 @@
+--- bacula-1.38.11/src/console/console.c.orig	2006-10-20 08:02:49.000000000 +0000
++++ bacula-1.38.11/src/console/console.c	2006-10-20 08:03:04.000000000 +0000
+@@ -47,7 +47,7 @@
+ #ifdef HAVE_CYGWIN
+ int rl_catch_signals;
+ #else
+-extern int rl_catch_signals;
++extern "C" int rl_catch_signals;
+ #endif
+ 
+ /* Imported functions */
