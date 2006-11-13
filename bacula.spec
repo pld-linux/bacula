@@ -475,7 +475,7 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/{mon-dir-password,mon-fd-password,mon-sd-pas
 rm -f $RPM_BUILD_ROOT%{_libexecdir}/%{name}/{gconsole,startmysql,stopmysql,bacula,bconsole,fd}
 rm -f $RPM_BUILD_ROOT%{_sbindir}/static-bacula-fd
 rm -f $RPM_BUILD_ROOT%{_mandir}/man1/gnome*
-%if %{without console_wx}
+%if !%{with console_wx}
 rm -f $RPM_BUILD_ROOT%{_desktopdir}/bacula-wx.desktop
 rm -f $RPM_BUILD_ROOT%{_mandir}/man1/wx-console*
 %endif
