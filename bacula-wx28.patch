@@ -1,0 +1,10 @@
+--- bacula-1.38.11/src/wx-console/wxbrestorepanel.cpp.orig	2006-12-24 11:56:01.000000000 +0000
++++ bacula-1.38.11/src/wx-console/wxbrestorepanel.cpp	2006-12-24 11:56:24.000000000 +0000
+@@ -64,6 +64,7 @@
+ #include "marked.xpm"
+ #include "partmarked.xpm"
+ 
++#include <wx/imaglist.h>
+ #include <wx/listimpl.cpp>
+ 
+ /* A macro named Yield is defined under MinGW */
