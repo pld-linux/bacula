@@ -38,6 +38,7 @@ Patch0:		%{name}-dvd-handler_path.patch
 Patch1:		%{name}-dvd_append.patch
 Patch2:		%{name}-link.patch
 Patch3:		%{name}-compile.patch
+Patch4:		%{name}-wx28.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-static
 BuildRequires:	automake
@@ -370,6 +371,7 @@ danego systemu, nale¿y ponownie uruchomiæ ./getdiskinfo .
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 #tar -xf %{SOURCE3}
 tar -xf %{SOURCE4} && ln -s bacula-rescue-* rescue
 sed -i -e 's#wx-config#wx-gtk2-ansi-config#g' configure*
