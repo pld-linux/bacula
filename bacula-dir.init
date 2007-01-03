@@ -1,7 +1,7 @@
-#! /bin/sh
+#!/bin/sh
 #
-# bacula       This shell script takes care of starting and stopping
-#	       the bacula Director daemon
+# bacula	   This shell script takes care of starting and stopping
+#		   the bacula Director daemon
 #
 # chkconfig: 2345 92 99
 # description: It comes by night and sucks the vital essence from your computers.
@@ -12,30 +12,30 @@
 
 RETVAL=0
 case "$1" in
-    start)
-       msg_starting "Bacula Director"
-       daemon /usr/sbin/bacula-dir -u bacula -g bacula $2 -c /etc/bacula/bacula-dir.conf
-       RETVAL=$?
-       [ $RETVAL -eq 0 ] && touch /var/lock/subsys/bacula-dir
-       ;;
-    stop)
-       msg_stopping "Bacula Director"
-       killproc /usr/sbin//bacula-dir
-       RETVAL=$?
-       [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/bacula-dir
-       ;;
-    restart)
-       $0 stop && sleep 5
-       $0 start
-       RETVAL=$?
-       ;;
-    status)
-       status /usr/sbin/bacula-dir
-       RETVAL=$?
-       ;;
-    *)
-       echo "Usage: $0 {start|stop|restart|status}"
-       exit 1
-       ;;
+start)
+	msg_starting "Bacula Director"
+	daemon /usr/sbin/bacula-dir -u bacula -g bacula $2 -c /etc/bacula/bacula-dir.conf
+	RETVAL=$?
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/bacula-dir
+	;;
+stop)
+	msg_stopping "Bacula Director"
+	killproc /usr/sbin/bacula-dir
+	RETVAL=$?
+	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/bacula-dir
+	;;
+restart)
+	$0 stop && sleep 5
+	$0 start
+	RETVAL=$?
+	;;
+status)
+	status /usr/sbin/bacula-dir
+	RETVAL=$?
+	;;
+*)
+	echo "Usage: $0 {start|stop|restart|status}"
+	exit 1
+	;;
 esac
 exit $RETVAL
