@@ -11,17 +11,27 @@
 . /etc/rc.d/init.d/functions
 
 start() {
-	msg_starting "Bacula Director"
-	daemon /usr/sbin/bacula-dir -u bacula -g bacula $2 -c /etc/bacula/bacula-dir.conf
-	RETVAL=$?
-	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/bacula-dir
+	# Check if the service is already running?
+	if [ ! -f /var/lock/subsys/"Bacula Director" ]; then
+		msg_starting "Bacula Director"
+		daemon /usr/sbin/bacula-dir -u bacula -g bacula $2 -c /etc/bacula/bacula-dir.conf
+		RETVAL=$?
+		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/bacula-dir
+	else
+		msg_already_running "Bacula Director"
+	fi
 }
 
 stop() {
-	msg_stopping "Bacula Director"
-	killproc /usr/sbin/bacula-dir
-	RETVAL=$?
-	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/bacula-dir
+	if [ -f /var/lock/subsys/"Bacula Director" ]; then
+		# Stop daemons.
+		msg_stopping "Bacula Director"
+		killproc /usr/sbin/bacula-dir
+		RETVAL=$?
+		[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/bacula-dir
+	else
+		msg_not_running "Bacula Director"
+	fi
 }
 
 RETVAL=0
