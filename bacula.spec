@@ -13,7 +13,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl):	Bacula - rozwi±zanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	1.38.11
-Release:	0.1
+Release:	1
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
@@ -69,6 +69,9 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/%{name}
 %define		_localstatedir	/var/lib/%{name}
+
+# dependency section is broken. ccache usage is instead to makefiles
+%undefine	with_ccache
 
 %description
 Bacula - It comes by night and sucks the vital essence from your
