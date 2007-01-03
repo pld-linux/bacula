@@ -16,7 +16,7 @@ BACULA_FD_GROUP="bacula"
 
 start() {
 	# Check if the service is already running?
-	if [ ! -f /var/lock/bacula-fd ]; then
+	if [ ! -f /var/lock/subsys/bacula-fd ]; then
 		msg_starting "Bacula File"
 		daemon /usr/sbin/bacula-fd -u "$BACULA_FD_USER" -g "$BACULA_FD_GROUP" $2 -c /etc/bacula/bacula-fd.conf
 		RETVAL=$?
@@ -27,7 +27,7 @@ start() {
 }
 
 stop() {
-	if [ -f /var/lock/bacula-fd ]; then
+	if [ -f /var/lock/subsys/bacula-fd ]; then
 		# Stop daemons.
 		msg_stopping "Bacula File"
 		killproc /usr/sbin/bacula-fd

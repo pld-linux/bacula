@@ -12,7 +12,7 @@
 
 start() {
 	# Check if the service is already running?
-	if [ ! -f /var/lock/subsys/"Bacula Director" ]; then
+	if [ ! -f /var/lock/subsys/bacula-dir ]; then
 		msg_starting "Bacula Director"
 		daemon /usr/sbin/bacula-dir -u bacula -g bacula $2 -c /etc/bacula/bacula-dir.conf
 		RETVAL=$?
@@ -23,7 +23,7 @@ start() {
 }
 
 stop() {
-	if [ -f /var/lock/subsys/"Bacula Director" ]; then
+	if [ -f /var/lock/subsys/bacula-dir ]; then
 		# Stop daemons.
 		msg_stopping "Bacula Director"
 		killproc /usr/sbin/bacula-dir
