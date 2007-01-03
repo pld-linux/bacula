@@ -101,6 +101,8 @@ Group:		Networking/Utilities
 Requires(post):	openssl-tools
 Requires(post):	sed >= 4.0
 Requires(post,preun):	/sbin/chkconfig
+Requires(postun):	/usr/sbin/groupdel
+Requires(postun):	/usr/sbin/userdel
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
 Conflicts:	bacula-console < 0:1.34.6
