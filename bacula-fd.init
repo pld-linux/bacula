@@ -1,7 +1,7 @@
 #! /bin/sh
 #
-# bacula       This shell script takes care of starting and stopping
-#	       the bacula File daemon.
+# bacula	   This shell script takes care of starting and stopping
+#		   the bacula File daemon.
 #
 # chkconfig: 2345 91 99
 # description: It comes by night and sucks the vital essence from your computers.
@@ -14,32 +14,31 @@ BACULA_FD_USER="bacula"
 BACULA_FD_GROUP="bacula"
 [ -f /etc/sysconfig/bacula-fd ] && . /etc/sysconfig/bacula-fd
 
-
 case "$1" in
-    start)
-       msg_starting "Bacula File"
-       daemon /usr/sbin/bacula-fd -u "$BACULA_FD_USER" -g "$BACULA_FD_GROUP" $2 -c /etc/bacula/bacula-fd.conf
-       RETVAL=$?
-       [ $RETVAL -eq 0 ] && touch /var/lock/subsys/bacula-fd
-       ;;
-    stop)
-       msg_stopping "Bacula File"
-       killproc /usr/sbin/bacula-fd
-       RETVAL=$?
-       [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/bacula-fd
-       ;;
-    restart)
-       $0 stop && sleep 5
-       $0 start
-       RETVAL=$?
-       ;;
-    status)
-       status /usr/sbin/bacula-fd
-       RETVAL=$?
-       ;;
-    *)
-       echo "Usage: $0 {start|stop|restart|status}"
-       exit 1
-       ;;
+start)
+	msg_starting "Bacula File"
+	daemon /usr/sbin/bacula-fd -u "$BACULA_FD_USER" -g "$BACULA_FD_GROUP" $2 -c /etc/bacula/bacula-fd.conf
+	RETVAL=$?
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/bacula-fd
+	;;
+stop)
+	msg_stopping "Bacula File"
+	killproc /usr/sbin/bacula-fd
+	RETVAL=$?
+	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/bacula-fd
+	;;
+restart)
+	$0 stop && sleep 5
+	$0 start
+	RETVAL=$?
+	;;
+status)
+	status /usr/sbin/bacula-fd
+	RETVAL=$?
+	;;
+*)
+	echo "Usage: $0 {start|stop|restart|status}"
+	exit 1
+	;;
 esac
 exit $RETVAL
