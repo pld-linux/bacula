@@ -42,8 +42,8 @@ status)
 	RETVAL=$?
 	;;
 *)
-	echo "Usage: $0 {start|stop|restart|status}"
-	exit 1
+	msg_usage "$0 {start|stop|restart|status}"
+	exit 3
 	;;
 esac
 exit $RETVAL
