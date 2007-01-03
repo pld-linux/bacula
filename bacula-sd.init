@@ -15,17 +15,27 @@ BACULA_SD_GROUP="bacula"
 [ -f /etc/sysconfig/bacula-sd ] && . /etc/sysconfig/bacula-sd
 
 start() {
-	msg_starting "Bacula Storage"
-	daemon /usr/sbin/bacula-sd -u "$BACULA_SD_USER" -g "$BACULA_SD_GROUP" $2 -c /etc/bacula/bacula-sd.conf
-	RETVAL=$?
-	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/bacula-sd
+	# Check if the service is already running?
+	if [ ! -f /var/lock/subsys/bacula-sd ]; then
+		msg_starting "Bacula Storage"
+		daemon /usr/sbin/bacula-sd -u "$BACULA_SD_USER" -g "$BACULA_SD_GROUP" $2 -c /etc/bacula/bacula-sd.conf
+		RETVAL=$?
+		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/bacula-sd
+	else
+		msg_already_running "Bacula Storage"
+	fi
 }
 
 stop() {
-	msg_stopping "Bacula Storage"
-	killproc /usr/sbin/bacula-sd
-	RETVAL=$?
-	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/bacula-sd
+	if [ -f /var/lock/subsys/bacula-sd ]; then
+		# Stop daemons.
+		msg_stopping "Bacula Storage"
+		killproc /usr/sbin/bacula-sd
+		RETVAL=$?
+		[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/bacula-sd
+	else
+		msg_not_running "Bacula Storage"
+	fi
 }
 
 case "$1" in
@@ -45,8 +55,8 @@ status)
 	RETVAL=$?
 	;;
 *)
-	echo "Usage: $0 {start|stop|restart|status}"
-	exit 1
+	msg_usage "$0 {start|stop|restart|status}"
+	exit 3
 	;;
 esac
 exit $RETVAL
