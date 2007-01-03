@@ -10,24 +10,32 @@
 # Source function library
 . /etc/rc.d/init.d/functions
 
-RETVAL=0
-case "$1" in
-start)
+start() {
 	msg_starting "Bacula Director"
 	daemon /usr/sbin/bacula-dir -u bacula -g bacula $2 -c /etc/bacula/bacula-dir.conf
 	RETVAL=$?
 	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/bacula-dir
-	;;
-stop)
+}
+
+stop() {
 	msg_stopping "Bacula Director"
 	killproc /usr/sbin/bacula-dir
 	RETVAL=$?
 	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/bacula-dir
+}
+
+RETVAL=0
+case "$1" in
+start)
+	start
+	;;
+stop)
+	stop
 	;;
 restart)
-	$0 stop && sleep 5
-	$0 start
-	RETVAL=$?
+	stop
+   	sleep 5
+	start
 	;;
 status)
 	status /usr/sbin/bacula-dir
