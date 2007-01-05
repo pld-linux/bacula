@@ -2,7 +2,6 @@
 #	- update desktop files, think about su-wrappers for console
 #	- package web admin
 #	- fix log file permissions
-#	- build documentation and package it
 #
 # Conditional build:
 %bcond_without	console_wx	# wx-console program
@@ -15,7 +14,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl):	Bacula - rozwi±zanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	2.0.0
-Release:	0.2
+Release:	0.3
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
@@ -23,8 +22,8 @@ Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
 # Source0-md5:	fbf990e64eb895a674c52c0de5acf0cd
 Source1:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.gz
 # Source1-md5:	9fe0efdf50c82f40f15b3ea6c7ad7ed6
-Source2:	http://dl.sourceforge.net/bacula/%{name}-gui-%{version}.tar.gz
-# Source2-md5:	c46b03dbdd9becfd56e109badcad3593
+#Source2:	http://dl.sourceforge.net/bacula/%{name}-gui-%{version}.tar.gz
+## Source2-md5:	c46b03dbdd9becfd56e109badcad3593
 Source3:	http://dl.sourceforge.net/bacula/%{name}-rescue-%{version}.tar.gz
 # Source3-md5:	4a21381f16355193771a34fc2eb4e806
 Source10:	%{name}-dir.init
@@ -695,7 +694,7 @@ fi
 %files dir
 %defattr(644,root,root,755)
 %doc ChangeLog CheckList ReleaseNotes kernstodo LICENSE
-#%doc examples %{name}-docs-%{version}-1/manual/{*.pdf,bacula}
+%doc examples %{name}-docs-%{version}/manual/{*.pdf,bacula}
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bacula-dir.conf
 %ghost %{_sysconfdir}/.pw.sed
 %attr(640,root,root) %config(noreplace) /etc/logrotate.d/bacula-dir
