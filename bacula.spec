@@ -165,7 +165,7 @@ maintaining the file indexes and volume databases for all files backed
 up. The Catalog services permit the System Administrator or user to
 quickly locate and restore any desired file, since it maintains a
 record of all Volumes used, all Jobs run, and all Files saved. This
-build requires sqlite to be installed separately as the catalog
+build requires sqlite%{?with_sqlite3:3} to be installed separately as the catalog
 database.
 
 %description dir -l pl
@@ -180,7 +180,7 @@ i baz± danych wolumenów dla wszystkich kopiowanych plików. Us³ugi
 katalogowe umo¿liwiaj± administratorowi lub u¿ytkownikowi szybko
 zlokalizowaæ i odtworzyæ dowolny plik, poniewa¿ utrzymuj± rekord ze
 wszystkimi u¿ywanymi wolumenami, uruchomionymi zadaniami i zapisanymi
-plikami. Pakiet wymaga sqlite zainstalowanego oddzielnie jako bazy
+plikami. Pakiet wymaga sqlite%{?with_sqlite3:3} zainstalowanego oddzielnie jako bazy
 danych dla katalogu.
 
 %package console
@@ -523,7 +523,7 @@ fi
 umask 077
 [ -s %{_localstatedir}/bacula.db ] && \
 	DB_VER=`echo "select * from Version;" | \
-	%{_bindir}/sqlite %{_localstatedir}/bacula.db | tail -n 1 2>/dev/null`
+	%{_bindir}/sqlite%{?with_sqlite3:3} %{_localstatedir}/bacula.db | tail -n 1 2>/dev/null`
 if [ -z "$DB_VER" ]; then
 # grant privileges and create tables
 	%{_libexecdir}/%{name}/grant_bacula_privileges > dev/null
@@ -531,24 +531,31 @@ if [ -z "$DB_VER" ]; then
 	%{_libexecdir}/%{name}/make_bacula_tables > dev/null
 elif [ "$DB_VER" -lt "9" ]; then
 	echo "Backing up bacula tables"
-	echo ".dump" | sqlite %{_localstatedir}/bacula.db | bzip2 > %{_localstatedir}/bacula_backup.sql.bz2
-	type=sqlite
+	echo ".dump" | sqlite%{?with_sqlite3:3} %{_localstatedir}/bacula.db | bzip2 > %{_localstatedir}/bacula_backup.sql.bz2
 	echo "Upgrading bacula tables"
-	if [ "$DB_VER" -lt "9" ]; then
-		if [ "$DB_VER" -lt "8" ]; then
-			if [ "$DB_VER" -lt "7" ]; then
-				if [ "$DB_VER" -lt "6" ]; then
-					if [ "$DB_VER" -lt "5" ]; then
-						%{_libexecdir}/%{name}/update_${type}_tables_4_to_5
-					fi
-					%{_libexecdir}/%{name}/update_${type}_tables_5_to_6
-				fi
-				%{_libexecdir}/%{name}/update_${type}_tables_6_to_7
-			fi
-			%{_libexecdir}/%{name}/update_${type}_tables_7_to_8
+	%if %{with sqlite3}
+		type=sqlite3
+		if [ "$DB_VER" -lt "9" ]; then
+			%{_libexecdir}/%{name}/update_${type}_tables_8_to_9
 		fi
-		%{_libexecdir}/%{name}/update_${type}_tables_8_to_9
-	fi
+	%else
+		type=sqlite
+		if [ "$DB_VER" -lt "9" ]; then
+			if [ "$DB_VER" -lt "8" ]; then
+				if [ "$DB_VER" -lt "7" ]; then
+					if [ "$DB_VER" -lt "6" ]; then
+						if [ "$DB_VER" -lt "5" ]; then
+							%{_libexecdir}/%{name}/update_${type}_tables_4_to_5
+						fi
+						%{_libexecdir}/%{name}/update_${type}_tables_5_to_6
+					fi
+					%{_libexecdir}/%{name}/update_${type}_tables_6_to_7
+				fi
+				%{_libexecdir}/%{name}/update_${type}_tables_7_to_8
+			fi
+			%{_libexecdir}/%{name}/update_${type}_tables_8_to_9
+		fi
+	%endif
 	%{_libexecdir}/%{name}/update_bacula_tables
 	echo "If bacula works correctly you can remove the backup file %{_localstatedir}/bacula_backup.sql.bz2"
 fi
