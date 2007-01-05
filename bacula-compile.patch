@@ -1,77 +1,11 @@
---- bacula-1.38.11/src/console/console.c.orig	2006-10-20 08:02:49.000000000 +0000
-+++ bacula-1.38.11/src/console/console.c	2006-10-20 08:03:04.000000000 +0000
-@@ -47,7 +47,7 @@
- #ifdef HAVE_CYGWIN
- int rl_catch_signals;
- #else
+--- bacula-2.0.0/src/console/console.c.orig	2006-11-27 11:02:59.000000000 +0100
++++ bacula-2.0.0/src/console/console.c	2007-01-05 09:57:26.000000000 +0100
+@@ -57,7 +57,7 @@
+ 
+ /* Exported variables */
+ 
 -extern int rl_catch_signals;
 +extern "C" int rl_catch_signals;
- #endif
  
  /* Imported functions */
-@@ -75,7 +75,7 @@
- static BSOCK *UA_sock = NULL;
- static DIRRES *dir;
- static FILE *output = stdout;
--static bool tee = false;                  /* output to output and stdout */
-+static bool bacula_tee = false;                  /* output to output and stdout */
- static bool stop = false;
- static int argc;
- static int numdir;
-@@ -702,7 +702,7 @@
- {
-    int len;
-    if (!stop) {
--      if (output == stdout || tee) {
-+      if (output == stdout || bacula_tee) {
-          sendit(prompt);
-       }
-    }
-@@ -781,14 +781,14 @@
- /* Send output to both termina and specified file */
- static int teecmd(FILE *input, BSOCK *UA_sock)
- {
--   tee = true;
-+   bacula_tee = true;
-    return do_outputcmd(input, UA_sock);
- }
- 
- /* Send output to specified "file" */
- static int outputcmd(FILE *input, BSOCK *UA_sock)
- {
--   tee = false;
-+   bacula_tee = false;
-    return do_outputcmd(input, UA_sock);
- }
- 
-@@ -806,7 +806,7 @@
-       if (output != stdout) {
-          fclose(output);
-          output = stdout;
--         tee = false;
-+         bacula_tee = false;
-       }
-       return 1;
-    }
-@@ -865,7 +865,7 @@
- void sendit(const char *buf)
- {
- #ifdef xHAVE_CONIO
--    if (output == stdout || tee) {
-+    if (output == stdout || bacula_tee) {
-        char *p, *q;
-        /*
-         * Here, we convert every \n into \r\n because the
-@@ -890,10 +890,10 @@
- 
-     fputs(buf, output);
-     fflush(output);
--    if (tee) {
-+    if (bacula_tee) {
-        fputs(buf, stdout);
-     }
--    if (output != stdout || tee) {
-+    if (output != stdout || bacula_tee) {
-        fflush(stdout);
-     }
- #endif
+ int authenticate_director(JCR *jcr, DIRRES *director, CONRES *cons);

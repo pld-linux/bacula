@@ -1,9 +1,9 @@
---- bacula-1.38.11/src/wx-console/wxbrestorepanel.cpp.orig	2006-12-24 11:56:01.000000000 +0000
-+++ bacula-1.38.11/src/wx-console/wxbrestorepanel.cpp	2006-12-24 11:56:24.000000000 +0000
-@@ -64,6 +64,7 @@
+--- bacula-2.0.0/src/wx-console/wxbrestorepanel.cpp.orig	2007-01-05 08:51:03.000000000 +0100
++++ bacula-2.0.0/src/wx-console/wxbrestorepanel.cpp	2007-01-05 08:51:38.000000000 +0100
+@@ -80,6 +80,7 @@
+ #include "unmarked.xpm"
  #include "marked.xpm"
  #include "partmarked.xpm"
- 
 +#include <wx/imaglist.h>
  #include <wx/listimpl.cpp>
  
