@@ -2,31 +2,31 @@
 #	- update desktop files, think about su-wrappers for console
 #	- package web admin
 #	- fix log file permissions
+#	- build documentation and package it
 #
 # Conditional build:
 %bcond_without	console_wx	# wx-console program
 %bcond_without	gnome		# gnome-console program
 %bcond_with	python
 %bcond_with	rescue
+%bcond_with	sqlite3		# use sqlite3 insted sqlite
 #
 Summary:	Bacula - The Network Backup Solution
 Summary(pl):	Bacula - rozwi±zanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	2.0.0
-Release:	0.1
+Release:	0.2
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
 Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
 # Source0-md5:	fbf990e64eb895a674c52c0de5acf0cd
-Source1:	%{name}-manpages.tar.bz2
-# Source1-md5:	e4dae86d6574b360e831efd3913e7f4c
-Source2:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.gz
-# Source2-md5:	9fe0efdf50c82f40f15b3ea6c7ad7ed6
-Source3:	http://dl.sourceforge.net/bacula/%{name}-gui-%{version}.tar.gz
-# Source3-md5:	c46b03dbdd9becfd56e109badcad3593
-Source4:	http://dl.sourceforge.net/bacula/%{name}-rescue-%{version}.tar.gz
-# Source4-md5:	4a21381f16355193771a34fc2eb4e806
+Source1:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.gz
+# Source1-md5:	9fe0efdf50c82f40f15b3ea6c7ad7ed6
+Source2:	http://dl.sourceforge.net/bacula/%{name}-gui-%{version}.tar.gz
+# Source2-md5:	c46b03dbdd9becfd56e109badcad3593
+Source3:	http://dl.sourceforge.net/bacula/%{name}-rescue-%{version}.tar.gz
+# Source3-md5:	4a21381f16355193771a34fc2eb4e806
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
@@ -42,7 +42,9 @@ Patch4:		%{name}-wx28.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-static
 BuildRequires:	automake
-%{?with_rescue:BuildRequires:	fakeroot}
+%if %{with rescue}
+BuildRequires:	fakeroot
+%endif
 BuildRequires:	glibc-static
 %if %{with gnome}
 BuildRequires:	libgnome-devel >= 2.0
@@ -55,13 +57,19 @@ BuildRequires:	ncurses-devel
 BuildRequires:	openssl-devel
 BuildRequires:	openssl-static
 BuildRequires:	pkgconfig
-%{?with_python:BuildRequires:	python-static}
+%if %{with python}
+BuildRequires:	python-static
+%endif
 BuildRequires:	readline-devel
 BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	sed >= 4.0
+%if %{with sqlite3}
+BuildRequires:	sqlite3-devel
+%else
 BuildRequires:	sqlite-devel
+%endif
 %if %{with console_wx}
-BuildRequires:	wxGTK2-devel >= 2.4.0
+BuildRequires:	wxGTK2-unicode-devel >= 2.4.0
 %endif
 BuildRequires:	zlib-devel
 BuildRequires:	zlib-static
@@ -371,15 +379,15 @@ Aby stworzyæ dyskietkê ratunkow± Baculi, nale¿y uruchomiæ "./make_rescue_disk
 danego systemu, nale¿y ponownie uruchomiæ ./getdiskinfo .
 
 %prep
-%setup -q -a 1 -a 2
+%setup -q -a 1
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-#tar -xf %{SOURCE3}
-tar -xf %{SOURCE4} && ln -s bacula-rescue-* rescue
-sed -i -e 's#wx-config#wx-gtk2-ansi-config#g' configure*
+#tar -xf %{SOURCE2}
+tar -xf %{SOURCE3} && ln -s bacula-rescue-* rescue
+sed -i -e 's#wx-config#wx-gtk2-unicode-config#g' configure*
 sed -i -e 's#-lreadline -lhistory -ltermcap#-lreadline -lhistory#g' configure*
 sed -i -e 's#bindir=.*#bindir=%{_bindir}#g' \
 	src/cats/create_* src/cats/delete_* src/cats/drop_* \
@@ -405,7 +413,7 @@ CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
 	--with-smtp-host=localhost \
 	--with-pid-dir=/var/run \
 	--with-subsys-dir=/var/lock/subsys \
-	--with-sqlite \
+	--with-sqlite%{?with_sqlite3:3} \
 	--with-dir-password="#FAKE-dir-password#" \
 	--with-fd-password="#FAKE-fd-password#" \
 	--with-sd-password="#FAKE-sd-password#" \
@@ -414,7 +422,6 @@ CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
 	--with-mon-sd-password="#FAKE-mon-sd-password#" \
 	--enable-static-fd \
 	--with-openssl
-
 %{__make}
 
 %if %{with rescue}
@@ -471,9 +478,6 @@ install rescue/linux/floppy/sfdisk.bz2 $RPM_BUILD_ROOT%{_sysconfdir}/rescue
 # install the updatedb scripts
 install updatedb/update_sqlite* $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
-# manual
-cp -a man1 man8 $RPM_BUILD_ROOT%{_mandir}
-
 # place for site passwords
 touch $RPM_BUILD_ROOT%{_sysconfdir}/{dir-password,fd-password,sd-password}
 touch $RPM_BUILD_ROOT%{_sysconfdir}/{mon-dir-password,mon-fd-password,mon-sd-password}
@@ -481,10 +485,8 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/{mon-dir-password,mon-fd-password,mon-sd-pas
 # some file changes
 rm -f $RPM_BUILD_ROOT%{_libexecdir}/%{name}/{gconsole,startmysql,stopmysql,bacula,bconsole,fd}
 rm -f $RPM_BUILD_ROOT%{_sbindir}/static-bacula-fd
-rm -f $RPM_BUILD_ROOT%{_mandir}/man1/gnome*
 %if !%{with console_wx}
 rm -f $RPM_BUILD_ROOT%{_desktopdir}/bacula-wx.desktop
-rm -f $RPM_BUILD_ROOT%{_mandir}/man1/wx-console*
 %endif
 touch $RPM_BUILD_ROOT%{_sysconfdir}/.pw.sed
 
@@ -673,9 +675,11 @@ fi
 %doc LICENSE
 %dir %{_sysconfdir}
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/*-password
-%attr(755,root,root) %{_sbindir}/btraceback
 %attr(755,root,root) %{_sbindir}/bsmtp
+%attr(755,root,root) %{_sbindir}/btraceback
 %{_mandir}/man8/bacula.8*
+%{_mandir}/man1/bsmtp.1*
+%{_mandir}/man8/btraceback.8*
 %dir %{_libexecdir}/%{name}
 %{_libexecdir}/%{name}/btraceback.dbx
 %{_libexecdir}/%{name}/btraceback.gdb
@@ -684,7 +688,7 @@ fi
 %files dir
 %defattr(644,root,root,755)
 %doc ChangeLog CheckList ReleaseNotes kernstodo LICENSE
-%doc examples %{name}-docs-%{version}-1/manual/{*.pdf,bacula}
+#%doc examples %{name}-docs-%{version}-1/manual/{*.pdf,bacula}
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bacula-dir.conf
 %ghost %{_sysconfdir}/.pw.sed
 %attr(640,root,root) %config(noreplace) /etc/logrotate.d/bacula-dir
@@ -695,14 +699,23 @@ fi
 %attr(755,root,root) %{_sbindir}/bwild
 %attr(755,root,root) %{_sbindir}/dbcheck
 %{_mandir}/man8/bacula-dir.8*
-%{_mandir}/man1/dbcheck.1*
+%{_mandir}/man8/dbcheck.8*
 %{_libexecdir}/%{name}/query.sql
+%if %{with sqlite3}
+%attr(755,root,root) %{_libexecdir}/%{name}/create_sqlite3_database
+%attr(755,root,root) %{_libexecdir}/%{name}/drop_sqlite3_database
+%attr(755,root,root) %{_libexecdir}/%{name}/drop_sqlite3_tables
+%attr(755,root,root) %{_libexecdir}/%{name}/grant_sqlite3_privileges
+%attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_tables
+%attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite3_*
+%else
 %attr(755,root,root) %{_libexecdir}/%{name}/create_sqlite_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_sqlite_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_sqlite_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/grant_sqlite_privileges
 %attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite_tables
-%attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite*
+%attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite_*
+%endif
 %attr(755,root,root) %{_libexecdir}/%{name}/create_bacula_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_bacula_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_bacula_tables
@@ -738,18 +751,18 @@ fi
 %attr(755,root,root) %{_libexecdir}/%{name}/disk-changer
 %attr(755,root,root) %{_libexecdir}/%{name}/dvd-handler
 %{_mandir}/man8/bacula-sd.8*
-%{_mandir}/man1/bcopy.1*
-%{_mandir}/man1/bextract.1*
-%{_mandir}/man1/bls.1*
-%{_mandir}/man1/bscan.1*
-%{_mandir}/man1/btape.1*
+%{_mandir}/man8/bcopy.8*
+%{_mandir}/man8/bextract.8*
+%{_mandir}/man8/bls.8*
+%{_mandir}/man8/bscan.8*
+%{_mandir}/man8/btape.8*
 
 %files console
 %defattr(644,root,root,755)
 %doc LICENSE
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bconsole.conf
 %attr(755,root,root) %{_sbindir}/bconsole
-%{_mandir}/man1/bconsole.1*
+%{_mandir}/man8/bconsole.8*
 
 %if %{with console_wx}
 %files console-wx
@@ -759,7 +772,7 @@ fi
 %{_desktopdir}/bacula-wx.desktop
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/wx-console.conf
 %attr(755,root,root) %{_sbindir}/wx-console
-%{_mandir}/man1/wx-console.1*
+%{_mandir}/man1/bacula-wxconsole.1*
 %endif
 
 %if %{with gnome}
@@ -770,7 +783,7 @@ fi
 %{_desktopdir}/bacula.desktop
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/gnome-console.conf
 %attr(755,root,root) %{_sbindir}/gnome-console
-#%{_mandir}/man1/gnome-console.1*
+%{_mandir}/man1/bacula-console-gnome.1*
 %endif
 
 %if %{with console_wx}
@@ -781,7 +794,7 @@ fi
 %{_desktopdir}/%{name}-tray-monitor.desktop
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/tray-monitor.conf
 %attr(755,root,root) %{_bindir}/bacula-tray-monitor
-#%{_mandir}/man1/bacula-tray-monitor.1*
+%{_mandir}/man1/bacula-tray-monitor.1*
 %endif
 
 %if %{with rescue}
