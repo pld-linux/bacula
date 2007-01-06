@@ -34,10 +34,9 @@ Source14:	%{name}-dir.sysconfig
 Source15:	%{name}-fd.sysconfig
 Source16:	%{name}-sd.sysconfig
 Patch0:		%{name}-dvd-handler_path.patch
-Patch1:		%{name}-dvd_append.patch
-Patch2:		%{name}-link.patch
-Patch3:		%{name}-compile.patch
-Patch4:		%{name}-wx28.patch
+Patch1:		%{name}-link.patch
+Patch2:		%{name}-compile.patch
+Patch3:		%{name}-wx28.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-static
 BuildRequires:	automake
@@ -383,7 +382,6 @@ danego systemu, nale¿y ponownie uruchomiæ ./getdiskinfo .
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
 #tar -xf %{SOURCE2}
 tar -xf %{SOURCE3} && ln -s bacula-rescue-* rescue
 sed -i -e 's#wx-config#wx-gtk2-unicode-config#g' configure*
