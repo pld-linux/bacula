@@ -9,12 +9,13 @@
 %bcond_with	python
 %bcond_with	rescue
 %bcond_with	sqlite3		# use sqlite3 insted sqlite
+%bcond_with	sqlite3_sync_off	# makes sqlite3 backend much faster, but less reliable
 #
 Summary:	Bacula - The Network Backup Solution
 Summary(pl):	Bacula - rozwi±zanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	2.0.0
-Release:	0.3
+Release:	0.4
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
@@ -37,6 +38,7 @@ Patch0:		%{name}-dvd-handler_path.patch
 Patch1:		%{name}-link.patch
 Patch2:		%{name}-compile.patch
 Patch3:		%{name}-wx28.patch
+Patch4:		%{name}-sqlite3_init_query.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-static
 BuildRequires:	automake
@@ -382,6 +384,8 @@ danego systemu, nale¿y ponownie uruchomiæ ./getdiskinfo .
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
+
 #tar -xf %{SOURCE2}
 tar -xf %{SOURCE3} && ln -s bacula-rescue-* rescue
 sed -i -e 's#wx-config#wx-gtk2-unicode-config#g' configure*
@@ -411,6 +415,7 @@ CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
 	--with-pid-dir=/var/run \
 	--with-subsys-dir=/var/lock/subsys \
 	--with-sqlite%{?with_sqlite3:3} \
+	%{?with_sqlite3_sync_off:--enable-extra-sqlite3-init="pragma synchronous=0;"} \
 	--with-dir-password="#FAKE-dir-password#" \
 	--with-fd-password="#FAKE-fd-password#" \
 	--with-sd-password="#FAKE-sd-password#" \
