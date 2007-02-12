@@ -12,7 +12,7 @@
 %bcond_with	sqlite3_sync_off	# makes sqlite3 backend much faster, but less reliable
 #
 Summary:	Bacula - The Network Backup Solution
-Summary(pl):	Bacula - rozwi±zanie do wykonywania kopii zapasowych po sieci
+Summary(pl.UTF-8):   Bacula - rozwiÄ…zanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	2.0.2
 Release:	0.1
@@ -93,21 +93,21 @@ Bacula is relatively easy to use and efficient, while offering many
 advanced storage management features that make it easy to find and
 recover lost or damaged files.
 
-%description -l pl
-Bacula - przychodzi noc± i wysysa ¿ywotny ekstrakt z komputerów.
+%description -l pl.UTF-8
+Bacula - przychodzi nocÄ… i wysysa Å¼ywotny ekstrakt z komputerÃ³w.
 
-Bacula to zbiór programów umo¿liwiaj±cych administratorowi na
-zarz±dzanie kopiami zapasowymi, odzyskiwaniem i weryfikacj± danych w
-sieci komputerów ró¿nego rodzaju. W terminologii technicznej jest to
-program do kopii zapasowych pracuj±cy w architekturze klient-serwer.
-Bacula jest stosunkowo ³atwa w u¿yciu i wydajna, oferuj±c przy tym
-wiele zaawansowanych mo¿liwo¶ci przy zarz±dzaniu no¶nikami,
-u³atwiaj±cych znalezienie i odzyskanie utraconych lub uszkodzonych
-plików.
+Bacula to zbiÃ³r programÃ³w umoÅ¼liwiajÄ…cych administratorowi na
+zarzÄ…dzanie kopiami zapasowymi, odzyskiwaniem i weryfikacjÄ… danych w
+sieci komputerÃ³w rÃ³Å¼nego rodzaju. W terminologii technicznej jest to
+program do kopii zapasowych pracujÄ…cy w architekturze klient-serwer.
+Bacula jest stosunkowo Å‚atwa w uÅ¼yciu i wydajna, oferujÄ…c przy tym
+wiele zaawansowanych moÅ¼liwoÅ›ci przy zarzÄ…dzaniu noÅ›nikami,
+uÅ‚atwiajÄ…cych znalezienie i odzyskanie utraconych lub uszkodzonych
+plikÃ³w.
 
 %package common
 Summary:	Common files for bacula package
-Summary(pl):	Pliki wspólne dla pakietu bacula
+Summary(pl.UTF-8):   Pliki wspÃ³lne dla pakietu bacula
 Group:		Networking/Utilities
 Requires(post):	openssl-tools
 Requires(post):	sed >= 4.0
@@ -133,21 +133,21 @@ Bacula is relatively easy to use and efficient, while offering many
 advanced storage management features that make it easy to find and
 recover lost or damaged files.
 
-%description common -l pl
-Bacula - przychodzi noc± i wysysa ¿ywotny ekstrakt z komputerów.
+%description common -l pl.UTF-8
+Bacula - przychodzi nocÄ… i wysysa Å¼ywotny ekstrakt z komputerÃ³w.
 
-Bacula to zbiór programów umo¿liwiaj±cych administratorowi na
-zarz±dzanie kopiami zapasowymi, odzyskiwaniem i weryfikacj± danych w
-sieci komputerów ró¿nego rodzaju. W terminologii technicznej jest to
-program do kopii zapasowych pracuj±cy w architekturze klient-serwer.
-Bacula jest stosunkowo ³atwa w u¿yciu i wydajna, oferuj±c przy tym
-wiele zaawansowanych mo¿liwo¶ci przy zarz±dzaniu no¶nikami,
-u³atwiaj±cych znalezienie i odzyskanie utraconych lub uszkodzonych
-plików.
+Bacula to zbiÃ³r programÃ³w umoÅ¼liwiajÄ…cych administratorowi na
+zarzÄ…dzanie kopiami zapasowymi, odzyskiwaniem i weryfikacjÄ… danych w
+sieci komputerÃ³w rÃ³Å¼nego rodzaju. W terminologii technicznej jest to
+program do kopii zapasowych pracujÄ…cy w architekturze klient-serwer.
+Bacula jest stosunkowo Å‚atwa w uÅ¼yciu i wydajna, oferujÄ…c przy tym
+wiele zaawansowanych moÅ¼liwoÅ›ci przy zarzÄ…dzaniu noÅ›nikami,
+uÅ‚atwiajÄ…cych znalezienie i odzyskanie utraconych lub uszkodzonych
+plikÃ³w.
 
 %package dir
 Summary:	Bacula Director and Catalog services
-Summary(pl):	Us³ugi Bacula Director i Catalog
+Summary(pl.UTF-8):   UsÅ‚ugi Bacula Director i Catalog
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -168,24 +168,24 @@ record of all Volumes used, all Jobs run, and all Files saved. This
 build requires sqlite%{?with_sqlite3:3} to be installed separately as the catalog
 database.
 
-%description dir -l pl
-Bacula - przychodzi noc± i wysysa ¿ywotny ekstrakt z komputerów.
+%description dir -l pl.UTF-8
+Bacula - przychodzi nocÄ… i wysysa Å¼ywotny ekstrakt z komputerÃ³w.
 
-Bacula Director to program nadzoruj±cy wszystkie operacje wykonywania
+Bacula Director to program nadzorujÄ…cy wszystkie operacje wykonywania
 kopii zapasowych, odzyskiwania, weryfikacji i archiwizowania.
-Administrator u¿ywa Bacula Directora do szeregowania kopii zapasowych
-oraz odzyskiwania plików. Us³ugi katalogowe (Catalog services) s±
-u¿ywane przez programy odpowiedzialne za zarz±dzanie indeksami plików
-i baz± danych wolumenów dla wszystkich kopiowanych plików. Us³ugi
-katalogowe umo¿liwiaj± administratorowi lub u¿ytkownikowi szybko
-zlokalizowaæ i odtworzyæ dowolny plik, poniewa¿ utrzymuj± rekord ze
-wszystkimi u¿ywanymi wolumenami, uruchomionymi zadaniami i zapisanymi
+Administrator uÅ¼ywa Bacula Directora do szeregowania kopii zapasowych
+oraz odzyskiwania plikÃ³w. UsÅ‚ugi katalogowe (Catalog services) sÄ…
+uÅ¼ywane przez programy odpowiedzialne za zarzÄ…dzanie indeksami plikÃ³w
+i bazÄ… danych wolumenÃ³w dla wszystkich kopiowanych plikÃ³w. UsÅ‚ugi
+katalogowe umoÅ¼liwiajÄ… administratorowi lub uÅ¼ytkownikowi szybko
+zlokalizowaÄ‡ i odtworzyÄ‡ dowolny plik, poniewaÅ¼ utrzymujÄ… rekord ze
+wszystkimi uÅ¼ywanymi wolumenami, uruchomionymi zadaniami i zapisanymi
 plikami. Pakiet wymaga sqlite%{?with_sqlite3:3} zainstalowanego oddzielnie jako bazy
 danych dla katalogu.
 
 %package console
 Summary:	Bacula Console
-Summary(pl):	Konsola Baculi
+Summary(pl.UTF-8):   Konsola Baculi
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -198,16 +198,16 @@ Bacula Console is the program that allows the administrator or user to
 communicate with the Bacula Director. This is the text only console
 interface.
 
-%description console -l pl
-Bacula - przychodzi noc± i wysysa ¿ywotny ekstrakt z komputerów.
+%description console -l pl.UTF-8
+Bacula - przychodzi nocÄ… i wysysa Å¼ywotny ekstrakt z komputerÃ³w.
 
-Bacula Console to program umo¿liwiaj±cy administratorowi lub
-u¿ytkownikowi komunikowanie siê z programem Bacula Director. To jest
+Bacula Console to program umoÅ¼liwiajÄ…cy administratorowi lub
+uÅ¼ytkownikowi komunikowanie siÄ™ z programem Bacula Director. To jest
 interfejs czysto tekstowy.
 
 %package console-wx
 Summary:	Bacula wxWidgets Console
-Summary(pl):	Konsola Baculi oparta na wxWidgets
+Summary(pl.UTF-8):   Konsola Baculi oparta na wxWidgets
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -220,16 +220,16 @@ Bacula Console is the program that allows the administrator or user to
 communicate with the Bacula Director. This is the wxWidgets GUI
 interface.
 
-%description console-wx -l pl
-Bacula - przychodzi noc± i wysysa ¿ywotny ekstrakt z komputerów.
+%description console-wx -l pl.UTF-8
+Bacula - przychodzi nocÄ… i wysysa Å¼ywotny ekstrakt z komputerÃ³w.
 
-Bacula Console to program umo¿liwiaj±cy administratorowi lub
-u¿ytkownikowi komunikowanie siê z programem Bacula Director. To jest
+Bacula Console to program umoÅ¼liwiajÄ…cy administratorowi lub
+uÅ¼ytkownikowi komunikowanie siÄ™ z programem Bacula Director. To jest
 interfejs graficzny oparty na wxWidgets.
 
 %package console-gnome
 Summary:	Bacula GNOME Console
-Summary(pl):	Konsola Baculi oparta dla GNOME
+Summary(pl.UTF-8):   Konsola Baculi oparta dla GNOME
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -241,11 +241,11 @@ computers.
 Bacula Console is the program that allows the administrator or user to
 communicate with the Bacula Director. This is the GNOME GUI interface.
 
-%description console-gnome -l pl
-Bacula - przychodzi noc± i wysysa ¿ywotny ekstrakt z komputerów.
+%description console-gnome -l pl.UTF-8
+Bacula - przychodzi nocÄ… i wysysa Å¼ywotny ekstrakt z komputerÃ³w.
 
-Bacula Console to program umo¿liwiaj±cy administratorowi lub
-u¿ytkownikowi komunikowanie siê z programem Bacula Director. To jest
+Bacula Console to program umoÅ¼liwiajÄ…cy administratorowi lub
+uÅ¼ytkownikowi komunikowanie siÄ™ z programem Bacula Director. To jest
 interfejs graficzny oparty na GNOME.
 
 %package tray-monitor
@@ -266,7 +266,7 @@ configured.
 
 %package fd
 Summary:	Bacula File services (Client)
-Summary(pl):	Us³ugi Bacula File (klient)
+Summary(pl.UTF-8):   UsÅ‚ugi Bacula File (klient)
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -285,23 +285,23 @@ This program runs as a daemon on the machine to be backed up, and in
 some of the documentation, the File daemon is referred to as the
 Client (for example in Bacula configuration file).
 
-%description fd -l pl
-Bacula - przychodzi noc± i wysysa ¿ywotny ekstrakt z komputerów.
+%description fd -l pl.UTF-8
+Bacula - przychodzi nocÄ… i wysysa Å¼ywotny ekstrakt z komputerÃ³w.
 
-Us³ugi Bacula File (inaczej program kliencki) to oprogramowanie, które
-instaluje siê na maszynach, z których maj± byæ wykonywane kopie
-zapasowe. S± one specyficzne dla systemu operacyjnego, pod którym
-dzia³a dana maszyna i odpowiadaj± za dostarczanie atrybutów i danych
-plików na ¿±danie Directora. Us³ugi plikowe s± tak¿e odpowiedzialne za
-zale¿n± od systemu plików czê¶æ odzyskiwania atrybutów i danych plików
-podczas operacji odzyskiwania danych. Program dzia³a jako demon na
-maszynie, która ma byæ backupowana i w czê¶ci dokumentacji demon ten
-(File) jest nazywany klientem (na przyk³ad w pliku konfiguracyjnym
+UsÅ‚ugi Bacula File (inaczej program kliencki) to oprogramowanie, ktÃ³re
+instaluje siÄ™ na maszynach, z ktÃ³rych majÄ… byÄ‡ wykonywane kopie
+zapasowe. SÄ… one specyficzne dla systemu operacyjnego, pod ktÃ³rym
+dziaÅ‚a dana maszyna i odpowiadajÄ… za dostarczanie atrybutÃ³w i danych
+plikÃ³w na Å¼Ä…danie Directora. UsÅ‚ugi plikowe sÄ… takÅ¼e odpowiedzialne za
+zaleÅ¼nÄ… od systemu plikÃ³w czÄ™Å›Ä‡ odzyskiwania atrybutÃ³w i danych plikÃ³w
+podczas operacji odzyskiwania danych. Program dziaÅ‚a jako demon na
+maszynie, ktÃ³ra ma byÄ‡ backupowana i w czÄ™Å›ci dokumentacji demon ten
+(File) jest nazywany klientem (na przykÅ‚ad w pliku konfiguracyjnym
 Baculi).
 
 %package sd
 Summary:	Bacula Storage services
-Summary(pl):	Us³ugi Bacula Storage
+Summary(pl.UTF-8):   UsÅ‚ugi Bacula Storage
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -318,20 +318,20 @@ is responsible for reading and writing your tapes (or other storage
 media, e.g. files). The Storage services runs as a daemon on the
 machine that has the backup device (usually a tape drive).
 
-%description sd -l pl
-Bacula - przychodzi noc± i wysysa ¿ywotny ekstrakt z komputerów.
+%description sd -l pl.UTF-8
+Bacula - przychodzi nocÄ… i wysysa Å¼ywotny ekstrakt z komputerÃ³w.
 
-Us³ugi Bacula Storage sk³adaj± siê z programów obs³uguj±cych
-przechowywanie danych oraz odzyskiwanie atrybutów i danych na
-fizycznych no¶nikach lub wolumenach. Innymi s³owy, demon Storage jest
-odpowiedzialny za odczyt i zapis ta¶m (lub innych no¶ników do
-przechowywania danych, np. plików). Us³ugi Storage dzia³aj± jako demon
-na maszynie, która zawiera urz±dzenie backupowe (zwykle napêd
-ta¶mowy).
+UsÅ‚ugi Bacula Storage skÅ‚adajÄ… siÄ™ z programÃ³w obsÅ‚ugujÄ…cych
+przechowywanie danych oraz odzyskiwanie atrybutÃ³w i danych na
+fizycznych noÅ›nikach lub wolumenach. Innymi sÅ‚owy, demon Storage jest
+odpowiedzialny za odczyt i zapis taÅ›m (lub innych noÅ›nikÃ³w do
+przechowywania danych, np. plikÃ³w). UsÅ‚ugi Storage dziaÅ‚ajÄ… jako demon
+na maszynie, ktÃ³ra zawiera urzÄ…dzenie backupowe (zwykle napÄ™d
+taÅ›mowy).
 
 %package rescue
 Summary:	Bacula - The Network Backup Solution
-Summary(pl):	Bacula - rozwi±zanie do wykonywania kopii zapasowych po sieci
+Summary(pl.UTF-8):   Bacula - rozwiÄ…zanie do wykonywania kopii zapasowych po sieci
 Group:		Networking/Utilities
 Requires:	%{name}-fd = %{epoch}:%{version}-%{release}
 Requires:	coreutils
@@ -358,25 +358,25 @@ To make the bacula rescue disk run "./make_rescue_disk
   recreate the rescue information for this system run ./getdiskinfo
   again.
 
-%description rescue -l pl
-Bacula - przychodzi noc± i wysysa ¿ywotny ekstrakt z komputerów.
+%description rescue -l pl.UTF-8
+Bacula - przychodzi nocÄ… i wysysa Å¼ywotny ekstrakt z komputerÃ³w.
 
-Bacula to zbiór programów umo¿liwiaj±cych administratorowi na
-zarz±dzanie kopiami zapasowymi, odzyskiwaniem i weryfikacj± danych w
-sieci komputerów ró¿nego rodzaju. W terminologii technicznej jest to
-program do kopii zapasowych pracuj±cy w architekturze klient-serwer.
-Bacula jest stosunkowo ³atwa w u¿yciu i wydajna, oferuj±c przy tym
-wiele zaawansowanych mo¿liwo¶ci przy zarz±dzaniu no¶nikami,
-u³atwiaj±cych znalezienie i odzyskanie utraconych lub uszkodzonych
-plików.
+Bacula to zbiÃ³r programÃ³w umoÅ¼liwiajÄ…cych administratorowi na
+zarzÄ…dzanie kopiami zapasowymi, odzyskiwaniem i weryfikacjÄ… danych w
+sieci komputerÃ³w rÃ³Å¼nego rodzaju. W terminologii technicznej jest to
+program do kopii zapasowych pracujÄ…cy w architekturze klient-serwer.
+Bacula jest stosunkowo Å‚atwa w uÅ¼yciu i wydajna, oferujÄ…c przy tym
+wiele zaawansowanych moÅ¼liwoÅ›ci przy zarzÄ…dzaniu noÅ›nikami,
+uÅ‚atwiajÄ…cych znalezienie i odzyskanie utraconych lub uszkodzonych
+plikÃ³w.
 
-Ten pakiet zawiera skrypty do odtwarzania po awarii i tworzy dyskietkê
+Ten pakiet zawiera skrypty do odtwarzania po awarii i tworzy dyskietkÄ™
 ratunkowe do odtwarzania systemu od zera.
 
-Aby stworzyæ dyskietkê ratunkow± Baculi, nale¿y uruchomiæ "./make_rescue_disk
+Aby stworzyÄ‡ dyskietkÄ™ ratunkowÄ… Baculi, naleÅ¼y uruchomiÄ‡ "./make_rescue_disk
 --copy-static-bacula - --copy-etc-files" z katalogu
-%{_sysconfdir}/rescue . Aby ponownie utworzyæ informacje ratunkowe dla
-danego systemu, nale¿y ponownie uruchomiæ ./getdiskinfo .
+%{_sysconfdir}/rescue . Aby ponownie utworzyÄ‡ informacje ratunkowe dla
+danego systemu, naleÅ¼y ponownie uruchomiÄ‡ ./getdiskinfo .
 
 %prep
 %setup -q -a 1
