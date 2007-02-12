@@ -12,7 +12,7 @@
 %bcond_with	sqlite3_sync_off	# makes sqlite3 backend much faster, but less reliable
 #
 Summary:	Bacula - The Network Backup Solution
-Summary(pl.UTF-8):   Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
+Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	2.0.2
 Release:	0.1
@@ -107,7 +107,7 @@ plików.
 
 %package common
 Summary:	Common files for bacula package
-Summary(pl.UTF-8):   Pliki wspólne dla pakietu bacula
+Summary(pl.UTF-8):	Pliki wspólne dla pakietu bacula
 Group:		Networking/Utilities
 Requires(post):	openssl-tools
 Requires(post):	sed >= 4.0
@@ -147,7 +147,7 @@ plików.
 
 %package dir
 Summary:	Bacula Director and Catalog services
-Summary(pl.UTF-8):   Usługi Bacula Director i Catalog
+Summary(pl.UTF-8):	Usługi Bacula Director i Catalog
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -185,7 +185,7 @@ danych dla katalogu.
 
 %package console
 Summary:	Bacula Console
-Summary(pl.UTF-8):   Konsola Baculi
+Summary(pl.UTF-8):	Konsola Baculi
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -207,7 +207,7 @@ interfejs czysto tekstowy.
 
 %package console-wx
 Summary:	Bacula wxWidgets Console
-Summary(pl.UTF-8):   Konsola Baculi oparta na wxWidgets
+Summary(pl.UTF-8):	Konsola Baculi oparta na wxWidgets
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -229,7 +229,7 @@ interfejs graficzny oparty na wxWidgets.
 
 %package console-gnome
 Summary:	Bacula GNOME Console
-Summary(pl.UTF-8):   Konsola Baculi oparta dla GNOME
+Summary(pl.UTF-8):	Konsola Baculi oparta dla GNOME
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -266,7 +266,7 @@ configured.
 
 %package fd
 Summary:	Bacula File services (Client)
-Summary(pl.UTF-8):   Usługi Bacula File (klient)
+Summary(pl.UTF-8):	Usługi Bacula File (klient)
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -301,7 +301,7 @@ Baculi).
 
 %package sd
 Summary:	Bacula Storage services
-Summary(pl.UTF-8):   Usługi Bacula Storage
+Summary(pl.UTF-8):	Usługi Bacula Storage
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -331,7 +331,7 @@ taśmowy).
 
 %package rescue
 Summary:	Bacula - The Network Backup Solution
-Summary(pl.UTF-8):   Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
+Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Group:		Networking/Utilities
 Requires:	%{name}-fd = %{epoch}:%{version}-%{release}
 Requires:	coreutils
