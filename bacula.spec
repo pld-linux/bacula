@@ -23,10 +23,8 @@ Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
 # Source0-md5:	299883ddd460336cfb613fd6d9bff989
 Source1:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.gz
 # Source1-md5:	a114daae0e276ee274ccd558e42e13f0
-#Source2:	http://dl.sourceforge.net/bacula/%{name}-gui-%{version}.tar.gz
-## Source2-md5:	c46b03dbdd9becfd56e109badcad3593
-Source3:	http://dl.sourceforge.net/bacula/%{name}-rescue-2.0.0.tar.gz
-# Source3-md5:	4a21381f16355193771a34fc2eb4e806
+Source2:	http://dl.sourceforge.net/bacula/%{name}-rescue-2.0.0.tar.gz
+# Source2-md5:	4a21381f16355193771a34fc2eb4e806
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
@@ -386,8 +384,7 @@ danego systemu, należy ponownie uruchomić ./getdiskinfo .
 %patch3 -p1
 %patch4 -p1
 
-#tar -xf %{SOURCE2}
-tar -xf %{SOURCE3} && ln -s bacula-rescue-* rescue
+tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
 sed -i -e 's#wx-config#wx-gtk2-unicode-config#g' configure*
 sed -i -e 's#-lreadline -lhistory -ltermcap#-lreadline -lhistory#g' configure*
 sed -i -e 's#bindir=.*#bindir=%{_bindir}#g' \
