@@ -14,15 +14,15 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	2.0.2
+Version:	2.0.3
 Release:	0.1
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
 Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	299883ddd460336cfb613fd6d9bff989
+# Source0-md5:	443d2560ace95173a0d8ba465de493ef
 Source1:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.gz
-# Source1-md5:	a114daae0e276ee274ccd558e42e13f0
+# Source1-md5:	dce3aed621b9e4abee51cc89aebf4a58
 Source2:	http://dl.sourceforge.net/bacula/%{name}-rescue-2.0.0.tar.gz
 # Source2-md5:	4a21381f16355193771a34fc2eb4e806
 Source10:	%{name}-dir.init
@@ -694,7 +694,7 @@ fi
 %files dir
 %defattr(644,root,root,755)
 %doc ChangeLog CheckList ReleaseNotes kernstodo LICENSE
-%doc examples %{name}-docs-%{version}/manual/{*.pdf,bacula}
+#%doc examples %{name}-docs-%{version}/manual/{*.pdf,bacula}
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bacula-dir.conf
 %ghost %{_sysconfdir}/.pw.sed
 %attr(640,root,root) %config(noreplace) /etc/logrotate.d/bacula-dir
