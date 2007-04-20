@@ -6,10 +6,17 @@
 # Conditional build:
 %bcond_without	console_wx	# wx-console program
 %bcond_without	gnome		# gnome-console program
+%bcond_without	mysql		# use mysql
 %bcond_with	python
 %bcond_with	rescue
+%bcond_with	sqlite		# use sqlite
 %bcond_with	sqlite3		# use sqlite3 insted sqlite
 %bcond_with	sqlite3_sync_off	# makes sqlite3 backend much faster, but less reliable
+%if %{with mysql}
+%undefine       with_sqlite
+%undefine       with_sqlite3
+%undefine       with_sqlite3_sync_off
+%endif
 #
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
@@ -61,11 +68,9 @@ BuildRequires:	python-static
 BuildRequires:	readline-devel
 BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	sed >= 4.0
-%if %{with sqlite3}
-BuildRequires:	sqlite3-devel
-%else
-BuildRequires:	sqlite-devel
-%endif
+%{?with_sqlite3:BuildRequires:  sqlite3-devel}
+%{?with_sqlite:BuildRequires:  sqlite-devel}
+%{?with_mysql:BuildRequires:  mysql-devel}
 %if %{with console_wx}
 BuildRequires:	wxGTK2-unicode-devel >= 2.4.0
 %endif
@@ -411,7 +416,9 @@ CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
 	--with-smtp-host=localhost \
 	--with-pid-dir=/var/run \
 	--with-subsys-dir=/var/lock/subsys \
-	--with-sqlite%{?with_sqlite3:3} \
+	%{?with_mysql:--with-mysql} \
+	%{?with_sqlite:--with-sqlite} \
+	%{?with_sqlite3:--with-sqlite3} \
 	%{?with_sqlite3_sync_off:--enable-extra-sqlite3-init="pragma synchronous=0;"} \
 	--with-dir-password="#FAKE-dir-password#" \
 	--with-fd-password="#FAKE-fd-password#" \
@@ -537,7 +544,8 @@ elif [ "$DB_VER" -lt "9" ]; then
 		if [ "$DB_VER" -lt "9" ]; then
 			%{_libexecdir}/%{name}/update_${type}_tables_8_to_9
 		fi
-	%else
+	%endif
+	%if %{with sqlite}
 		type=sqlite
 		if [ "$DB_VER" -lt "9" ]; then
 			if [ "$DB_VER" -lt "8" ]; then
@@ -714,13 +722,22 @@ fi
 %attr(755,root,root) %{_libexecdir}/%{name}/grant_sqlite3_privileges
 %attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite3_*
-%else
+%endif
+%if %{with sqlite}
 %attr(755,root,root) %{_libexecdir}/%{name}/create_sqlite_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_sqlite_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_sqlite_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/grant_sqlite_privileges
 %attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite_*
+%endif
+%if %{with mysql}
+%attr(755,root,root) %{_libexecdir}/%{name}/create_mysql_database
+%attr(755,root,root) %{_libexecdir}/%{name}/drop_mysql_database
+%attr(755,root,root) %{_libexecdir}/%{name}/drop_mysql_tables
+%attr(755,root,root) %{_libexecdir}/%{name}/grant_mysql_privileges
+%attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_tables
+%attr(755,root,root) %{_libexecdir}/%{name}/update_mysql_*
 %endif
 %attr(755,root,root) %{_libexecdir}/%{name}/create_bacula_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_bacula_database
