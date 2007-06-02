@@ -6,10 +6,10 @@
 # Conditional build:
 %bcond_without	console_wx	# wx-console program
 %bcond_without	gnome		# gnome-console program
-%bcond_without	mysql		# use mysql
+%bcond_without	sqlite		# use sqlite
+%bcond_with	mysql		# use mysql
 %bcond_with	python
 %bcond_with	rescue
-%bcond_with	sqlite		# use sqlite
 %bcond_with	sqlite3		# use sqlite3 insted sqlite
 %bcond_with	sqlite3_sync_off	# makes sqlite3 backend much faster, but less reliable
 %if %{with mysql}
