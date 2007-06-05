@@ -8,13 +8,31 @@
 %bcond_without	gnome		# gnome-console program
 %bcond_without	sqlite		# use sqlite
 %bcond_with	mysql		# use mysql
+%bcond_with	pgsql		# use PostgreSQL
 %bcond_with	python
 %bcond_with	rescue
 %bcond_with	sqlite3		# use sqlite3 insted sqlite
 %bcond_with	sqlite3_sync_off	# makes sqlite3 backend much faster, but less reliable
-%if %{with mysql}
+%if %{with sqlite}
+%define		_database	sqlite
+%endif
+%if %{with sqlite3}
+%define		_database	sqlite3
+%undefine       with_sqlite
+%undefine       with_mysql
+%undefine       with_pgsql
+%endif
+%if %{with pgsql}
+%define		_database	postgresql
 %undefine       with_sqlite
 %undefine       with_sqlite3
+%undefine       with_mysql
+%endif
+%if %{with mysql}
+%define		_database	mysql
+%undefine       with_sqlite
+%undefine       with_sqlite3
+%undefine       with_pgsql
 %undefine       with_sqlite3_sync_off
 %endif
 #
@@ -71,6 +89,7 @@ BuildRequires:	sed >= 4.0
 %{?with_sqlite3:BuildRequires:  sqlite3-devel}
 %{?with_sqlite:BuildRequires:  sqlite-devel}
 %{?with_mysql:BuildRequires:  mysql-devel}
+%{?with_pgsql:BuildRequires:  postgresql-devel}
 %if %{with console_wx}
 BuildRequires:	wxGTK2-unicode-devel >= 2.4.0
 %endif
@@ -183,7 +202,7 @@ i bazą danych wolumenów dla wszystkich kopiowanych plików. Usługi
 katalogowe umożliwiają administratorowi lub użytkownikowi szybko
 zlokalizować i odtworzyć dowolny plik, ponieważ utrzymują rekord ze
 wszystkimi używanymi wolumenami, uruchomionymi zadaniami i zapisanymi
-plikami. Pakiet wymaga sqlite%{?with_sqlite3:3} zainstalowanego oddzielnie jako bazy
+plikami. Pakiet wymaga %{_database} zainstalowanego oddzielnie jako bazy
 danych dla katalogu.
 
 %package console
@@ -416,9 +435,7 @@ CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
 	--with-smtp-host=localhost \
 	--with-pid-dir=/var/run \
 	--with-subsys-dir=/var/lock/subsys \
-	%{?with_mysql:--with-mysql} \
-	%{?with_sqlite:--with-sqlite} \
-	%{?with_sqlite3:--with-sqlite3} \
+	--with-%{_database} \
 	%{?with_sqlite3_sync_off:--enable-extra-sqlite3-init="pragma synchronous=0;"} \
 	--with-dir-password="#FAKE-dir-password#" \
 	--with-fd-password="#FAKE-fd-password#" \
@@ -738,6 +755,14 @@ fi
 %attr(755,root,root) %{_libexecdir}/%{name}/grant_mysql_privileges
 %attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_mysql_*
+%endif
+%if %{with pgsql}
+%attr(755,root,root) %{_libexecdir}/%{name}/create_postgresql_database
+%attr(755,root,root) %{_libexecdir}/%{name}/drop_postgresql_database
+%attr(755,root,root) %{_libexecdir}/%{name}/drop_postgresql_tables
+%attr(755,root,root) %{_libexecdir}/%{name}/grant_postgresql_privileges
+%attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_tables
+%attr(755,root,root) %{_libexecdir}/%{name}/update_postgresql_*
 %endif
 %attr(755,root,root) %{_libexecdir}/%{name}/create_bacula_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_bacula_database
