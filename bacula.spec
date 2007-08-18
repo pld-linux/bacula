@@ -39,17 +39,17 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	2.0.3
+Version:	2.2.0
 Release:	0.1
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
 Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	443d2560ace95173a0d8ba465de493ef
-Source1:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.gz
-# Source1-md5:	dce3aed621b9e4abee51cc89aebf4a58
-Source2:	http://dl.sourceforge.net/bacula/%{name}-rescue-2.0.0.tar.gz
-# Source2-md5:	4a21381f16355193771a34fc2eb4e806
+# Source0-md5:	bdd2320f1adc03c552598b14443a4d3d
+Source1:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.bz2
+# Source1-md5:	f8599e55a4ec67f9d6f8296d61ba15d5
+Source2:	http://dl.sourceforge.net/bacula/%{name}-rescue-2.2.0.tar.gz
+# Source2-md5:	cb651b7341e6afc72f36671d7e1d5c2a
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
@@ -404,9 +404,9 @@ danego systemu, należy ponownie uruchomić ./getdiskinfo .
 %setup -q -a 1
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
+#%patch2 -p1
+#%patch3 -p1
+#%patch4 -p1
 
 tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
 sed -i -e 's#wx-config#wx-gtk2-unicode-config#g' configure*
@@ -443,7 +443,6 @@ CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
 	--with-mon-dir-password="#FAKE-mon-dir-password#" \
 	--with-mon-fd-password="#FAKE-mon-fd-password#" \
 	--with-mon-sd-password="#FAKE-mon-sd-password#" \
-	--enable-static-fd \
 	--with-openssl
 %{__make}
 
@@ -466,8 +465,8 @@ install -d $RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir},%{_mandir},%{_bindir}}
 	DESTDIR=$RPM_BUILD_ROOT
 
 # static daemon
-strip -R.comment -R.note src/filed/static-bacula-fd
-install src/filed/static-bacula-fd $RPM_BUILD_ROOT%{_sysconfdir}/rescue/bacula-fd
+#strip -R.comment -R.note src/filed/static-bacula-fd
+#install src/filed/static-bacula-fd $RPM_BUILD_ROOT%{_sysconfdir}/rescue/bacula-fd
 
 install %{SOURCE10} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-dir
 install %{SOURCE11} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-fd
