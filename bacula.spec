@@ -39,17 +39,17 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	2.2.0
+Version:	2.2.2
 Release:	0.1
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
 Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	bdd2320f1adc03c552598b14443a4d3d
+# Source0-md5:	7d21d14d8411949383b2cfd58dbb9f26
 Source1:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.bz2
-# Source1-md5:	f8599e55a4ec67f9d6f8296d61ba15d5
-Source2:	http://dl.sourceforge.net/bacula/%{name}-rescue-2.2.0.tar.gz
-# Source2-md5:	cb651b7341e6afc72f36671d7e1d5c2a
+# Source1-md5:	cd3d6e4a425a2c4a9607a1597528add9
+Source2:	http://dl.sourceforge.net/bacula/%{name}-rescue-2.2.2.tar.gz
+# Source2-md5:	5d827dfc73c6307269173b5aa4fa49ce
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
@@ -83,6 +83,8 @@ BuildRequires:	pkgconfig
 %if %{with python}
 BuildRequires:	python-static
 %endif
+BuildRequires:	qwt-devel
+BuildRequires:	QtGui-devel
 BuildRequires:	readline-devel
 BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	sed >= 4.0
@@ -422,9 +424,10 @@ CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
 %configure \
 	--with-scriptdir=%{_libexecdir}/%{name} \
 	--%{!?with_gnome:dis}%{?with_gnome:en}able-gnome \
+	--enable-bat \
 	--disable-conio \
 	--enable-smartalloc \
-	%{?with_console_wx:--enable-wx-console} \
+	%{?with_console_wx:--enable-bwx-console} \
 	--enable-tray-monitor \
 	%{?with_python:--with-python} \
 	--with-readline \
@@ -817,9 +820,9 @@ fi
 %doc LICENSE
 %{_pixmapsdir}/%{name}.png
 %{_desktopdir}/bacula-wx.desktop
-%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/wx-console.conf
-%attr(755,root,root) %{_sbindir}/wx-console
-%{_mandir}/man1/bacula-wxconsole.1*
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bwx-console.conf
+%attr(755,root,root) %{_sbindir}/bwx-console
+%{_mandir}/man1/bacula-bwxconsole.1*
 %endif
 
 %if %{with gnome}
@@ -828,9 +831,9 @@ fi
 %doc LICENSE
 %{_pixmapsdir}/%{name}.png
 %{_desktopdir}/bacula.desktop
-%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/gnome-console.conf
-%attr(755,root,root) %{_sbindir}/gnome-console
-%{_mandir}/man1/bacula-console-gnome.1*
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bgnome-console.conf
+%attr(755,root,root) %{_sbindir}/bgnome-console
+%{_mandir}/man1/bacula-bgnome-console.1*
 %endif
 
 %if %{with console_wx}
