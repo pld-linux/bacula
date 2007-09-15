@@ -7,6 +7,7 @@
 %bcond_without	console_wx	# wx-console program
 %bcond_without	gnome		# gnome-console program
 %bcond_without	sqlite		# use sqlite
+%bcond_with	bat		# bat Qt4 GUI
 %bcond_with	mysql		# use mysql
 %bcond_with	pgsql		# use PostgreSQL
 %bcond_with	python
@@ -39,17 +40,17 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	2.2.2
+Version:	2.2.4
 Release:	0.1
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
 Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	7d21d14d8411949383b2cfd58dbb9f26
+# Source0-md5:	2e3bbac3bf8b6d4c0825997c3009f18f
 Source1:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.bz2
-# Source1-md5:	cd3d6e4a425a2c4a9607a1597528add9
-Source2:	http://dl.sourceforge.net/bacula/%{name}-rescue-2.2.2.tar.gz
-# Source2-md5:	5d827dfc73c6307269173b5aa4fa49ce
+# Source1-md5:	115f7276ad5dda8060ac0f9595372cef
+Source2:	http://dl.sourceforge.net/bacula/%{name}-rescue-2.2.4.tar.gz
+# Source2-md5:	a5416d1e9ebd13af8e53f35e4d77bc3e
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
@@ -83,8 +84,10 @@ BuildRequires:	pkgconfig
 %if %{with python}
 BuildRequires:	python-static
 %endif
+%if %{with bat}
 BuildRequires:	qwt-devel
 BuildRequires:	QtGui-devel
+%endif
 BuildRequires:	readline-devel
 BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	sed >= 4.0
@@ -424,7 +427,7 @@ CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
 %configure \
 	--with-scriptdir=%{_libexecdir}/%{name} \
 	--%{!?with_gnome:dis}%{?with_gnome:en}able-gnome \
-	--enable-bat \
+	%{?with_bat:--enable-bat} \
 	--disable-conio \
 	--enable-smartalloc \
 	%{?with_console_wx:--enable-bwx-console} \
