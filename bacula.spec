@@ -40,17 +40,17 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	2.2.4
-Release:	0.2
+Version:	2.2.5
+Release:	0.1
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
 Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	2e3bbac3bf8b6d4c0825997c3009f18f
+# Source0-md5:	175a796b96c28fc28cbedb1dc881826f
 Source1:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.bz2
-# Source1-md5:	115f7276ad5dda8060ac0f9595372cef
-Source2:	http://dl.sourceforge.net/bacula/%{name}-rescue-2.2.4.tar.gz
-# Source2-md5:	a5416d1e9ebd13af8e53f35e4d77bc3e
+# Source1-md5:	578e4221afd009d711f1430e392823d6
+Source2:	http://dl.sourceforge.net/bacula/%{name}-rescue-%{version}.tar.gz
+# Source2-md5:	266e3e814482c2c33e071607cb25d38f
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
@@ -63,17 +63,6 @@ Patch1:		%{name}-link.patch
 Patch2:		%{name}-compile.patch
 Patch3:		%{name}-wx28.patch
 Patch4:		%{name}-sqlite3_init_query.patch
-
-Patch10:	%{name}-2.2.4-ansi-label.patch
-Patch11:	%{name}-2.2.4-lost-block.patch
-Patch12:	%{name}-2.2.4-parse-command.patch
-Patch13:	%{name}-2.2.4-poll-mount.patch
-Patch14:	%{name}-2.2.4-replace.patch
-Patch15:	%{name}-2.2.4-restore.patch
-Patch16:	%{name}-2.2.4-sd-auth-fail.patch
-Patch17:	%{name}-2.2.4-sql.patch
-Patch18:	%{name}-2.2.4-verify.patch
-
 URL:		http://www.bacula.org/
 BuildRequires:	acl-static
 BuildRequires:	automake
@@ -423,17 +412,6 @@ danego systemu, należy ponownie uruchomić ./getdiskinfo .
 #%patch2 -p1
 #%patch3 -p1
 #%patch4 -p1
-
-%patch10 -p0
-%patch11 -p0
-%patch12 -p0
-%patch13 -p0
-%patch14 -p0
-%patch15 -p0
-%patch16 -p0
-%patch17 -p0
-%patch18 -p0
-
 
 tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
 sed -i -e 's#wx-config#wx-gtk2-unicode-config#g' configure*
