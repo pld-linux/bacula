@@ -58,6 +58,11 @@ Source13:	%{name}.logrotate
 Source14:	%{name}-dir.sysconfig
 Source15:	%{name}-fd.sysconfig
 Source16:	%{name}-sd.sysconfig
+Patch100:	http://dl.sourceforge.net/bacula/2.2.5-deamon.patch
+Patch101:	http://dl.sourceforge.net/bacula/2.2.5-lastwritten.patch
+Patch102:	http://dl.sourceforge.net/bacula/2.2.5-nextvol.patch
+Patch103:	http://dl.sourceforge.net/bacula/2.2.5-postgresql-errors.patch
+Patch104:	http://dl.sourceforge.net/bacula/2.2.5-tray-monitor.patch
 Patch0:		%{name}-dvd-handler_path.patch
 Patch1:		%{name}-link.patch
 Patch2:		%{name}-compile.patch
@@ -430,6 +435,12 @@ danego systemu, należy ponownie uruchomić ./getdiskinfo .
 
 %prep
 %setup -q -a 1
+%patch100 -p0
+%patch101 -p0
+%patch102 -p0
+%patch103 -p0
+%patch104 -p0
+
 %patch0 -p1
 %patch1 -p1
 #%patch2 -p1
