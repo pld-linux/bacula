@@ -7,7 +7,7 @@
 %bcond_without	console_wx	# wx-console program
 %bcond_without	gnome		# gnome-console program
 %bcond_without	sqlite		# use sqlite
-%bcond_with	bat		# bat Qt4 GUI
+%bcond_without	bat		# bat Qt4 GUI
 %bcond_with	mysql		# use mysql
 %bcond_with	pgsql		# use PostgreSQL
 %bcond_with	python
@@ -85,7 +85,9 @@ BuildRequires:	pkgconfig
 BuildRequires:	python-static
 %endif
 %if %{with bat}
-BuildRequires:	qwt-devel
+BuildRequires:	qt4-qmake
+BuildRequires:	qwt-devel >= 5.0.2-2
+BuildRequires:	QtCore-devel
 BuildRequires:	QtGui-devel
 %endif
 BuildRequires:	readline-devel
@@ -275,6 +277,27 @@ Bacula Console to program umożliwiający administratorowi lub
 użytkownikowi komunikowanie się z programem Bacula Director. To jest
 interfejs graficzny oparty na GNOME.
 
+%package console-qt4
+Summary:	Bacula QT4 Console
+Summary(pl.UTF-8):	Konsola Baculi oparta na QT4
+Group:		Networking/Utilities
+Requires(post):	sed >= 4.0
+Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+
+%description console-qt4
+Bacula - It comes by night and sucks the vital essence from your
+computers.
+
+Bacula Console is the program that allows the administrator or user to
+communicate with the Bacula Director. This is the QT4 GUI interface.
+
+%description console-qt4 -l pl.UTF-8
+Bacula - przychodzi nocą i wysysa żywotny ekstrakt z komputerów.
+
+Bacula Console to program umożliwiający administratorowi lub
+użytkownikowi komunikowanie się z programem Bacula Director. To jest
+interfejs graficzny oparty na QT4.
+
 %package tray-monitor
 Summary:	Bacula Tray Monitor
 Group:		Networking/Utilities
@@ -450,6 +473,13 @@ CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
 	--with-mon-fd-password="#FAKE-mon-fd-password#" \
 	--with-mon-sd-password="#FAKE-mon-sd-password#" \
 	--with-openssl
+
+%if %{with bat}
+cd src/qt-console
+qt4-qmake bat.pro
+cd ../..
+%endif
+
 %{__make}
 
 %if %{with rescue}
@@ -493,6 +523,11 @@ sed -e 's/gnome-console/wx-console/g;s/Console/Wx Console/g' \
 	scripts/bacula.desktop.gnome2 > $RPM_BUILD_ROOT%{_desktopdir}/bacula-wx.desktop
 sed -e 's#%{_sbindir}#%{_bindir}#' \
 	scripts/bacula-tray-monitor.desktop > $RPM_BUILD_ROOT%{_desktopdir}/bacula-tray-monitor.desktop
+%endif
+
+%if %{with bat}
+install src/qt-console/bat $RPM_BUILD_ROOT%{_sbindir}
+install scripts/bat.desktop $RPM_BUILD_ROOT%{_desktopdir}
 %endif
 
 %if %{with rescue}
@@ -676,6 +711,15 @@ for f in *-password ; do
 done
 sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew 2>/dev/null || :
 
+%post console-qt4
+echo "Updating Bacula passwords and names..."
+cd /etc/bacula
+for f in *-password ; do
+	p=`cat $f`
+	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew 2>/dev/null || :
+done
+sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew 2>/dev/null || :
+
 %post tray-monitor
 echo "Updating Bacula passwords and names..."
 cd /etc/bacula
@@ -837,6 +881,17 @@ fi
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bgnome-console.conf
 %attr(755,root,root) %{_sbindir}/bgnome-console
 %{_mandir}/man1/bacula-bgnome-console.1*
+%endif
+
+%if %{with bat}
+%files console-qt4
+%defattr(644,root,root,755)
+%doc LICENSE
+%{_pixmapsdir}/%{name}.png
+%{_desktopdir}/bat.desktop
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bat.conf
+%attr(755,root,root) %{_sbindir}/bat
+%{_mandir}/man1/bat.1*
 %endif
 
 %if %{with console_wx}
