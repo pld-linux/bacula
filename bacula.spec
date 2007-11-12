@@ -40,17 +40,17 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	2.2.5
+Version:	2.2.6
 Release:	1
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
 Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	175a796b96c28fc28cbedb1dc881826f
+# Source0-md5:	fe964931ab3fc538a8884204d23e8a5a
 Source1:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.bz2
-# Source1-md5:	578e4221afd009d711f1430e392823d6
+# Source1-md5:	a251dc0b5a2c8250b43e2ae372526de2
 Source2:	http://dl.sourceforge.net/bacula/%{name}-rescue-%{version}.tar.gz
-# Source2-md5:	266e3e814482c2c33e071607cb25d38f
+# Source2-md5:	51bc4b1e5d60593cb9f9aa80d31ad8e4
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
@@ -58,11 +58,6 @@ Source13:	%{name}.logrotate
 Source14:	%{name}-dir.sysconfig
 Source15:	%{name}-fd.sysconfig
 Source16:	%{name}-sd.sysconfig
-Patch100:	http://dl.sourceforge.net/bacula/2.2.5-deamon.patch
-Patch101:	http://dl.sourceforge.net/bacula/2.2.5-lastwritten.patch
-Patch102:	http://dl.sourceforge.net/bacula/2.2.5-nextvol.patch
-Patch103:	http://dl.sourceforge.net/bacula/2.2.5-postgresql-errors.patch
-Patch104:	http://dl.sourceforge.net/bacula/2.2.5-tray-monitor.patch
 Patch0:		%{name}-dvd-handler_path.patch
 Patch1:		%{name}-link.patch
 Patch2:		%{name}-compile.patch
@@ -435,11 +430,6 @@ danego systemu, należy ponownie uruchomić ./getdiskinfo .
 
 %prep
 %setup -q -a 1
-%patch100 -p0
-%patch101 -p0
-%patch102 -p0
-%patch103 -p0
-%patch104 -p0
 
 %patch0 -p1
 %patch1 -p1
