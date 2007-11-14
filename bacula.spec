@@ -85,6 +85,7 @@ BuildRequires:	pkgconfig
 BuildRequires:	python-static
 %endif
 %if %{with bat}
+BuildRequires:  qt4-build
 BuildRequires:	qt4-qmake
 BuildRequires:	qwt-devel >= 5.0.2-2
 BuildRequires:	QtCore-devel
