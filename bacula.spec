@@ -588,47 +588,43 @@ fi
 
 %post dir
 umask 077
+
+# XXX: Most of this upgrade procedure is safe for sqlite only. Other databases would require knowledge
+#      about currently used version so we can't easily support these :(
+
+if %{with sqlite} || %{with sqlite3}
 [ -s %{_localstatedir}/bacula.db ] && \
 	DB_VER=`echo "select * from Version;" | \
 	%{_bindir}/sqlite%{?with_sqlite3:3} %{_localstatedir}/bacula.db | tail -n 1 2>/dev/null`
+
 if [ -z "$DB_VER" ]; then
 # grant privileges and create tables
 	%{_libexecdir}/%{name}/grant_bacula_privileges > dev/null
 	%{_libexecdir}/%{name}/create_bacula_database > dev/null
 	%{_libexecdir}/%{name}/make_bacula_tables > dev/null
-elif [ "$DB_VER" -lt "9" ]; then
+else
 	echo "Backing up bacula tables"
 	echo ".dump" | sqlite%{?with_sqlite3:3} %{_localstatedir}/bacula.db | bzip2 > %{_localstatedir}/bacula_backup.sql.bz2
-	echo "Upgrading bacula tables"
-	%if %{with sqlite3}
-		type=sqlite3
-		if [ "$DB_VER" -lt "9" ]; then
-			%{_libexecdir}/%{name}/update_${type}_tables_8_to_9
+
+	db_type="%{_database}"
+
+	next_ver=$(($DB_VER + 1))
+	# support up to version 30; increase this if needed
+	for ver in $(seq $next_ver 30); do
+		prev_ver=$(($ver - 1))
+
+		if [ -x %{_libexecdir}/%{name}/update_${type}_tables_${prev_ver}_to_${ver} ]; then
+			echo "Upgrading bacula database: db=${db_type} from ${prev_ver} to ${ver}..."
+			%{_libexecdir}/%{name}/update_${type}_tables_${prev_ver}_to_${ver}
 		fi
-	%endif
-	%if %{with sqlite}
-		type=sqlite
-		if [ "$DB_VER" -lt "9" ]; then
-			if [ "$DB_VER" -lt "8" ]; then
-				if [ "$DB_VER" -lt "7" ]; then
-					if [ "$DB_VER" -lt "6" ]; then
-						if [ "$DB_VER" -lt "5" ]; then
-							%{_libexecdir}/%{name}/update_${type}_tables_4_to_5
-						fi
-						%{_libexecdir}/%{name}/update_${type}_tables_5_to_6
-					fi
-					%{_libexecdir}/%{name}/update_${type}_tables_6_to_7
-				fi
-				%{_libexecdir}/%{name}/update_${type}_tables_7_to_8
-			fi
-			%{_libexecdir}/%{name}/update_${type}_tables_8_to_9
-		fi
-	%endif
+	done
+
 	%{_libexecdir}/%{name}/update_bacula_tables
 	echo "If bacula works correctly you can remove the backup file %{_localstatedir}/bacula_backup.sql.bz2"
 fi
 chown -R bacula:bacula %{_localstatedir}
 chmod -R u+rX,go-rwx %{_localstatedir}/*
+%endif
 
 echo "Updating Bacula passwords and names..."
 cd /etc/bacula
