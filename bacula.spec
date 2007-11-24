@@ -771,7 +771,7 @@ fi
 %defattr(644,root,root,755)
 %doc ChangeLog CheckList ReleaseNotes kernstodo LICENSE
 #%doc examples %{name}-docs-%{version}/manual/{*.pdf,bacula}
-%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bacula-dir.conf
+%attr(640,root,bacula) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bacula-dir.conf
 %ghost %{_sysconfdir}/.pw.sed
 %attr(640,root,root) %config(noreplace) /etc/logrotate.d/bacula-dir
 %attr(754,root,root) /etc/rc.d/init.d/bacula-dir
