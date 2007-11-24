@@ -6,9 +6,9 @@
 # Conditional build:
 %bcond_without	console_wx	# wx-console program
 %bcond_without	gnome		# gnome-console program
-%bcond_without	sqlite		# use sqlite
+%bcond_with	sqlite		# use sqlite
 %bcond_without	bat		# bat Qt4 GUI
-%bcond_with	mysql		# use mysql
+%bcond_without	mysql		# use mysql
 %bcond_with	pgsql		# use PostgreSQL
 %bcond_with	python
 %bcond_with	rescue
@@ -41,7 +41,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	2.2.6
-Release:	1
+Release:	2
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
@@ -60,9 +60,8 @@ Source15:	%{name}-fd.sysconfig
 Source16:	%{name}-sd.sysconfig
 Patch0:		%{name}-dvd-handler_path.patch
 Patch1:		%{name}-link.patch
-Patch2:		%{name}-compile.patch
-Patch3:		%{name}-wx28.patch
-Patch4:		%{name}-sqlite3_init_query.patch
+Patch2:		%{name}-mysql.patch
+Patch3:		%{name}-tinfo-readline.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-static
 BuildRequires:	automake
@@ -434,13 +433,11 @@ danego systemu, należy ponownie uruchomić ./getdiskinfo .
 
 %patch0 -p1
 %patch1 -p1
-#%patch2 -p1
-#%patch3 -p1
-#%patch4 -p1
+%patch2 -p1
+%patch3 -p1
 
 tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
-sed -i -e 's#wx-config#wx-gtk2-unicode-config#g' configure*
-sed -i -e 's#-lreadline -lhistory -ltermcap#-lreadline -lhistory#g' configure*
+
 sed -i -e 's#bindir=.*#bindir=%{_bindir}#g' \
 	src/cats/create_* src/cats/delete_* src/cats/drop_* \
 	src/cats/grant_* src/cats/make_* src/cats/update_*
@@ -448,7 +445,11 @@ sed -i -e 's/@hostname@/--hostname--/' src/*/*.conf.in
 
 %build
 cp -f %{_datadir}/automake/config.sub autoconf
+cd autoconf && %{__aclocal} -I bacula-macros -I gettext-macros && cd ..
+%{__autoconf} --prepend-include=$(pwd)/autoconf autoconf/configure.in > configure
+
 CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
+WXCONFIG=%{_bindir}/wx-gtk2-unicode-config \
 %configure \
 	--with-scriptdir=%{_libexecdir}/%{name} \
 	--%{!?with_gnome:dis}%{?with_gnome:en}able-gnome \
@@ -466,6 +467,7 @@ CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
 	--with-smtp-host=localhost \
 	--with-pid-dir=/var/run \
 	--with-subsys-dir=/var/lock/subsys \
+	--enable-batch-insert \
 	--with-%{_database} \
 	%{?with_sqlite3_sync_off:--enable-extra-sqlite3-init="pragma synchronous=0;"} \
 	--with-dir-password="#FAKE-dir-password#" \
