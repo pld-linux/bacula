@@ -1,0 +1,21 @@
+diff -urN bacula-2.2.6.org/src/dird/bacula-dir.conf.in bacula-2.2.6/src/dird/bacula-dir.conf.in
+--- bacula-2.2.6.org/src/dird/bacula-dir.conf.in	2007-10-03 18:22:07.000000000 +0200
++++ bacula-2.2.6/src/dird/bacula-dir.conf.in	2007-11-24 22:44:44.660275104 +0100
+@@ -256,7 +256,7 @@
+ #          time to time as it will grow indefinitely. However, it will
+ #          also keep all your messages if they scroll off the console.
+ #
+-  append = "@working_dir@/log" = all, !skipped
++  append = "/var/log/bacula/log" = all, !skipped
+ }
+ 
+ 
+@@ -267,7 +267,7 @@
+   mailcommand = "@sbindir@/bsmtp -h @smtp_host@ -f \"\(Bacula\) \<%r\>\" -s \"Bacula daemon message\" %r"
+   mail = @job_email@ = all, !skipped            
+   console = all, !skipped, !saved
+-  append = "@working_dir@/log" = all, !skipped
++  append = "/var/log/bacula/log" = all, !skipped
+ }
+ 
+ 
