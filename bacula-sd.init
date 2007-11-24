@@ -32,7 +32,7 @@ stop() {
 		msg_stopping "Bacula Storage"
 		killproc /usr/sbin/bacula-sd
 		RETVAL=$?
-		[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/bacula-sd
+		rm -f /var/lock/subsys/bacula-sd
 	else
 		msg_not_running "Bacula Storage"
 	fi

@@ -32,7 +32,7 @@ stop() {
 		msg_stopping "Bacula File"
 		killproc /usr/sbin/bacula-fd
 		RETVAL=$?
-		[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/bacula-fd
+		rm -f /var/lock/subsys/bacula-fd
 	else
 		msg_not_running "Bacula File"
 	fi

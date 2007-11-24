@@ -28,7 +28,7 @@ stop() {
 		msg_stopping "Bacula Director"
 		killproc /usr/sbin/bacula-dir
 		RETVAL=$?
-		[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/bacula-dir
+		rm -f /var/lock/subsys/bacula-dir
 	else
 		msg_not_running "Bacula Director"
 	fi
