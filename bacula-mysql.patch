@@ -1,6 +1,6 @@
 diff -ur bacula-2.2.6.org/autoconf/bacula-macros/db.m4 bacula-2.2.6/autoconf/bacula-macros/db.m4
 --- bacula-2.2.6.org/autoconf/bacula-macros/db.m4	2007-08-30 18:19:42.000000000 +0200
-+++ bacula-2.2.6/autoconf/bacula-macros/db.m4	2007-11-24 18:53:10.171719209 +0100
++++ bacula-2.2.6/autoconf/bacula-macros/db.m4	2007-11-24 18:59:45.582166513 +0100
 @@ -21,12 +21,9 @@
                     MYSQL_BINDIR=/usr/local/mysql/bin
             elif test -f /usr/include/mysql/mysql.h; then
@@ -17,16 +17,16 @@ diff -ur bacula-2.2.6.org/autoconf/bacula-macros/db.m4 bacula-2.2.6/autoconf/bac
                     else
                             MYSQL_LIBDIR=/usr/lib
                     fi
-@@ -97,8 +94,10 @@
+@@ -97,7 +94,11 @@
         AC_DEFINE(HAVE_THREAD_SAFE_MYSQL)
      fi
      SQL_BINDIR=$MYSQL_BINDIR
 -    SQL_LIB=$MYSQL_LIBDIR/libmysqlclient_r.a
--
-+    if test -f $MYSQL_LIBDIR/libmysqlclient_r.so; then
-+	SQL_LIB=$MYSQL_LIBDIR/libmysqlclient_r.so
-+    else
++    if test -f $MYSQL_LIBDIR/libmysqlclient_r.a; then
 +	SQL_LIB=$MYSQL_LIBDIR/libmysqlclient_r.a
++    else
++	SQL_LIB=$MYSQL_LIBDIR/libmysqlclient_r.so
++    fi
+ 
      AC_DEFINE(HAVE_MYSQL)
      AC_MSG_RESULT(yes)
-     db_found=yes
