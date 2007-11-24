@@ -1,0 +1,17 @@
+diff -urN bacula-2.2.6.org/autoconf/configure.in bacula-2.2.6/autoconf/configure.in
+--- bacula-2.2.6.org/autoconf/configure.in	2007-10-24 20:37:02.000000000 +0200
++++ bacula-2.2.6/autoconf/configure.in	2007-11-24 22:01:38.010721290 +0100
+@@ -2094,6 +2094,13 @@
+   ;;
+ esac  
+ 
++# force PLD branding
++DISTNAME="PLD/Linux"
++DISTVER=$(awk ' { print $1 " " $4  } ' /etc/pld-release 2> /dev/null)
++TAPEDRIVE="/dev/nst0"
++PSCMD="ps -e -o pid,command"
++
++
+ AC_SUBST(hostname)
+ 
+ LIBS="$PTHREAD_LIB $LIBS"
