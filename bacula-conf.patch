@@ -19,3 +19,14 @@ diff -urN bacula-2.2.6.org/src/dird/bacula-dir.conf.in bacula-2.2.6/src/dird/bac
  }
  
  
+diff -urN bacula-2.2.6.org/autoconf/configure.in bacula-2.2.6/autoconf/configure.in
+--- bacula-2.2.6.org/autoconf/configure.in	2007-10-24 20:37:02.000000000 +0200
++++ bacula-2.2.6/autoconf/configure.in	2007-11-24 22:54:17.646345227 +0100
+@@ -172,6 +172,7 @@
+     archivedir=${archivedir}
+ fi
+ archivedir=`eval echo ${archivedir}`
++[ -z "$archivedir" ] && archivedir=/tmp
+ 
+ # -------------------------------------------------------------------------
+ #  If the user has not set --mandir, we default to /usr/share/man
