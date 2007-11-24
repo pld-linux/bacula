@@ -41,7 +41,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	2.2.6
-Release:	2
+Release:	3
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
@@ -63,6 +63,7 @@ Patch1:		%{name}-link.patch
 Patch2:		%{name}-mysql.patch
 Patch3:		%{name}-tinfo-readline.patch
 Patch4:		%{name}-branding.patch
+Patch5:		%{name}-conf.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-static
 BuildRequires:	automake
@@ -437,6 +438,7 @@ danego systemu, należy ponownie uruchomić ./getdiskinfo .
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
 
@@ -501,7 +503,7 @@ rm -rf $RPM_BUILD_ROOT
 
 install -d $RPM_BUILD_ROOT/etc/{rc.d/init.d,logrotate.d,pam.d,sysconfig}
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/rescue
-install -d $RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir},%{_mandir},%{_bindir}}
+install -d $RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir},%{_mandir},%{_bindir},/var/log/bacula}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -543,6 +545,8 @@ install rescue/linux/floppy/*_* $RPM_BUILD_ROOT%{_sysconfdir}/rescue
 install rescue/linux/floppy/getdiskinfo $RPM_BUILD_ROOT%{_sysconfdir}/rescue
 install rescue/linux/floppy/sfdisk.bz2 $RPM_BUILD_ROOT%{_sysconfdir}/rescue
 %endif
+
+touch $RPM_BUILD_ROOT/var/log/bacula/log
 
 # install the updatedb scripts
 install updatedb/update_sqlite* $RPM_BUILD_ROOT%{_libexecdir}/%{name}
@@ -594,7 +598,7 @@ umask 077
 # XXX: Most of this upgrade procedure is safe for sqlite only. Other databases would require knowledge
 #      about currently used version so we can't easily support these :(
 
-if %{with sqlite} || %{with sqlite3}
+%if %{with sqlite} || %{with sqlite3}
 [ -s %{_localstatedir}/bacula.db ] && \
 	DB_VER=`echo "select * from Version;" | \
 	%{_bindir}/sqlite%{?with_sqlite3:3} %{_localstatedir}/bacula.db | tail -n 1 2>/dev/null`
@@ -766,6 +770,8 @@ fi
 %{_libexecdir}/%{name}/btraceback.dbx
 %{_libexecdir}/%{name}/btraceback.gdb
 %attr(770,root,bacula) %dir %{_localstatedir}
+%attr(750,bacula,logs) %dir /var/log/bacula
+%attr(640,bacula,logs) %ghost /var/log/bacula/log
 
 %files dir
 %defattr(644,root,root,755)
