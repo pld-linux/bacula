@@ -16,6 +16,8 @@
 %bcond_with	sqlite3_sync_off	# makes sqlite3 backend much faster, but less reliable
 %if %{with sqlite}
 %define		_database	sqlite
+%undefine       with_mysql
+%undefine       with_pgsql
 %endif
 %if %{with sqlite3}
 %define		_database	sqlite3
