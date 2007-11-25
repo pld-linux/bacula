@@ -842,7 +842,6 @@ fi
 %files sd
 %defattr(644,root,root,755)
 %doc LICENSE
-%dir %{_sysconfdir}
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bacula-sd.conf
 %attr(754,root,root) /etc/rc.d/init.d/bacula-sd
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/bacula-sd
