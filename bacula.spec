@@ -43,7 +43,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	2.2.6
-Release:	3
+Release:	4
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
@@ -66,6 +66,13 @@ Patch2:		%{name}-mysql.patch
 Patch3:		%{name}-tinfo-readline.patch
 Patch4:		%{name}-branding.patch
 Patch5:		%{name}-conf.patch
+Patch10:	2.2.6-add.patch
+Patch11:	2.2.6-dvdwrite_trialfix.patch
+Patch12:	2.2.6-queued-msg.patch
+Patch13:	2.2.6-backup-restore-socket.patch
+Patch14:	2.2.6-mac-build.patch
+Patch15:	2.2.6-status.patch
+
 URL:		http://www.bacula.org/
 BuildRequires:	acl-static
 BuildRequires:	automake
@@ -441,6 +448,13 @@ danego systemu, należy ponownie uruchomić ./getdiskinfo .
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+
+%patch10 -p0
+%patch11 -p0
+%patch12 -p0
+%patch13 -p0
+%patch14 -p0
+%patch15 -p0
 
 tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
 
