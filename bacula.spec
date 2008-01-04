@@ -289,8 +289,8 @@ użytkownikowi komunikowanie się z programem Bacula Director. To jest
 interfejs graficzny oparty na GNOME.
 
 %package console-qt4
-Summary:	Bacula QT4 Console
-Summary(pl.UTF-8):	Konsola Baculi oparta na QT4
+Summary:	Bacula Qt4 Console
+Summary(pl.UTF-8):	Konsola Baculi oparta na Qt4
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -300,14 +300,14 @@ Bacula - It comes by night and sucks the vital essence from your
 computers.
 
 Bacula Console is the program that allows the administrator or user to
-communicate with the Bacula Director. This is the QT4 GUI interface.
+communicate with the Bacula Director. This is the Qt4 GUI interface.
 
 %description console-qt4 -l pl.UTF-8
 Bacula - przychodzi nocą i wysysa żywotny ekstrakt z komputerów.
 
 Bacula Console to program umożliwiający administratorowi lub
 użytkownikowi komunikowanie się z programem Bacula Director. To jest
-interfejs graficzny oparty na QT4.
+interfejs graficzny oparty na Qt4.
 
 %package tray-monitor
 Summary:	Bacula Tray Monitor
