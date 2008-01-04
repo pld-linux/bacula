@@ -4,16 +4,16 @@
 #	- fix log file permissions
 #
 # Conditional build:
-%bcond_without	console_wx	# wx-console program
-%bcond_without	gnome		# gnome-console program
-%bcond_with	sqlite		# use sqlite
-%bcond_without	bat		# bat Qt4 GUI
-%bcond_without	mysql		# use mysql
-%bcond_with	pgsql		# use PostgreSQL
+%bcond_without	console_wx		# wx-console program
+%bcond_without	gnome			# gnome-console program
+%bcond_with	sqlite			# use SQLite
+%bcond_without	bat			# bat Qt4 GUI
+%bcond_without	mysql			# use MySQL
+%bcond_with	pgsql			# use PostgreSQL
 %bcond_with	python
 %bcond_with	rescue
-%bcond_with	sqlite3		# use sqlite3 insted sqlite
-%bcond_with	sqlite3_sync_off	# makes sqlite3 backend much faster, but less reliable
+%bcond_with	sqlite3			# use SQLite3 instead of SQLite 2
+%bcond_with	sqlite3_sync_off	# makes SQLite3 backend much faster, but less reliable
 %if %{with sqlite}
 %define		_database	sqlite
 %undefine       with_mysql
@@ -95,19 +95,19 @@ BuildRequires:	pkgconfig
 BuildRequires:	python-static
 %endif
 %if %{with bat}
-BuildRequires:  qt4-build
-BuildRequires:	qt4-qmake
-BuildRequires:	qwt-devel >= 5.0.2-2
 BuildRequires:	QtCore-devel
 BuildRequires:	QtGui-devel
+BuildRequires:	qt4-build
+BuildRequires:	qt4-qmake
+BuildRequires:	qwt-devel >= 5.0.2-2
 %endif
 BuildRequires:	readline-devel
 BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	sed >= 4.0
-%{?with_sqlite3:BuildRequires:  sqlite3-devel}
-%{?with_sqlite:BuildRequires:  sqlite-devel}
-%{?with_mysql:BuildRequires:  mysql-devel}
-%{?with_pgsql:BuildRequires:  postgresql-devel}
+%{?with_sqlite:BuildRequires:	sqlite-devel}
+%{?with_sqlite3:BuildRequires:	sqlite3-devel}
+%{?with_mysql:BuildRequires:	mysql-devel}
+%{?with_pgsql:BuildRequires:	postgresql-devel}
 %if %{with console_wx}
 BuildRequires:	wxGTK2-unicode-devel >= 2.4.0
 %endif
