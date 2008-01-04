@@ -97,8 +97,8 @@ BuildRequires:	python-static
 %if %{with bat}
 BuildRequires:	QtCore-devel
 BuildRequires:	QtGui-devel
-BuildRequires:	qt4-build
-BuildRequires:	qt4-qmake
+BuildRequires:	qt4-build >= 4.3.3-3
+BuildRequires:	qt4-qmake >= 4.3.3-3
 BuildRequires:	qwt-devel >= 5.0.2-2
 %endif
 BuildRequires:	readline-devel
@@ -500,7 +500,7 @@ WXCONFIG=%{_bindir}/wx-gtk2-unicode-config \
 
 %if %{with bat}
 cd src/qt-console
-qt4-qmake bat.pro
+qmake-qt4 bat.pro
 cd ../..
 %endif
 
