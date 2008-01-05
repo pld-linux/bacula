@@ -1,0 +1,58 @@
+--- bacula-2.2.6/autoconf/bacula-macros/db.m4.orig	2008-01-05 20:59:42.130439587 +0100
++++ bacula-2.2.6/autoconf/bacula-macros/db.m4	2008-01-05 20:58:25.513191191 +0100
+@@ -94,7 +94,7 @@
+        AC_DEFINE(HAVE_THREAD_SAFE_MYSQL)
+     fi
+     SQL_BINDIR=$MYSQL_BINDIR
+-    SQL_LIB=$MYSQL_LIBDIR/libmysqlclient_r.a
++    SQL_LIB=$MYSQL_LIBDIR/libmysqlclient_r.so
+ 
+     AC_DEFINE(HAVE_MYSQL)
+     AC_MSG_RESULT(yes)
+@@ -271,7 +271,7 @@
+      SQL_INCLUDE=-I$SQLITE_INCDIR
+      SQL_LFLAGS="-L$SQLITE_LIBDIR -lsqlite"
+      SQL_BINDIR=$SQLITE_BINDIR
+-     SQL_LIB=$SQLITE_LIBDIR/libsqlite.a
++     SQL_LIB=$SQLITE_LIBDIR/libsqlite.so
+ 
+      AC_DEFINE(HAVE_SQLITE)
+      AC_MSG_RESULT(yes)
+@@ -353,7 +353,7 @@
+      SQL_INCLUDE=-I$SQLITE_INCDIR
+      SQL_LFLAGS="-L$SQLITE_LIBDIR -lsqlite3"
+      SQL_BINDIR=$SQLITE_BINDIR
+-     SQL_LIB=$SQLITE_LIBDIR/libsqlite3.a
++     SQL_LIB=$SQLITE_LIBDIR/libsqlite3.so
+ 
+      AC_DEFINE(HAVE_SQLITE3)
+      AC_MSG_RESULT(yes)
+@@ -452,7 +452,7 @@
+       SQL_INCLUDE=-I$POSTGRESQL_INCDIR
+       SQL_LFLAGS=$POSTGRESQL_LFLAGS
+       SQL_BINDIR=$POSTGRESQL_BINDIR
+-      SQL_LIB=$POSTGRESQL_LIBDIR/libpq.a
++      SQL_LIB=$POSTGRESQL_LIBDIR/libpq.so
+ 
+       AC_DEFINE(HAVE_POSTGRESQL)
+       AC_MSG_RESULT(yes)
+--- bacula-2.2.6/autoconf/configure.in.orig	2008-01-05 20:47:52.624185000 +0100
++++ bacula-2.2.6/autoconf/configure.in	2008-01-05 20:59:28.983101104 +0100
+@@ -1331,7 +1331,7 @@
+ # enable batch attribute DB insert (default on)
+ # -------------------------------------------
+ support_batch_insert=no
+-A=`nm $SQL_LIB | grep pthread_mutex_lock`
++A=`objdump -tT $SQL_LIB 2>/dev/null| grep pthread_mutex_lock`
+ pkg=$?
+ if test $pkg = 0; then
+    support_batch_insert=yes
+@@ -1346,7 +1346,7 @@
+ 	
+ # Check if postgresql support batch mode	
+ if test x$DB_TYPE = xpostgresql; then
+-   A=`nm $SQL_LIB | grep PQputCopyData`
++   A=`objdump -tT $SQL_LIB 2>/dev/null| grep PQputCopyData`
+    pkg=$?
+    if test $pkg != 0; then
+       support_batch_insert=no
