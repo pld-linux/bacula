@@ -15,24 +15,24 @@
 %bcond_with	sqlite3			# use SQLite3 instead of SQLite 2
 %bcond_with	sqlite3_sync_off	# makes SQLite3 backend much faster, but less reliable
 %if %{with sqlite}
-%define		_database	sqlite
+%define		database	sqlite
 %undefine       with_mysql
 %undefine       with_pgsql
 %endif
 %if %{with sqlite3}
-%define		_database	sqlite3
+%define		database	sqlite3
 %undefine       with_sqlite
 %undefine       with_mysql
 %undefine       with_pgsql
 %endif
 %if %{with pgsql}
-%define		_database	postgresql
+%define		database	postgresql
 %undefine       with_sqlite
 %undefine       with_sqlite3
 %undefine       with_mysql
 %endif
 %if %{with mysql}
-%define		_database	mysql
+%define		database	mysql
 %undefine       with_sqlite
 %undefine       with_sqlite3
 %undefine       with_pgsql
@@ -205,7 +205,7 @@ maintaining the file indexes and volume databases for all files backed
 up. The Catalog services permit the System Administrator or user to
 quickly locate and restore any desired file, since it maintains a
 record of all Volumes used, all Jobs run, and all Files saved. This
-build requires sqlite%{?with_sqlite3:3} to be installed separately as the catalog
+build requires %{database} to be installed separately as the catalog
 database.
 
 %description dir -l pl.UTF-8
@@ -220,8 +220,8 @@ i bazą danych wolumenów dla wszystkich kopiowanych plików. Usługi
 katalogowe umożliwiają administratorowi lub użytkownikowi szybko
 zlokalizować i odtworzyć dowolny plik, ponieważ utrzymują rekord ze
 wszystkimi używanymi wolumenami, uruchomionymi zadaniami i zapisanymi
-plikami. Pakiet wymaga %{_database} zainstalowanego oddzielnie jako bazy
-danych dla katalogu.
+plikami. Pakiet wymaga %{database} zainstalowanego oddzielnie jako
+bazy danych dla katalogu.
 
 %package console
 Summary:	Bacula Console
@@ -488,7 +488,7 @@ WXCONFIG=%{_bindir}/wx-gtk2-unicode-config \
 	--with-pid-dir=/var/run \
 	--with-subsys-dir=/var/lock/subsys \
 	--enable-batch-insert \
-	--with-%{_database} \
+	--with-%{database} \
 	%{?with_sqlite3_sync_off:--enable-extra-sqlite3-init="pragma synchronous=0;"} \
 	--with-dir-password="#FAKE-dir-password#" \
 	--with-fd-password="#FAKE-fd-password#" \
@@ -628,7 +628,7 @@ else
 	echo "Backing up bacula tables"
 	echo ".dump" | sqlite%{?with_sqlite3:3} %{_localstatedir}/bacula.db | bzip2 > %{_localstatedir}/bacula_backup.sql.bz2
 
-	db_type="%{_database}"
+	db_type="%{database}"
 
 	next_ver=$(($DB_VER + 1))
 	# support up to version 30; increase this if needed
