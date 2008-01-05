@@ -17,16 +17,3 @@ diff -ur bacula-2.2.6.org/autoconf/bacula-macros/db.m4 bacula-2.2.6/autoconf/bac
                     else
                             MYSQL_LIBDIR=/usr/lib
                     fi
-@@ -97,7 +94,11 @@
-        AC_DEFINE(HAVE_THREAD_SAFE_MYSQL)
-     fi
-     SQL_BINDIR=$MYSQL_BINDIR
--    SQL_LIB=$MYSQL_LIBDIR/libmysqlclient_r.a
-+    if test -f $MYSQL_LIBDIR/libmysqlclient_r.a; then
-+	SQL_LIB=$MYSQL_LIBDIR/libmysqlclient_r.a
-+    else
-+	SQL_LIB=$MYSQL_LIBDIR/libmysqlclient_r.so
-+    fi
- 
-     AC_DEFINE(HAVE_MYSQL)
-     AC_MSG_RESULT(yes)
