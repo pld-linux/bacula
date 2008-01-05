@@ -66,6 +66,7 @@ Patch2:		%{name}-mysql.patch
 Patch3:		%{name}-tinfo-readline.patch
 Patch4:		%{name}-branding.patch
 Patch5:		%{name}-conf.patch
+Patch6:		%{name}-nostatic.patch
 Patch10:	2.2.6-add.patch
 Patch11:	2.2.6-dvdwrite_trialfix.patch
 Patch12:	2.2.6-queued-msg.patch
@@ -448,6 +449,7 @@ danego systemu, należy ponownie uruchomić ./getdiskinfo .
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %patch10 -p0
 %patch11 -p0
