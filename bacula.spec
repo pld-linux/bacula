@@ -42,17 +42,17 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	2.2.6
-Release:	4
+Version:	2.2.8
+Release:	1
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
 Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	fe964931ab3fc538a8884204d23e8a5a
+# Source0-md5:	4547d0bf9f976d5d9ea5f21a7bd078ee
 Source1:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.bz2
-# Source1-md5:	a251dc0b5a2c8250b43e2ae372526de2
+# Source1-md5:	9cc38ace92d52c7bebbbfc2ed5507b79
 Source2:	http://dl.sourceforge.net/bacula/%{name}-rescue-%{version}.tar.gz
-# Source2-md5:	51bc4b1e5d60593cb9f9aa80d31ad8e4
+# Source2-md5:	29f8c7455e901574e28d1b50f30995b4
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
@@ -67,12 +67,6 @@ Patch3:		%{name}-tinfo-readline.patch
 Patch4:		%{name}-branding.patch
 Patch5:		%{name}-conf.patch
 Patch6:		%{name}-nostatic.patch
-Patch10:	2.2.6-add.patch
-Patch11:	2.2.6-dvdwrite_trialfix.patch
-Patch12:	2.2.6-queued-msg.patch
-Patch13:	2.2.6-backup-restore-socket.patch
-Patch14:	2.2.6-mac-build.patch
-Patch15:	2.2.6-status.patch
 
 URL:		http://www.bacula.org/
 BuildRequires:	acl-static
@@ -450,13 +444,6 @@ danego systemu, należy ponownie uruchomić ./getdiskinfo .
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-
-%patch10 -p0
-%patch11 -p0
-%patch12 -p0
-%patch13 -p0
-%patch14 -p0
-%patch15 -p0
 
 tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
 
