@@ -43,7 +43,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	2.4.1
-Release:	1
+Release:	2
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
@@ -67,7 +67,9 @@ Patch3:		%{name}-tinfo-readline.patch
 Patch4:		%{name}-branding.patch
 Patch5:		%{name}-conf.patch
 Patch6:		%{name}-nostatic.patch
-
+Patch7:		%{name}-mount.patch
+Patch8:		%{name}-mysql-timeout.patch
+Patch9:		%{name}-sd-crash.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-static
 BuildRequires:	automake
@@ -96,13 +98,13 @@ BuildRequires:	qt4-build >= 4.3.3-3
 BuildRequires:	qt4-qmake >= 4.3.3-3
 BuildRequires:	qwt-devel >= 5.0.2-2
 %endif
+%{?with_mysql:BuildRequires:	mysql-devel}
+%{?with_pgsql:BuildRequires:	postgresql-devel}
 BuildRequires:	readline-devel
 BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	sed >= 4.0
 %{?with_sqlite:BuildRequires:	sqlite-devel}
 %{?with_sqlite3:BuildRequires:	sqlite3-devel}
-%{?with_mysql:BuildRequires:	mysql-devel}
-%{?with_pgsql:BuildRequires:	postgresql-devel}
 %if %{with console_wx}
 BuildRequires:	wxGTK2-unicode-devel >= 2.4.0
 %endif
@@ -444,6 +446,9 @@ danego systemu, należy ponownie uruchomić ./getdiskinfo .
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p0
+%patch8 -p0
+%patch9 -p0
 
 tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
 
