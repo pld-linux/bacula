@@ -42,17 +42,17 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	2.4.3
-Release:	3
+Version:	2.4.4
+Release:	1
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
 Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	6c61f730e896e6161d21d67efed55a5b
+# Source0-md5:	4eb6155b45611018af03002d37a2ffde
 Source1:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.bz2
-# Source1-md5:	630cdd353baa3bfbf847f78b03c99bc4
+# Source1-md5:	d9bb3e8ca8c9a4c741b83569c21a4806
 Source2:	http://dl.sourceforge.net/bacula/%{name}-rescue-%{version}.tar.gz
-# Source2-md5:	4f55418018384d181f9351be029e7be1
+# Source2-md5:	320f95575591d285c3192e58912322c4
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
@@ -67,9 +67,6 @@ Patch3:		%{name}-tinfo-readline.patch
 Patch4:		%{name}-branding.patch
 Patch5:		%{name}-conf.patch
 Patch6:		%{name}-nostatic.patch
-Patch7:		%{name}-2.4.3-update-slots.patch 
-Patch8:		%{name}-2.4.3-win32-runscript-unicode-path.patch
-Patch9:		%{name}-2.4.3-orphaned-jobs.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-static
 BuildRequires:	automake
@@ -446,9 +443,6 @@ danego systemu, należy ponownie uruchomić ./getdiskinfo .
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-%patch7 -p0
-%patch8 -p0
-%patch9 -p0
 
 tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
 
