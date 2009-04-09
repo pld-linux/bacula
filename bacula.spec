@@ -43,7 +43,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	2.4.4
-Release:	2
+Release:	3
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
@@ -67,6 +67,14 @@ Patch3:		%{name}-tinfo-readline.patch
 Patch4:		%{name}-branding.patch
 Patch5:		%{name}-conf.patch
 Patch6:		%{name}-nostatic.patch
+Patch7:		%{name}-2.4.4-bat-install.patch
+Patch8:		%{name}-2.4.4-fortify.patch
+Patch9:		%{name}-2.4.4-jobname-edit.patch
+Patch10:	%{name}-2.4.4-label-failure.patch
+Patch11:	%{name}-2.4.4-reload.patch
+Patch12:	%{name}-2.4.4-sd-deadlock.patch
+Patch13:	%{name}-2.4.4-time_t_64bit.patch
+Patch14:	%{name}-2.4.4-tray-sizing.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-static
 BuildRequires:	automake
@@ -443,6 +451,13 @@ danego systemu, należy ponownie uruchomić ./getdiskinfo .
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p0
+%patch8 -p0
+%patch9 -p0
+%patch10 -p0
+%patch11 -p0
+%patch12 -p0
+%patch13 -p0
 
 tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
 
