@@ -42,17 +42,17 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	2.4.4
-Release:	3
+Version:	3.0.0
+Release:	0.1
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
 Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	4eb6155b45611018af03002d37a2ffde
+# Source0-md5:	5ea5294c4f66f0d8ba1414f1ca9dc79b
 Source1:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.bz2
-# Source1-md5:	d9bb3e8ca8c9a4c741b83569c21a4806
+# Source1-md5:	2c3a1c6ba46b1371240a9b8d053fdf61
 Source2:	http://dl.sourceforge.net/bacula/%{name}-rescue-%{version}.tar.gz
-# Source2-md5:	320f95575591d285c3192e58912322c4
+# Source2-md5:	b31af264219f6e6a0985288d810d7bb6
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
@@ -67,14 +67,6 @@ Patch3:		%{name}-tinfo-readline.patch
 Patch4:		%{name}-branding.patch
 Patch5:		%{name}-conf.patch
 Patch6:		%{name}-nostatic.patch
-Patch7:		%{name}-2.4.4-bat-install.patch
-Patch8:		%{name}-2.4.4-fortify.patch
-Patch9:		%{name}-2.4.4-jobname-edit.patch
-Patch10:	%{name}-2.4.4-label-failure.patch
-Patch11:	%{name}-2.4.4-reload.patch
-Patch12:	%{name}-2.4.4-sd-deadlock.patch
-Patch13:	%{name}-2.4.4-time_t_64bit.patch
-Patch14:	%{name}-2.4.4-tray-sizing.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-static
 BuildRequires:	automake
@@ -444,20 +436,13 @@ danego systemu, należy ponownie uruchomić ./getdiskinfo .
 %prep
 %setup -q -a 1
 
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
+#%patch0 -p1
+#%patch1 -p1
+#%patch2 -p1
+#%patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
-%patch7 -p0
-%patch8 -p0
-%patch9 -p0
-%patch10 -p0
-%patch11 -p0
-%patch12 -p0
-%patch13 -p0
+#%patch6 -p1
 
 tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
 
