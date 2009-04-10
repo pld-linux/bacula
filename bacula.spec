@@ -767,6 +767,16 @@ fi
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/*-password
 %attr(755,root,root) %{_sbindir}/bsmtp
 %attr(755,root,root) %{_sbindir}/btraceback
+%attr(755,root,root) /%{_libdir}/libbac.so.1.*.*
+%attr(755,root,root) %ghost /%{_libdir}/libbac.so.1
+%attr(755,root,root) /%{_libdir}/libbaccfg.so.1.*.*
+%attr(755,root,root) %ghost /%{_libdir}/libbaccfg.so.1
+%attr(755,root,root) /%{_libdir}/libbacfind.so.1.*.*
+%attr(755,root,root) %ghost /%{_libdir}/libbacfind.so.1
+%attr(755,root,root) /%{_libdir}/libbacpy.so.1.*.*
+%attr(755,root,root) %ghost /%{_libdir}/libbacpy.so.1
+%attr(755,root,root) /%{_libdir}/libbacsql.so.1.*.*
+%attr(755,root,root) %ghost /%{_libdir}/libbacsql.so.1
 %{_mandir}/man8/bacula.8*
 %{_mandir}/man1/bsmtp.1*
 %{_mandir}/man8/btraceback.8*
