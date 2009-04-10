@@ -1,7 +1,6 @@
-diff -urN bacula-2.2.6.org/autoconf/configure.in bacula-2.2.6/autoconf/configure.in
---- bacula-2.2.6.org/autoconf/configure.in	2007-10-24 20:37:02.000000000 +0200
-+++ bacula-2.2.6/autoconf/configure.in	2007-11-24 19:06:59.025825009 +0100
-@@ -574,9 +574,9 @@
+--- bacula-3.0.0/autoconf/configure.in.orig	2009-04-07 16:07:30.000000000 +0000
++++ bacula-3.0.0/autoconf/configure.in	2009-04-10 22:28:47.948114014 +0000
+@@ -776,9 +776,9 @@
  
  got_conio="no"
  if test x$support_conio = xyes; then
@@ -11,32 +10,33 @@ diff -urN bacula-2.2.6.org/autoconf/configure.in bacula-2.2.6/autoconf/configure
 +   AC_CHECK_HEADER(ncurses.h, 
 +     [ AC_CHECK_LIB(tinfo, tgetent, 
 +       [ CONS_LIBS="-ltinfo"
- 	 CONS_OBJ="conio.o"
- 	 CONS_SRC="conio.c"
- 	 got_conio="yes"
-@@ -646,7 +646,7 @@
- 	  fi
- 	  AC_CHECK_HEADER(${with_readline}/readline.h, 
- 	     [ AC_DEFINE(HAVE_READLINE, 1, [Set to enable readline support])
--	       CONS_LIBS="-lreadline -lhistory -ltermcap"
-+	       CONS_LIBS="-lreadline -lhistory"
- 	       got_readline="yes"   
- 	     ],
- 	     [ echo " "
-@@ -662,14 +662,14 @@
- 	 [ AC_DEFINE(HAVE_READLINE, 1, [Set to enable readline support])
- 	   got_readline="yes"
- 	   CONS_INC="-I/usr/include/readline"
--	   CONS_LIBS="-lreadline -ltermcap"
-+	   CONS_LIBS="-lreadline"
- 	 ], [
- 	   # Did not find standard library, so try Bacula's default
- 	    AC_CHECK_HEADER(${TOP_DIR}/depkgs/readline/readline.h, 
- 	      [ AC_DEFINE(HAVE_READLINE, 1, [Set to enable readline support])
- 		 got_readline="yes"   
- 		 CONS_INC="-I${TOP_DIR}/depkgs/readline"
--		 CONS_LIBS="-lreadline -lhistory -ltermcap"
-+		 CONS_LIBS="-lreadline -lhistory"
- 		 CONS_LDFLAGS="-L${TOP_DIR}/depkgs/readline"
- 		 PRTREADLINE_SRC="${TOP_DIR}/depkgs/readline"
- 	      ],
+     CONS_OBJ="conio.o"
+     CONS_SRC="conio.c"
+     got_conio="yes"
+@@ -854,7 +854,7 @@
+ 	     AC_CHECK_HEADER(${with_readline}/readline.h, 
+ 		[
+ 		    AC_DEFINE(HAVE_READLINE, 1, [Set to enable readline support])
+-		    CONS_LIBS="-lreadline -lhistory -ltermcap"
++		    CONS_LIBS="-lreadline -lhistory"
+ 		    got_readline="yes"	 
+ 		], [
+ 		    echo " "
+@@ -871,7 +871,7 @@
+ 		AC_DEFINE(HAVE_READLINE, 1, [Set to enable readline support])
+ 		got_readline="yes"
+ 		CONS_INC="-I/usr/include/readline"
+-		CONS_LIBS="-lreadline -ltermcap"
++		CONS_LIBS="-lreadline"
+ 	    ], [
+ 		dnl Did not find standard library, so try Bacula's default
+ 		AC_CHECK_HEADER(${TOP_DIR}/depkgs/readline/readline.h, 
+@@ -879,7 +879,7 @@
+ 			AC_DEFINE(HAVE_READLINE, 1, [Set to enable readline support])
+ 			got_readline="yes"   
+ 			CONS_INC="-I${TOP_DIR}/depkgs/readline"
+-			CONS_LIBS="-lreadline -lhistory -ltermcap"
++			CONS_LIBS="-lreadline -lhistory"
+ 			CONS_LDFLAGS="-L${TOP_DIR}/depkgs/readline"
+ 			PRTREADLINE_SRC="${TOP_DIR}/depkgs/readline"
+ 		    ], [
