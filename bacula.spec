@@ -43,7 +43,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	3.0.0
-Release:	0.1
+Release:	0.2
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
@@ -60,13 +60,11 @@ Source13:	%{name}.logrotate
 Source14:	%{name}-dir.sysconfig
 Source15:	%{name}-fd.sysconfig
 Source16:	%{name}-sd.sysconfig
-Patch0:		%{name}-dvd-handler_path.patch
+Patch0:		%{name}-mtx-changer.patch
 Patch1:		%{name}-link.patch
-Patch2:		%{name}-mysql.patch
-Patch3:		%{name}-tinfo-readline.patch
-Patch4:		%{name}-branding.patch
-Patch5:		%{name}-conf.patch
-Patch6:		%{name}-nostatic.patch
+Patch2:		%{name}-tinfo-readline.patch
+Patch3:		%{name}-branding.patch
+Patch4:		%{name}-conf.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-static
 BuildRequires:	automake
@@ -436,13 +434,11 @@ danego systemu, należy ponownie uruchomić ./getdiskinfo .
 %prep
 %setup -q -a 1
 
-#%patch0 -p1
+%patch0 -p1
 %patch1 -p1
-#%patch2 -p1
+%patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
-#%patch6 -p1
 
 tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
 
@@ -559,6 +555,8 @@ install updatedb/update_sqlite* $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 touch $RPM_BUILD_ROOT%{_sysconfdir}/{dir-password,fd-password,sd-password}
 touch $RPM_BUILD_ROOT%{_sysconfdir}/{mon-dir-password,mon-fd-password,mon-sd-password}
 
+install scripts/mtx-changer.conf $RPM_BUILD_ROOT%{_sysconfdir}/
+
 # some file changes
 rm -f $RPM_BUILD_ROOT%{_libexecdir}/%{name}/{gconsole,startmysql,stopmysql,bacula,bconsole,fd}
 rm -f $RPM_BUILD_ROOT%{_sbindir}/static-bacula-fd
@@ -575,6 +573,7 @@ rm -rf $RPM_BUILD_ROOT
 %useradd -P %{name}-common -u 136 -r -d /var/lib/bacula -s /bin/false -c "Bacula User" -g bacula bacula
 
 %post common
+/sbin/ldconfig
 echo "Updating bacula passwords and names..."
 cd /etc/bacula
 for f in *-password ; do
@@ -591,6 +590,7 @@ for cf in *.conf *.conf.rpmnew ; do
 done
 
 %postun common
+/sbin/ldconfig
 if [ "$1" = "0" ]; then
 	%userremove bacula
 	%groupremove bacula
@@ -857,6 +857,7 @@ fi
 %defattr(644,root,root,755)
 %doc LICENSE
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bacula-sd.conf
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/mtx-changer.conf
 %attr(754,root,root) /etc/rc.d/init.d/bacula-sd
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/bacula-sd
 %attr(755,root,root) %{_sbindir}/bacula-sd
