@@ -1,0 +1,11 @@
+--- bacula-3.0.0/scripts/mtx-changer.in.org	2009-04-15 15:10:55.507667883 +0000
++++ bacula-3.0.0/scripts/mtx-changer.in	2009-04-15 15:12:18.968782941 +0000
+@@ -47,7 +47,7 @@
+ #
+ 
+ # source our conf file
+-. @scriptdir@/mtx-changer.conf
++. /etc/bacula/mtx-changer.conf
+ 
+ MTX=@MTX@
+ 
