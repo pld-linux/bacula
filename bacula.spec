@@ -65,6 +65,7 @@ Patch1:		%{name}-link.patch
 Patch2:		%{name}-tinfo-readline.patch
 Patch3:		%{name}-branding.patch
 Patch4:		%{name}-conf.patch
+Patch5:		%{name}-desktop.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-static
 BuildRequires:	automake
@@ -433,12 +434,12 @@ danego systemu, należy ponownie uruchomić ./getdiskinfo .
 
 %prep
 %setup -q -a 1
-
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
 
