@@ -639,7 +639,7 @@ chmod -R u+rX,go-rwx %{_localstatedir}/*
 
 echo "Updating Bacula passwords and names..."
 cd /etc/bacula
-for f in *-password ; do
+for f in *-password; do
 	p=`cat $f`
 	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew 2>/dev/null || :
 done
@@ -657,7 +657,7 @@ fi
 %post fd
 echo "Updating Bacula passwords and names..."
 cd /etc/bacula
-for f in *-password ; do
+for f in *-password; do
 	p=`cat $f`
 	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew 2>/dev/null || :
 done
@@ -675,7 +675,7 @@ fi
 %post sd
 echo "Updating Bacula passwords and names..."
 cd /etc/bacula
-for f in *-password ; do
+for f in *-password; do
 	p=`cat $f`
 	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew 2>/dev/null || :
 done
@@ -698,7 +698,7 @@ fi
 %post console
 echo "Updating Bacula passwords and names..."
 cd /etc/bacula
-for f in *-password ; do
+for f in *-password; do
 	p=`cat $f`
 	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew 2>/dev/null || :
 done
@@ -707,7 +707,7 @@ sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew 2>/dev/null || :
 %post console-wx
 echo "Updating Bacula passwords and names..."
 cd /etc/bacula
-for f in *-password ; do
+for f in *-password; do
 	p=`cat $f`
 	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew 2>/dev/null || :
 done
@@ -716,7 +716,7 @@ sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew 2>/dev/null || :
 %post console-gnome
 echo "Updating Bacula passwords and names..."
 cd /etc/bacula
-for f in *-password ; do
+for f in *-password; do
 	p=`cat $f`
 	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew 2>/dev/null || :
 done
@@ -725,7 +725,7 @@ sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew 2>/dev/null || :
 %post console-qt4
 echo "Updating Bacula passwords and names..."
 cd /etc/bacula
-for f in *-password ; do
+for f in *-password; do
 	p=`cat $f`
 	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew 2>/dev/null || :
 done
@@ -734,7 +734,7 @@ sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew 2>/dev/null || :
 %post tray-monitor
 echo "Updating Bacula passwords and names..."
 cd /etc/bacula
-for f in *-password ; do
+for f in *-password; do
 	p=`cat $f`
 	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew 2>/dev/null || :
 done
@@ -912,7 +912,7 @@ fi
 %doc LICENSE
 %{_pixmapsdir}/%{name}.png
 %{_desktopdir}/bat.desktop
-%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bat.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bat.conf
 %attr(755,root,root) %{_sbindir}/bat
 %{_mandir}/man1/bat.1*
 %endif
