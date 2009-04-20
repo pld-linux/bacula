@@ -1,0 +1,37 @@
+--- bacula-3.0.0/autoconf/bacula-macros/db.m4.orig	2009-04-20 13:02:06.530168885 +0200
++++ bacula-3.0.0/autoconf/bacula-macros/db.m4	2009-04-20 13:05:42.299890921 +0200
+@@ -35,26 +35,18 @@
+            AC_MSG_RESULT(no)
+            AC_MSG_ERROR(Unable to find dbi.h in standard locations)
+         fi
+-        if test -d /usr/local/lib/dbd; then
++        if test -d /usr/local/lib64/dbd; then
++           DRIVERDIR=/usr/local/lib64/dbd
++        elif test -d /usr/local/lib/dbd; then
+            DRIVERDIR=/usr/local/lib/dbd
+-           if test -d /usr/local/lib64/dbd; then
+-              DRIVERDIR=/usr/local/lib64/dbd
+-           else
+-              DRIVERDIR=/usr/local/lib/dbd
+-           fi
++        elif test -d /usr/lib64/dbd; then
++           DRIVERDIR=/usr/lib64/dbd
+         elif test -d /usr/lib/dbd; then
+            DRIVERDIR=/usr/lib/dbd
+-           if test -d /usr/lib64/dbd; then
+-              DRIVERDIR=/usr/lib64/dbd
+-           else
+-              DRIVERDIR=/usr/lib/dbd
+-           fi
++        elif test -d $prefix/lib64/dbd; then
++           DRIVERDIR=$prefix/lib64/dbd
+         elif test -d $prefix/lib/dbd; then
+-           if test -d $prefix/lib64/dbd; then
+-              DRIVERDIR=$prefix/lib64/dbd
+-           else
+-              DRIVERDIR=$prefix/lib/dbd
+-           fi
++           DRIVERDIR=$prefix/lib/dbd
+         else
+            AC_MSG_RESULT(no)
+            AC_MSG_ERROR(Unable to find DBD drivers in standard locations)
