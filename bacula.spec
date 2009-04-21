@@ -6,36 +6,51 @@
 # Conditional build:
 %bcond_without	console_wx		# wx-console program
 %bcond_without	gnome			# gnome-console program
-%bcond_with	sqlite			# use SQLite
 %bcond_without	bat			# bat Qt4 GUI
-%bcond_without	mysql			# use MySQL
+%bcond_without	dbi			# use Database Independent Abstraction Layer (libdbi)
+%bcond_with	mysql			# use MySQL
 %bcond_with	pgsql			# use PostgreSQL
 %bcond_with	python
 %bcond_with	rescue
+%bcond_with	sqlite			# use SQLite
 %bcond_with	sqlite3			# use SQLite3 instead of SQLite 2
 %bcond_with	sqlite3_sync_off	# makes SQLite3 backend much faster, but less reliable
-%if %{with sqlite}
-%define		database	sqlite
+%if %{with dbi}
+%define		database	dbi
 %undefine       with_mysql
 %undefine       with_pgsql
+%undefine       with_sqlite
+%undefine       with_sqlite3
+%endif
+%if %{with sqlite}
+%define		database	sqlite
+%undefine       with_dbi
+%undefine       with_mysql
+%undefine       with_pgsql
+%undefine       with_sqlite3
 %endif
 %if %{with sqlite3}
 %define		database	sqlite3
-%undefine       with_sqlite
+%undefine       with_dbi
 %undefine       with_mysql
 %undefine       with_pgsql
+%undefine       with_sqlite
 %endif
 %if %{with pgsql}
 %define		database	postgresql
+%undefine       with_dbi
+%undefine       with_mysql
 %undefine       with_sqlite
 %undefine       with_sqlite3
-%undefine       with_mysql
 %endif
 %if %{with mysql}
 %define		database	mysql
+%undefine       with_dbi
+%undefine       with_pgsql
 %undefine       with_sqlite
 %undefine       with_sqlite3
-%undefine       with_pgsql
+%endif
+%if !%{with sqlite3}
 %undefine       with_sqlite3_sync_off
 %endif
 #
@@ -66,9 +81,11 @@ Patch2:		%{name}-tinfo-readline.patch
 Patch3:		%{name}-branding.patch
 Patch4:		%{name}-conf.patch
 Patch5:		%{name}-desktop.patch
+Patch6:		%{name}-64bitbuild_fix.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-static
 BuildRequires:	automake
+%{?with_dbi:BuildRequires:	libdbi-devel}
 %if %{with rescue}
 BuildRequires:	fakeroot
 %endif
@@ -197,9 +214,7 @@ services are comprised of the software programs responsible for
 maintaining the file indexes and volume databases for all files backed
 up. The Catalog services permit the System Administrator or user to
 quickly locate and restore any desired file, since it maintains a
-record of all Volumes used, all Jobs run, and all Files saved. This
-build requires %{database} to be installed separately as the catalog
-database.
+record of all Volumes used, all Jobs run, and all Files saved.
 
 %description dir -l pl.UTF-8
 Bacula - przychodzi nocą i wysysa żywotny ekstrakt z komputerów.
@@ -213,8 +228,7 @@ i bazą danych wolumenów dla wszystkich kopiowanych plików. Usługi
 katalogowe umożliwiają administratorowi lub użytkownikowi szybko
 zlokalizować i odtworzyć dowolny plik, ponieważ utrzymują rekord ze
 wszystkimi używanymi wolumenami, uruchomionymi zadaniami i zapisanymi
-plikami. Pakiet wymaga %{database} zainstalowanego oddzielnie jako
-bazy danych dla katalogu.
+plikami.
 
 %package console
 Summary:	Bacula Console
@@ -440,6 +454,7 @@ danego systemu, należy ponownie uruchomić ./getdiskinfo .
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
 
