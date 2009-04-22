@@ -58,7 +58,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	3.0.0
-Release:	0.2
+Release:	0.3
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
@@ -82,6 +82,7 @@ Patch3:		%{name}-branding.patch
 Patch4:		%{name}-conf.patch
 Patch5:		%{name}-desktop.patch
 Patch6:		%{name}-64bitbuild_fix.patch
+Patch7:		%{name}-dbi_fixes.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-static
 BuildRequires:	automake
@@ -455,6 +456,7 @@ danego systemu, należy ponownie uruchomić ./getdiskinfo .
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%{?with_dbi:%patch7 -p1}
 
 tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
 
@@ -462,6 +464,10 @@ sed -i -e 's#bindir=.*#bindir=%{_bindir}#g' \
 	src/cats/create_* src/cats/delete_* src/cats/drop_* \
 	src/cats/grant_* src/cats/make_* src/cats/update_*
 sed -i -e 's/@hostname@/--hostname--/' src/*/*.conf.in
+
+for dbtype in bdb mysql postgresql sqlite3 sqlite; do
+	sed -i -e "s,@DB_TYPE@,$dbtype,g" src/cats/*_${dbtype}_*
+done
 
 %build
 cp -f %{_datadir}/automake/config.sub autoconf
@@ -819,7 +825,15 @@ fi
 %{_mandir}/man8/bacula-dir.8*
 %{_mandir}/man8/dbcheck.8*
 %{_libexecdir}/%{name}/query.sql
-%if %{with sqlite3}
+%if %{with bdb} || %{with dbi}
+%attr(755,root,root) %{_libexecdir}/%{name}/create_bdb_database
+%attr(755,root,root) %{_libexecdir}/%{name}/drop_bdb_database
+%attr(755,root,root) %{_libexecdir}/%{name}/drop_bdb_tables
+%attr(755,root,root) %{_libexecdir}/%{name}/grant_bdb_privileges
+%attr(755,root,root) %{_libexecdir}/%{name}/make_bdb_tables
+%attr(755,root,root) %{_libexecdir}/%{name}/update_bdb_*
+%endif
+%if %{with sqlite3} || %{with dbi}
 %attr(755,root,root) %{_libexecdir}/%{name}/create_sqlite3_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_sqlite3_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_sqlite3_tables
@@ -827,7 +841,7 @@ fi
 %attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite3_*
 %endif
-%if %{with sqlite}
+%if %{with sqlite} || %{with dbi}
 %attr(755,root,root) %{_libexecdir}/%{name}/create_sqlite_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_sqlite_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_sqlite_tables
@@ -835,7 +849,7 @@ fi
 %attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite_*
 %endif
-%if %{with mysql}
+%if %{with mysql} || %{with dbi}
 %attr(755,root,root) %{_libexecdir}/%{name}/create_mysql_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_mysql_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_mysql_tables
@@ -843,20 +857,23 @@ fi
 %attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_mysql_*
 %endif
-%if %{with pgsql}
+%if %{with pgsql} || %{with dbi}
 %attr(755,root,root) %{_libexecdir}/%{name}/create_postgresql_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_postgresql_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_postgresql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/grant_postgresql_privileges
 %attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_postgresql_*
+%attr(755,root,root) %{_libexecdir}/%{name}/fix_postgresql_*
 %endif
+%if %{without dbi}
 %attr(755,root,root) %{_libexecdir}/%{name}/create_bacula_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_bacula_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_bacula_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/grant_bacula_privileges
 %attr(755,root,root) %{_libexecdir}/%{name}/make_bacula_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_bacula_tables
+%endif
 %attr(755,root,root) %{_libexecdir}/%{name}/make_catalog_backup
 %attr(755,root,root) %{_libexecdir}/%{name}/delete_catalog_backup
 
