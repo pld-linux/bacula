@@ -58,7 +58,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	3.0.0
-Release:	0.3
+Release:	0.4
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
@@ -465,9 +465,11 @@ sed -i -e 's#bindir=.*#bindir=%{_bindir}#g' \
 	src/cats/grant_* src/cats/make_* src/cats/update_*
 sed -i -e 's/@hostname@/--hostname--/' src/*/*.conf.in
 
+%if %{with dbi}
 for dbtype in bdb mysql postgresql sqlite3 sqlite; do
 	sed -i -e "s,@DB_TYPE@,$dbtype,g" src/cats/*_${dbtype}_*
 done
+%endif
 
 %build
 cp -f %{_datadir}/automake/config.sub autoconf
@@ -556,7 +558,7 @@ sed -e 's#%{_sbindir}#%{_bindir}#' \
 %endif
 
 %if %{with bat}
-install src/qt-console/bat $RPM_BUILD_ROOT%{_sbindir}
+install src/qt-console/.libs/bat $RPM_BUILD_ROOT%{_sbindir}
 install scripts/bat.desktop $RPM_BUILD_ROOT%{_desktopdir}
 %endif
 
