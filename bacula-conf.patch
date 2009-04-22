@@ -1,6 +1,16 @@
 diff -urN bacula-2.2.6.org/src/dird/bacula-dir.conf.in bacula-2.2.6/src/dird/bacula-dir.conf.in
 --- bacula-2.2.6.org/src/dird/bacula-dir.conf.in	2007-10-03 18:22:07.000000000 +0200
 +++ bacula-2.2.6/src/dird/bacula-dir.conf.in	2007-11-24 22:44:44.660275104 +0100
+@@ -231,8 +231,7 @@
+ # Generic catalog service
+ Catalog {
+   Name = MyCatalog
+-# Uncomment the following line if you want the dbi driver
+-@uncomment_dbi@ dbdriver = "dbi:@DB_TYPE@"; dbaddress = 127.0.0.1; dbport = @db_port@
++  dbdriver = "dbi:mysql"; dbaddress = 127.0.0.1; dbport = 3306
+   dbname = "@db_name@"; dbuser = "@db_user@"; dbpassword = "@db_password@"
+ }
+ 
 @@ -256,7 +256,7 @@
  #          time to time as it will grow indefinitely. However, it will
  #          also keep all your messages if they scroll off the console.
