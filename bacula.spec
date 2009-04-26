@@ -84,23 +84,18 @@ Patch5:		%{name}-desktop.patch
 Patch6:		%{name}-64bitbuild_fix.patch
 Patch7:		%{name}-dbi_fixes.patch
 URL:		http://www.bacula.org/
-BuildRequires:	acl-static
 BuildRequires:	automake
 %{?with_dbi:BuildRequires:	libdbi-devel}
 %if %{with rescue}
 BuildRequires:	fakeroot
 %endif
-BuildRequires:	glibc-static
 %if %{with gnome}
 BuildRequires:	libgnome-devel >= 2.0
 BuildRequires:	libgnomeui-devel >= 2.0
 %endif
-BuildRequires:	libstdc++-static
-BuildRequires:	libwrap-static
 BuildRequires:	mtx
 BuildRequires:	ncurses-devel
 BuildRequires:	openssl-devel
-BuildRequires:	openssl-static
 BuildRequires:	pkgconfig
 %if %{with python}
 BuildRequires:	python-static
@@ -123,7 +118,6 @@ BuildRequires:	sed >= 4.0
 BuildRequires:	wxGTK2-unicode-devel >= 2.4.0
 %endif
 BuildRequires:	zlib-devel
-BuildRequires:	zlib-static
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/%{name}
@@ -532,10 +526,6 @@ install -d $RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir},%{_mandir},%{_bindir},/
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-# static daemon
-#strip -R.comment -R.note src/filed/static-bacula-fd
-#install src/filed/static-bacula-fd $RPM_BUILD_ROOT%{_sysconfdir}/rescue/bacula-fd
-
 install %{SOURCE10} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-dir
 install %{SOURCE11} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-fd
 install %{SOURCE12} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-sd
@@ -583,7 +573,6 @@ install scripts/mtx-changer.conf $RPM_BUILD_ROOT%{_sysconfdir}/
 
 # some file changes
 rm -f $RPM_BUILD_ROOT%{_libexecdir}/%{name}/{gconsole,startmysql,stopmysql,bacula,bconsole,fd}
-rm -f $RPM_BUILD_ROOT%{_sbindir}/static-bacula-fd
 %if !%{with console_wx}
 rm -f $RPM_BUILD_ROOT%{_desktopdir}/bacula-wx.desktop
 %endif
