@@ -85,7 +85,7 @@ Patch6:		%{name}-64bitbuild_fix.patch
 Patch7:		%{name}-dbi_fixes.patch
 URL:		http://www.bacula.org/
 BuildRequires:	automake
-%{?with_dbi:BuildRequires:	libdbi-devel}
+%{?with_dbi:BuildRequires:	libdbi-devel >= 0.8.4}
 %if %{with rescue}
 BuildRequires:	fakeroot
 %endif
