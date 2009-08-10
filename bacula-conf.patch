@@ -17,8 +17,8 @@ diff -urN bacula-2.2.6.org/src/dird/bacula-dir.conf.in bacula-2.2.6/src/dird/bac
  #
 -  append = "@working_dir@/log" = all, !skipped
 +  append = "/var/log/bacula/log" = all, !skipped
+   catalog = all
  }
- 
  
 @@ -267,7 +267,7 @@
    mailcommand = "@sbindir@/bsmtp -h @smtp_host@ -f \"\(Bacula\) \<%r\>\" -s \"Bacula daemon message\" %r"

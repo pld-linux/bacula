@@ -57,17 +57,17 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	3.0.1
+Version:	3.0.2
 Release:	0.1
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
 Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	173ef4d07ff10dfdbcc1142d8be21f17
+# Source0-md5:	52f4bc25d8988dffcff429bb5e1ee81b
 Source1:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.bz2
-# Source1-md5:	5c8d0710eaaf439f4b78913915d45523
+# Source1-md5:	456ec1f95a4fad967fdb32609f9d2490
 Source2:	http://dl.sourceforge.net/bacula/%{name}-rescue-%{version}.tar.gz
-# Source2-md5:	bd0d340354e3308d423a3e965f53dda8
+# Source2-md5:	9cc1e8d2f1a93468c071bdafa343e710
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
@@ -855,7 +855,6 @@ fi
 %attr(755,root,root) %{_libexecdir}/%{name}/grant_postgresql_privileges
 %attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_postgresql_*
-%attr(755,root,root) %{_libexecdir}/%{name}/fix_postgresql_*
 %endif
 %if %{without dbi}
 %attr(755,root,root) %{_libexecdir}/%{name}/create_bacula_database
