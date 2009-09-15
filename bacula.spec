@@ -93,6 +93,7 @@ BuildRequires:	fakeroot
 BuildRequires:	libgnome-devel >= 2.0
 BuildRequires:	libgnomeui-devel >= 2.0
 %endif
+BuildRequires:	libwrap-devel
 BuildRequires:	mtx
 BuildRequires:	ncurses-devel
 BuildRequires:	openssl-devel
