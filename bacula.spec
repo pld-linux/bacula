@@ -2,6 +2,31 @@
 #	- update desktop files, think about su-wrappers for console
 #	- package web admin
 #	- fix log file permissions
+#   /usr/lib64/bacula/bacula-ctl-dir
+#   /usr/lib64/bacula/bacula-ctl-fd
+#   /usr/lib64/bacula/bacula-ctl-sd
+#   /usr/lib64/bacula/bacula_config
+#   /usr/lib64/bacula/update_sqlite_tables_10_to_11.in
+#   /usr/lib64/bacula/update_sqlite_tables_4_to_5
+#   /usr/lib64/bacula/update_sqlite_tables_5_to_6
+#   /usr/lib64/bacula/update_sqlite_tables_6_to_7
+#   /usr/lib64/bacula/update_sqlite_tables_7_to_8
+#   /usr/lib64/bacula/update_sqlite_tables_8_to_9
+#   /usr/lib64/bacula/update_sqlite_tables_9_to_10.in
+#   /usr/lib64/bpipe-fd.so
+#   /usr/lib64/libbac.la
+#   /usr/lib64/libbac.so
+#   /usr/lib64/libbaccfg.la
+#   /usr/lib64/libbaccfg.so
+#   /usr/lib64/libbacfind.la
+#   /usr/lib64/libbacfind.so
+#   /usr/lib64/libbacpy.la
+#   /usr/lib64/libbacpy.so
+#   /usr/lib64/libbacsql.la
+#   /usr/lib64/libbacsql.so
+#   /usr/sbin/bacula
+#   /usr/share/man/man1/bat.1.gz
+#
 #
 # Conditional build:
 %bcond_without	console_wx		# wx-console program
@@ -13,6 +38,7 @@
 %bcond_with	rescue
 %bcond_with	sqlite3			# use SQLite3 instead of SQLite 2
 %bcond_with	sqlite3_sync_off	# makes SQLite3 backend much faster, but less reliable
+
 %if %{with dbi}
 %define		database	dbi
 %undefine       with_mysql
@@ -37,7 +63,7 @@
 %undefine       with_pgsql
 %undefine       with_sqlite3
 %endif
-%if !%{with sqlite3}
+%if %{without sqlite3}
 %undefine       with_sqlite3_sync_off
 %endif
 #
@@ -533,14 +559,22 @@ install updatedb/update_sqlite* $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 touch $RPM_BUILD_ROOT%{_sysconfdir}/{dir-password,fd-password,sd-password}
 touch $RPM_BUILD_ROOT%{_sysconfdir}/{mon-dir-password,mon-fd-password,mon-sd-password}
 
-install scripts/mtx-changer.conf $RPM_BUILD_ROOT%{_sysconfdir}/
+mv $RPM_BUILD_ROOT%{_libdir}/bacula/mtx-changer.conf $RPM_BUILD_ROOT/etc/bacula/mtx-changer.conf
 
 # some file changes
 rm -f $RPM_BUILD_ROOT%{_libexecdir}/%{name}/{gconsole,startmysql,stopmysql,bacula,bconsole,fd}
-%if !%{with console_wx}
+%if %{without console_wx}
 rm -f $RPM_BUILD_ROOT%{_desktopdir}/bacula-wx.desktop
 %endif
 touch $RPM_BUILD_ROOT%{_sysconfdir}/.pw.sed
+
+rm $RPM_BUILD_ROOT%{_docdir}/bacula/ChangeLog
+rm $RPM_BUILD_ROOT%{_docdir}/bacula/INSTALL
+rm $RPM_BUILD_ROOT%{_docdir}/bacula/LICENSE
+rm $RPM_BUILD_ROOT%{_docdir}/bacula/README
+rm $RPM_BUILD_ROOT%{_docdir}/bacula/ReleaseNotes
+rm $RPM_BUILD_ROOT%{_docdir}/bacula/VERIFYING
+rm $RPM_BUILD_ROOT%{_docdir}/bacula/technotes
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -733,18 +767,13 @@ fi
 %doc LICENSE
 %dir %{_sysconfdir}
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/*-password
-%attr(755,root,root) %{_sbindir}/bsmtp
+#%attr(755,root,root) %{_sbindir}/bsmtp
 %attr(755,root,root) %{_sbindir}/btraceback
-%attr(755,root,root) /%{_libdir}/libbac.so.1.*.*
-%attr(755,root,root) %ghost /%{_libdir}/libbac.so.1
-%attr(755,root,root) /%{_libdir}/libbaccfg.so.1.*.*
-%attr(755,root,root) %ghost /%{_libdir}/libbaccfg.so.1
-%attr(755,root,root) /%{_libdir}/libbacfind.so.1.*.*
-%attr(755,root,root) %ghost /%{_libdir}/libbacfind.so.1
-%attr(755,root,root) /%{_libdir}/libbacpy.so.1.*.*
-%attr(755,root,root) %ghost /%{_libdir}/libbacpy.so.1
-%attr(755,root,root) /%{_libdir}/libbacsql.so.1.*.*
-%attr(755,root,root) %ghost /%{_libdir}/libbacsql.so.1
+%attr(755,root,root) /%{_libdir}/libbac-%{version}.so
+%attr(755,root,root) /%{_libdir}/libbaccfg-%{version}.so
+%attr(755,root,root) /%{_libdir}/libbacfind-%{version}.so
+%attr(755,root,root) /%{_libdir}/libbacpy-%{version}.so
+%attr(755,root,root) /%{_libdir}/libbacsql-%{version}.so
 %{_mandir}/man8/bacula.8*
 %{_mandir}/man1/bsmtp.1*
 %{_mandir}/man8/btraceback.8*
@@ -765,9 +794,9 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/bacula-dir
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/bacula-dir
 %attr(755,root,root) %{_sbindir}/bacula-dir
-%attr(755,root,root) %{_sbindir}/bregex
-%attr(755,root,root) %{_sbindir}/bwild
-%attr(755,root,root) %{_sbindir}/dbcheck
+#%attr(755,root,root) %{_sbindir}/bregex
+#%attr(755,root,root) %{_sbindir}/bwild
+#%attr(755,root,root) %{_sbindir}/dbcheck
 %{_mandir}/man8/bacula-dir.8*
 %{_mandir}/man8/dbcheck.8*
 %{_libexecdir}/%{name}/query.sql
@@ -811,8 +840,8 @@ fi
 %attr(755,root,root) %{_libexecdir}/%{name}/make_bacula_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_bacula_tables
 %endif
-%attr(755,root,root) %{_libexecdir}/%{name}/make_catalog_backup
-%attr(755,root,root) %{_libexecdir}/%{name}/delete_catalog_backup
+#%attr(755,root,root) %{_libexecdir}/%{name}/make_catalog_backup
+#%attr(755,root,root) %{_libexecdir}/%{name}/delete_catalog_backup
 
 %files fd
 %defattr(644,root,root,755)
@@ -879,8 +908,9 @@ fi
 %files tray-monitor
 %defattr(644,root,root,755)
 %doc LICENSE
-%{_pixmapsdir}/%{name}-tray-monitor.xpm
-%{_desktopdir}/%{name}-tray-monitor.desktop
+%attr(755,root,root) %{_sbindir}/bacula-tray-monitor
+#%{_pixmapsdir}/%{name}-tray-monitor.xpm
+#%{_desktopdir}/%{name}-tray-monitor.desktop
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/tray-monitor.conf
 %{_mandir}/man1/bacula-tray-monitor.1*
 %endif
