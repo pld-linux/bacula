@@ -2,6 +2,7 @@
 #	- update desktop files, think about su-wrappers for console
 #	- package web admin
 #	- fix log file permissions
+#warning: Installed (but unpackaged) file(s) found:
 #   /usr/lib64/bacula/bacula-ctl-dir
 #   /usr/lib64/bacula/bacula-ctl-fd
 #   /usr/lib64/bacula/bacula-ctl-sd
@@ -25,7 +26,18 @@
 #   /usr/lib64/libbacsql.la
 #   /usr/lib64/libbacsql.so
 #   /usr/sbin/bacula
-#   /usr/share/man/man1/bat.1.gz
+#   /usr/share/doc/bacula/html/clients.html
+#   /usr/share/doc/bacula/html/console.html
+#   /usr/share/doc/bacula/html/filesets.html
+#   /usr/share/doc/bacula/html/index.html
+#   /usr/share/doc/bacula/html/joblist.html
+#   /usr/share/doc/bacula/html/jobplot.html
+#   /usr/share/doc/bacula/html/jobs.html
+#   /usr/share/doc/bacula/html/mail-message-new.png
+#   /usr/share/doc/bacula/html/media.html
+#   /usr/share/doc/bacula/html/restore.html
+#   /usr/share/doc/bacula/html/status.png
+#   /usr/share/doc/bacula/html/storage.html
 #
 #
 # Conditional build:
@@ -492,7 +504,6 @@ WXCONFIG=%{_bindir}/wx-gtk2-unicode-config \
 
 %if %{with bat}
 cd src/qt-console
-%{__libtoolize}
 qmake-qt4 bat.pro
 cd ../..
 %endif
