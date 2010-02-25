@@ -1,9 +1,17 @@
---- bacula-3.0.0/scripts/mtx-changer.in.org	2009-04-15 15:10:55.507667883 +0000
-+++ bacula-3.0.0/scripts/mtx-changer.in	2009-04-15 15:12:18.968782941 +0000
-@@ -47,7 +47,7 @@
+--- bacula-5.0.1/scripts/mtx-changer.in~	2010-02-24 17:33:48.000000000 +0200
++++ bacula-5.0.1/scripts/mtx-changer.in	2010-02-25 11:49:14.545143118 +0200
+@@ -47,13 +47,13 @@
  #
  
  # source our conf file
+-if test ! -f @scriptdir@/mtx-changer.conf ; then
++if test ! -f /etc/bacula/mtx-changer.conf ; then
+   echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+-  echo "ERROR: @scriptdir@/mtx-changer.conf file not found!!!!"
++  echo "ERROR: /etc/bacula/mtx-changer.conf file not found!!!!"
+   echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+   exit 1
+ fi
 -. @scriptdir@/mtx-changer.conf
 +. /etc/bacula/mtx-changer.conf
  

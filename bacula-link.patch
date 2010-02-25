@@ -1,29 +1,29 @@
---- bacula-3.0.0/src/lib/Makefile.in_	2009-04-10 22:10:09.584897968 +0000
-+++ bacula-3.0.0/src/lib/Makefile.in	2009-04-10 22:11:28.661552416 +0000
-@@ -116,7 +116,7 @@
+--- bacula-5.0.1/src/lib/Makefile.in~	2010-02-24 17:33:48.000000000 +0200
++++ bacula-5.0.1/src/lib/Makefile.in	2010-02-25 11:57:20.038428596 +0200
+@@ -126,7 +126,7 @@
  
- libbac.la: Makefile $(LIBBAC_OBJS)
+ libbac.la: Makefile $(LIBBAC_LOBJS)
  	@echo "Making $@ ..."
--	$(LIBTOOL_LINK) $(CXX) $(DEFS) $(DEBUG) $(LDFLAGS) -o $@ $(LIBBAC_OBJS) -export-dynamic -rpath $(libdir) -version-info $(LIBBAC_LT_CURRENT):$(LIBBAC_LT_REVISION):$(LIBBAC_LT_AGE) $(WRAPLIBS)
-+	$(LIBTOOL_LINK) $(CXX) $(DEFS) $(DEBUG) $(LDFLAGS) -o $@ $(LIBBAC_OBJS) -export-dynamic -rpath $(libdir) -version-info $(LIBBAC_LT_CURRENT):$(LIBBAC_LT_REVISION):$(LIBBAC_LT_AGE) $(WRAPLIBS) $(OPENSSL_LIBS) $(LIBS)
+-	$(LIBTOOL_LINK) $(CXX) $(DEFS) $(DEBUG) $(LDFLAGS) -o $@ $(LIBBAC_LOBJS) -export-dynamic -rpath $(libdir) -release $(LIBBAC_LT_CURRENT).$(LIBBAC_LT_REVISION).$(LIBBAC_LT_AGE) $(WRAPLIBS) $(CAP_LIBS)
++	$(LIBTOOL_LINK) $(CXX) $(DEFS) $(DEBUG) $(LDFLAGS) -o $@ $(LIBBAC_LOBJS) -export-dynamic -rpath $(libdir) -release $(LIBBAC_LT_CURRENT).$(LIBBAC_LT_REVISION).$(LIBBAC_LT_AGE) $(WRAPLIBS) $(CAP_LIBS) $(OPENSSL_LIBS) $(LIBS)
  
  libbaccfg.a: $(LIBBACCFG_OBJS) 
  	@echo "Making $@ ..."
-@@ -125,7 +125,7 @@
+@@ -135,7 +135,7 @@
  
- libbaccfg.la: Makefile $(LIBBACCFG_OBJS) 
+ libbaccfg.la: Makefile $(LIBBACCFG_LOBJS) 
  	@echo "Making $@ ..."
--	$(LIBTOOL_LINK) $(CXX) $(DEFS) $(DEBUG) $(LDFLAGS) -o $@ $(LIBBACCFG_OBJS) -export-dynamic -rpath $(libdir) -version-info $(LIBBACCFG_LT_CURRENT):$(LIBBACCFG_LT_REVISION):$(LIBBACCFG_LT_AGE)
-+	$(LIBTOOL_LINK) $(CXX) $(DEFS) $(DEBUG) $(LDFLAGS) -o $@ $(LIBBACCFG_OBJS) -export-dynamic -rpath $(libdir) -version-info $(LIBBACCFG_LT_CURRENT):$(LIBBACCFG_LT_REVISION):$(LIBBACCFG_LT_AGE) $(OPENSSL_LIBS) $(LIBS)
+-	$(LIBTOOL_LINK) $(CXX) $(DEFS) $(DEBUG) $(LDFLAGS) -o $@ $(LIBBACCFG_LOBJS) -export-dynamic -rpath $(libdir) -release $(LIBBACCFG_LT_CURRENT).$(LIBBACCFG_LT_REVISION).$(LIBBACCFG_LT_AGE)
++	$(LIBTOOL_LINK) $(CXX) $(DEFS) $(DEBUG) $(LDFLAGS) -o $@ $(LIBBACCFG_LOBJS) -export-dynamic -rpath $(libdir) -release $(LIBBACCFG_LT_CURRENT).$(LIBBACCFG_LT_REVISION).$(LIBBACCFG_LT_AGE) $(OPENSSL_LIBS) $(LIBS)
  
  libbacpy.a: $(LIBBACPY_OBJS) 
  	@echo "Making $@ ..."
-@@ -134,7 +134,7 @@
+@@ -144,7 +144,7 @@
  
- libbacpy.la: Makefile $(LIBBACPY_OBJS) 
+ libbacpy.la: Makefile $(LIBBACPY_LOBJS) 
  	@echo "Making $@ ..."
--	$(LIBTOOL_LINK) $(CXX) $(DEFS) $(DEBUG) $(LDFLAGS) -o $@ $(LIBBACPY_OBJS) -export-dynamic -rpath $(libdir) -version-info $(LIBBACPY_LT_CURRENT):$(LIBBACPY_LT_REVISION):$(LIBBACPY_LT_AGE) $(PYTHON_LIBS)
-+	$(LIBTOOL_LINK) $(CXX) $(DEFS) $(DEBUG) $(LDFLAGS) -o $@ $(LIBBACPY_OBJS) -export-dynamic -rpath $(libdir) -version-info $(LIBBACPY_LT_CURRENT):$(LIBBACPY_LT_REVISION):$(LIBBACPY_LT_AGE) $(PYTHON_LIBS) $(OPENSSL_LIBS) $(LIBS)
+-	$(LIBTOOL_LINK) $(CXX) $(DEFS) $(DEBUG) $(LDFLAGS) -o $@ $(LIBBACPY_LOBJS) -export-dynamic -rpath $(libdir) -release $(LIBBACPY_LT_CURRENT).$(LIBBACPY_LT_REVISION).$(LIBBACPY_LT_AGE) $(PYTHON_LIBS)
++	$(LIBTOOL_LINK) $(CXX) $(DEFS) $(DEBUG) $(LDFLAGS) -o $@ $(LIBBACPY_LOBJS) -export-dynamic -rpath $(libdir) -release $(LIBBACPY_LT_CURRENT).$(LIBBACPY_LT_REVISION).$(LIBBACPY_LT_AGE) $(PYTHON_LIBS) $(OPENSSL_LIBS) $(LIBS)
  
  Makefile: $(srcdir)/Makefile.in $(topdir)/config.status
  	cd $(topdir) \
