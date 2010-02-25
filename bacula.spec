@@ -5,26 +5,16 @@
 #
 # Conditional build:
 %bcond_without	console_wx		# wx-console program
-%bcond_without	gnome			# gnome-console program
 %bcond_without	bat			# bat Qt4 GUI
 %bcond_without	dbi			# use Database Independent Abstraction Layer (libdbi)
 %bcond_with	mysql			# use MySQL
 %bcond_with	pgsql			# use PostgreSQL
 %bcond_with	python
 %bcond_with	rescue
-%bcond_with	sqlite			# use SQLite
 %bcond_with	sqlite3			# use SQLite3 instead of SQLite 2
 %bcond_with	sqlite3_sync_off	# makes SQLite3 backend much faster, but less reliable
 %if %{with dbi}
 %define		database	dbi
-%undefine       with_mysql
-%undefine       with_pgsql
-%undefine       with_sqlite
-%undefine       with_sqlite3
-%endif
-%if %{with sqlite}
-%define		database	sqlite
-%undefine       with_dbi
 %undefine       with_mysql
 %undefine       with_pgsql
 %undefine       with_sqlite3
@@ -34,20 +24,17 @@
 %undefine       with_dbi
 %undefine       with_mysql
 %undefine       with_pgsql
-%undefine       with_sqlite
 %endif
 %if %{with pgsql}
 %define		database	postgresql
 %undefine       with_dbi
 %undefine       with_mysql
-%undefine       with_sqlite
 %undefine       with_sqlite3
 %endif
 %if %{with mysql}
 %define		database	mysql
 %undefine       with_dbi
 %undefine       with_pgsql
-%undefine       with_sqlite
 %undefine       with_sqlite3
 %endif
 %if !%{with sqlite3}
@@ -89,10 +76,6 @@ BuildRequires:	automake
 %if %{with rescue}
 BuildRequires:	fakeroot
 %endif
-%if %{with gnome}
-BuildRequires:	libgnome-devel >= 2.0
-BuildRequires:	libgnomeui-devel >= 2.0
-%endif
 BuildRequires:	libwrap-devel
 BuildRequires:	mtx
 BuildRequires:	ncurses-devel
@@ -113,7 +96,6 @@ BuildRequires:	qwt-devel >= 5.0.2-2
 BuildRequires:	readline-devel
 BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	sed >= 4.0
-%{?with_sqlite:BuildRequires:	sqlite-devel}
 %{?with_sqlite3:BuildRequires:	sqlite3-devel}
 %if %{with console_wx}
 BuildRequires:	wxGTK2-unicode-devel >= 2.4.0
@@ -269,27 +251,6 @@ Bacula - przychodzi nocą i wysysa żywotny ekstrakt z komputerów.
 Bacula Console to program umożliwiający administratorowi lub
 użytkownikowi komunikowanie się z programem Bacula Director. To jest
 interfejs graficzny oparty na wxWidgets.
-
-%package console-gnome
-Summary:	Bacula GNOME Console
-Summary(pl.UTF-8):	Konsola Baculi oparta dla GNOME
-Group:		Networking/Utilities
-Requires(post):	sed >= 4.0
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-
-%description console-gnome
-Bacula - It comes by night and sucks the vital essence from your
-computers.
-
-Bacula Console is the program that allows the administrator or user to
-communicate with the Bacula Director. This is the GNOME GUI interface.
-
-%description console-gnome -l pl.UTF-8
-Bacula - przychodzi nocą i wysysa żywotny ekstrakt z komputerów.
-
-Bacula Console to program umożliwiający administratorowi lub
-użytkownikowi komunikowanie się z programem Bacula Director. To jest
-interfejs graficzny oparty na GNOME.
 
 %package console-qt4
 Summary:	Bacula Qt4 Console
@@ -450,7 +411,7 @@ danego systemu, należy ponownie uruchomić ./getdiskinfo .
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
+#%patch6 -p1
 %{?with_dbi:%patch7 -p1}
 
 tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
@@ -461,7 +422,7 @@ sed -i -e 's#bindir=.*#bindir=%{_bindir}#g' \
 sed -i -e 's/@hostname@/--hostname--/' src/*/*.conf.in
 
 %if %{with dbi}
-for dbtype in bdb mysql postgresql sqlite3 sqlite; do
+for dbtype in bdb mysql postgresql sqlite3; do
 	sed -i -e "s,@DB_TYPE@,$dbtype,g" src/cats/*_${dbtype}_*
 done
 %endif
@@ -475,7 +436,6 @@ CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
 WXCONFIG=%{_bindir}/wx-gtk2-unicode-config \
 %configure \
 	--with-scriptdir=%{_libexecdir}/%{name} \
-	--%{!?with_gnome:dis}%{?with_gnome:en}able-gnome \
 	%{?with_bat:--enable-bat} \
 	--disable-conio \
 	--enable-smartalloc \
@@ -503,6 +463,10 @@ WXCONFIG=%{_bindir}/wx-gtk2-unicode-config \
 
 %if %{with bat}
 cd src/qt-console
+%{__libtoolize}
+#%{__aclocal}
+#%{__autoconf}
+#%{__autoheader}
 qmake-qt4 bat.pro
 cd ../..
 %endif
@@ -537,15 +501,14 @@ install %{SOURCE16} $RPM_BUILD_ROOT/etc/sysconfig/bacula-sd
 
 %if %{with console_wx}
 # tray-monitor is for regular users
-mv $RPM_BUILD_ROOT%{_sbindir}/bacula-tray-monitor $RPM_BUILD_ROOT%{_bindir}
+#mv $RPM_BUILD_ROOT%{_sbindir}/bacula-tray-monitor $RPM_BUILD_ROOT%{_bindir}
 
 install scripts/bacula.png $RPM_BUILD_ROOT%{_pixmapsdir}/bacula.png
-install src/tray-monitor/generic.xpm $RPM_BUILD_ROOT%{_pixmapsdir}/bacula-tray-monitor.xpm
-install scripts/bacula.desktop.gnome2 $RPM_BUILD_ROOT%{_desktopdir}/bacula.desktop
+#install src/tray-monitor/generic.xpm $RPM_BUILD_ROOT%{_pixmapsdir}/bacula-tray-monitor.xpm
 sed -e 's/gnome-console/wx-console/g;s/Console/Wx Console/g' \
 	scripts/bacula.desktop.gnome2 > $RPM_BUILD_ROOT%{_desktopdir}/bacula-wx.desktop
-sed -e 's#%{_sbindir}#%{_bindir}#' \
-	scripts/bacula-tray-monitor.desktop > $RPM_BUILD_ROOT%{_desktopdir}/bacula-tray-monitor.desktop
+#sed -e 's#%{_sbindir}#%{_bindir}#' \
+#	scripts/bacula-tray-monitor.desktop > $RPM_BUILD_ROOT%{_desktopdir}/bacula-tray-monitor.desktop
 %endif
 
 %if %{with bat}
@@ -616,7 +579,7 @@ umask 077
 # XXX: Most of this upgrade procedure is safe for sqlite only. Other databases would require knowledge
 #      about currently used version so we can't easily support these :(
 
-%if %{with sqlite} || %{with sqlite3}
+%if %{with sqlite3}
 [ -s %{_localstatedir}/bacula.db ] && \
 	DB_VER=`echo "select * from Version;" | \
 	%{_bindir}/sqlite%{?with_sqlite3:3} %{_localstatedir}/bacula.db | tail -n 1 2>/dev/null`
@@ -726,15 +689,6 @@ for f in *-password; do
 done
 sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew 2>/dev/null || :
 
-%post console-gnome
-echo "Updating Bacula passwords and names..."
-cd /etc/bacula
-for f in *-password; do
-	p=`cat $f`
-	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew 2>/dev/null || :
-done
-sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew 2>/dev/null || :
-
 %post console-qt4
 echo "Updating Bacula passwords and names..."
 cd /etc/bacula
@@ -833,14 +787,6 @@ fi
 %attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite3_*
 %endif
-%if %{with sqlite} || %{with dbi}
-%attr(755,root,root) %{_libexecdir}/%{name}/create_sqlite_database
-%attr(755,root,root) %{_libexecdir}/%{name}/drop_sqlite_database
-%attr(755,root,root) %{_libexecdir}/%{name}/drop_sqlite_tables
-%attr(755,root,root) %{_libexecdir}/%{name}/grant_sqlite_privileges
-%attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite_tables
-%attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite_*
-%endif
 %if %{with mysql} || %{with dbi}
 %attr(755,root,root) %{_libexecdir}/%{name}/create_mysql_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_mysql_database
@@ -918,17 +864,6 @@ fi
 %{_mandir}/man1/bacula-bwxconsole.1*
 %endif
 
-%if %{with gnome}
-%files console-gnome
-%defattr(644,root,root,755)
-%doc LICENSE
-%{_pixmapsdir}/%{name}.png
-%{_desktopdir}/bacula.desktop
-%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bgnome-console.conf
-%attr(755,root,root) %{_sbindir}/bgnome-console
-%{_mandir}/man1/bacula-bgnome-console.1*
-%endif
-
 %if %{with bat}
 %files console-qt4
 %defattr(644,root,root,755)
@@ -947,7 +882,6 @@ fi
 %{_pixmapsdir}/%{name}-tray-monitor.xpm
 %{_desktopdir}/%{name}-tray-monitor.desktop
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/tray-monitor.conf
-%attr(755,root,root) %{_bindir}/bacula-tray-monitor
 %{_mandir}/man1/bacula-tray-monitor.1*
 %endif
 
