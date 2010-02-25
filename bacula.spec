@@ -428,8 +428,11 @@ done
 %endif
 
 %build
-cp -f %{_datadir}/automake/config.sub autoconf
-cd autoconf && %{__aclocal} -I bacula-macros -I gettext-macros && cd ..
+cd autoconf
+%{__aclocal} -I bacula-macros -I gettext-macros
+# $BUILD_DIR not seen by libtoolize, export it
+BUILD_DIR=.. %{__libtoolize}
+cd ..
 %{__autoconf} --prepend-include=$(pwd)/autoconf autoconf/configure.in > configure
 
 CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
@@ -464,9 +467,6 @@ WXCONFIG=%{_bindir}/wx-gtk2-unicode-config \
 %if %{with bat}
 cd src/qt-console
 %{__libtoolize}
-#%{__aclocal}
-#%{__autoconf}
-#%{__autoheader}
 qmake-qt4 bat.pro
 cd ../..
 %endif
