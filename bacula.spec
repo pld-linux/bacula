@@ -108,6 +108,7 @@ Patch4:		%{name}-conf.patch
 Patch5:		%{name}-desktop.patch
 Patch6:		%{name}-64bitbuild_fix.patch
 Patch7:		%{name}-dbi_fixes.patch
+Patch8:		%{name}-qmake-qt4.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
