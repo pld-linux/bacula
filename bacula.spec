@@ -109,8 +109,13 @@ Patch5:		%{name}-desktop.patch
 Patch6:		%{name}-64bitbuild_fix.patch
 Patch7:		%{name}-dbi_fixes.patch
 URL:		http://www.bacula.org/
+BuildRequires:	acl-devel
+BuildRequires:	autoconf
 BuildRequires:	automake
+BuildRequires:	gettext-devel
+BuildRequires:	libcap-devel
 %{?with_dbi:BuildRequires:	libdbi-devel >= 0.8.4}
+BuildRequires:	libtool
 %if %{with rescue}
 BuildRequires:	fakeroot
 %endif
