@@ -22,7 +22,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	5.0.1
-Release:	0.2
+Release:	0.5
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
@@ -48,6 +48,7 @@ Patch5:		%{name}-desktop.patch
 Patch6:		%{name}-64bitbuild_fix.patch
 Patch7:		%{name}-dbi_fixes.patch
 Patch8:		%{name}-dbi_dbcheck.patch
+Patch9:		%{name}-config_no_clean.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -467,8 +468,9 @@ Aby stworzyć dyskietkę ratunkową Baculi, należy uruchomić
 %patch4 -p1
 %patch5 -p1
 #%patch6 -p1
-%{?with_dbi:%patch7 -p1}
+%patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
 
@@ -491,10 +493,13 @@ BUILD_DIR=.. %{__libtoolize}
 cd ..
 %{__autoconf} --prepend-include=$(pwd)/autoconf autoconf/configure.in > configure
 
+CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
+
+# we wan't the 'base' build built with the first database in the list,
+# to make sure it is full-featured
 base_built="no"
 
 for database in %{databases} ; do
-	CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
 	WXCONFIG=%{_bindir}/wx-gtk2-unicode-config \
 	%configure \
 		--with-scriptdir=%{_libexecdir}/%{name} \
@@ -847,19 +852,42 @@ for name in "create database" "drop tables" "drop database" "grant privileges" "
 	prefix="${name%% *}" \
 	suffix="${name#* }" \
 	ln -sf "${prefix}_%{1}_${suffix}" %{_libexecdir}/%{name}/"${prefix}_bacula_${suffix}" || :  \
-done
+done \
+%service bacula-dir restart "Bacula Director daemon"
+
+%define db_postun() \
+/sbin/ldconfig \
+if [ "$1" = "0" ]; then \
+	for f in %{_libexecdir}/%{name}/*_bacula_* ; do \
+		if [ ! -e "$f" ] ; then \
+			rm "$f" \
+		fi \
+	done \
+fi
 
 %post db-postgresql
 %db_post postgresql
 
+%postun db-postgresql
+%db_postun postgresql
+
 %post db-mysql
 %db_post mysql
+
+%postun db-mysql
+%db_postun mysql
 
 %post db-sqlite3
 %db_post sqlite3
 
+%postun db-sqlite3
+%db_postun sqlite3
+
+# dbi backend is different, as it is not bound with a specific db engine
 %post db-dbi
 /sbin/ldconfig
+
+%postun db-dbi -p /sbin/ldconfig
 
 %files common
 %defattr(644,root,root,755)
