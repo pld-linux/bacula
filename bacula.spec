@@ -112,12 +112,12 @@ Bacula - przychodzi nocą i wysysa żywotny ekstrakt z komputerów.
 
 Bacula to zbiór programów umożliwiających administratorowi na
 zarządzanie kopiami zapasowymi, odzyskiwaniem i weryfikacją danych w
-sieci komputerów różnego rodzaju. W terminologii technicznej jest
-to program do kopii zapasowych pracujący w architekturze
-klient-serwer. Bacula jest stosunkowo łatwa w użyciu i wydajna,
-oferując przy tym wiele zaawansowanych możliwości przy zarządzaniu
-nośnikami, ułatwiających znalezienie i odzyskanie utraconych lub
-uszkodzonych plików.
+sieci komputerów różnego rodzaju. W terminologii technicznej jest to
+program do kopii zapasowych pracujący w architekturze klient-serwer.
+Bacula jest stosunkowo łatwa w użyciu i wydajna, oferując przy tym
+wiele zaawansowanych możliwości przy zarządzaniu nośnikami,
+ułatwiających znalezienie i odzyskanie utraconych lub uszkodzonych
+plików.
 
 %package common
 Summary:	Common files for bacula package
@@ -152,12 +152,12 @@ Bacula - przychodzi nocą i wysysa żywotny ekstrakt z komputerów.
 
 Bacula to zbiór programów umożliwiających administratorowi na
 zarządzanie kopiami zapasowymi, odzyskiwaniem i weryfikacją danych w
-sieci komputerów różnego rodzaju. W terminologii technicznej jest
-to program do kopii zapasowych pracujący w architekturze
-klient-serwer. Bacula jest stosunkowo łatwa w użyciu i wydajna,
-oferując przy tym wiele zaawansowanych możliwości przy zarządzaniu
-nośnikami, ułatwiających znalezienie i odzyskanie utraconych lub
-uszkodzonych plików.
+sieci komputerów różnego rodzaju. W terminologii technicznej jest to
+program do kopii zapasowych pracujący w architekturze klient-serwer.
+Bacula jest stosunkowo łatwa w użyciu i wydajna, oferując przy tym
+wiele zaawansowanych możliwości przy zarządzaniu nośnikami,
+ułatwiających znalezienie i odzyskanie utraconych lub uszkodzonych
+plików.
 
 %package dir
 Summary:	Bacula Director and Catalog services
@@ -188,12 +188,12 @@ Bacula Director to program nadzorujący wszystkie operacje wykonywania
 kopii zapasowych, odzyskiwania, weryfikacji i archiwizowania.
 Administrator używa Bacula Directora do szeregowania kopii zapasowych
 oraz odzyskiwania plików. Usługi katalogowe (Catalog services) są
-używane przez programy odpowiedzialne za zarządzanie indeksami
-plików i bazą danych wolumenów dla wszystkich kopiowanych plików.
-Usługi katalogowe umożliwiają administratorowi lub użytkownikowi
-szybko zlokalizować i odtworzyć dowolny plik, ponieważ utrzymują
-rekord ze wszystkimi używanymi wolumenami, uruchomionymi zadaniami i
-zapisanymi plikami.
+używane przez programy odpowiedzialne za zarządzanie indeksami plików
+i bazą danych wolumenów dla wszystkich kopiowanych plików. Usługi
+katalogowe umożliwiają administratorowi lub użytkownikowi szybko
+zlokalizować i odtworzyć dowolny plik, ponieważ utrzymują rekord ze
+wszystkimi używanymi wolumenami, uruchomionymi zadaniami i zapisanymi
+plikami.
 
 %package console
 Summary:	Bacula Console
@@ -300,16 +300,16 @@ Client (for example in Bacula configuration file).
 %description fd -l pl.UTF-8
 Bacula - przychodzi nocą i wysysa żywotny ekstrakt z komputerów.
 
-Usługi Bacula File (inaczej program kliencki) to oprogramowanie,
-które instaluje się na maszynach, z których mają być wykonywane
-kopie zapasowe. Są one specyficzne dla systemu operacyjnego, pod
-którym działa dana maszyna i odpowiadają za dostarczanie atrybutów
-i danych plików na żądanie Directora. Usługi plikowe są także
-odpowiedzialne za zależną od systemu plików część odzyskiwania
-atrybutów i danych plików podczas operacji odzyskiwania danych.
-Program działa jako demon na maszynie, która ma być backupowana i w
-części dokumentacji demon ten (File) jest nazywany klientem (na
-przykład w pliku konfiguracyjnym Baculi).
+Usługi Bacula File (inaczej program kliencki) to oprogramowanie, które
+instaluje się na maszynach, z których mają być wykonywane kopie
+zapasowe. Są one specyficzne dla systemu operacyjnego, pod którym
+działa dana maszyna i odpowiadają za dostarczanie atrybutów i danych
+plików na żądanie Directora. Usługi plikowe są także odpowiedzialne za
+zależną od systemu plików część odzyskiwania atrybutów i danych plików
+podczas operacji odzyskiwania danych. Program działa jako demon na
+maszynie, która ma być backupowana i w części dokumentacji demon ten
+(File) jest nazywany klientem (na przykład w pliku konfiguracyjnym
+Baculi).
 
 %package sd
 Summary:	Bacula Storage services
@@ -335,10 +335,10 @@ Bacula - przychodzi nocą i wysysa żywotny ekstrakt z komputerów.
 
 Usługi Bacula Storage składają się z programów obsługujących
 przechowywanie danych oraz odzyskiwanie atrybutów i danych na
-fizycznych nośnikach lub wolumenach. Innymi słowy, demon Storage
-jest odpowiedzialny za odczyt i zapis taśm (lub innych nośników do
-przechowywania danych, np. plików). Usługi Storage działają jako
-demon na maszynie, która zawiera urządzenie backupowe (zwykle napęd
+fizycznych nośnikach lub wolumenach. Innymi słowy, demon Storage jest
+odpowiedzialny za odczyt i zapis taśm (lub innych nośników do
+przechowywania danych, np. plików). Usługi Storage działają jako demon
+na maszynie, która zawiera urządzenie backupowe (zwykle napęd
 taśmowy).
 
 %package db-postgresql
@@ -348,9 +348,7 @@ Group:		Networking/Utilities
 Requires(post):	/sbin/ldconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Provides:	bacula(db) = %{epoch}:%{version}-%{release}
-Obsoletes:	bacula-db-dbi
-Obsoletes:	bacula-db-mysql
-Obsoletes:	bacula-db-sqlite3
+Obsoletes:	bacula(db)
 
 %description db-postgresql
 PostgreSQL database driver for Bacula.
@@ -365,9 +363,7 @@ Group:		Networking/Utilities
 Requires(post):	/sbin/ldconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Provides:	bacula(db) = %{epoch}:%{version}-%{release}
-Obsoletes:	bacula-db-dbi
-Obsoletes:	bacula-db-postgresql
-Obsoletes:	bacula-db-sqlite3
+Obsoletes:	bacula(db)
 
 %description db-mysql
 MySQL database driver for Bacula.
@@ -382,9 +378,7 @@ Group:		Networking/Utilities
 Requires(post):	/sbin/ldconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Provides:	bacula(db) = %{epoch}:%{version}-%{release}
-Obsoletes:	bacula-db-dbi
-Obsoletes:	bacula-db-mysql
-Obsoletes:	bacula-db-postgresql
+Obsoletes:	bacula(db)
 
 %description db-sqlite3
 SQLite database driver for Bacula.
@@ -399,9 +393,7 @@ Group:		Networking/Utilities
 Requires(post):	/sbin/ldconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Provides:	bacula(db) = %{epoch}:%{version}-%{release}
-Obsoletes:	bacula-db-mysql
-Obsoletes:	bacula-db-postgresql
-Obsoletes:	bacula-db-sqlite3
+Obsoletes:	bacula(db)
 
 %description db-dbi
 libdbi database driver for Bacula.
@@ -432,32 +424,20 @@ recover lost or damaged files.
 This package installs scripts for disaster recovery and builds rescue
 floppy disk for bare metal recovery.
 
-To make the bacula rescue disk run "./make_rescue_disk
-- --copy-static-bacula
-- --copy-etc-files" from the %{_sysconfdir}/rescue directory. To
-  recreate the rescue information for this system run ./getdiskinfo
-  again.
-
 %description rescue -l pl.UTF-8
 Bacula - przychodzi nocą i wysysa żywotny ekstrakt z komputerów.
 
 Bacula to zbiór programów umożliwiających administratorowi na
 zarządzanie kopiami zapasowymi, odzyskiwaniem i weryfikacją danych w
-sieci komputerów różnego rodzaju. W terminologii technicznej jest
-to program do kopii zapasowych pracujący w architekturze
-klient-serwer. Bacula jest stosunkowo łatwa w użyciu i wydajna,
-oferując przy tym wiele zaawansowanych możliwości przy zarządzaniu
-nośnikami, ułatwiających znalezienie i odzyskanie utraconych lub
-uszkodzonych plików.
+sieci komputerów różnego rodzaju. W terminologii technicznej jest to
+program do kopii zapasowych pracujący w architekturze klient-serwer.
+Bacula jest stosunkowo łatwa w użyciu i wydajna, oferując przy tym
+wiele zaawansowanych możliwości przy zarządzaniu nośnikami,
+ułatwiających znalezienie i odzyskanie utraconych lub uszkodzonych
+plików.
 
-Ten pakiet zawiera skrypty do odtwarzania po awarii i tworzy
-dyskietkę ratunkowe do odtwarzania systemu od zera.
-
-Aby stworzyć dyskietkę ratunkową Baculi, należy uruchomić
-"./make_rescue_disk
-- --copy-static-bacula - --copy-etc-files" z katalogu
-  %{_sysconfdir}/rescue . Aby ponownie utworzyć informacje ratunkowe
-  dla danego systemu, należy ponownie uruchomić ./getdiskinfo .
+Ten pakiet zawiera skrypty do odtwarzania po awarii i tworzy dyskietkę
+ratunkowe do odtwarzania systemu od zera.
 
 %prep
 %setup -q -a 1
