@@ -2,43 +2,6 @@
 #	- update desktop files, think about su-wrappers for console
 #	- package web admin
 #	- fix log file permissions
-#warning: Installed (but unpackaged) file(s) found:
-#   /usr/lib64/bacula/bacula-ctl-dir
-#   /usr/lib64/bacula/bacula-ctl-fd
-#   /usr/lib64/bacula/bacula-ctl-sd
-#   /usr/lib64/bacula/bacula_config
-#   /usr/lib64/bacula/update_sqlite_tables_10_to_11.in
-#   /usr/lib64/bacula/update_sqlite_tables_4_to_5
-#   /usr/lib64/bacula/update_sqlite_tables_5_to_6
-#   /usr/lib64/bacula/update_sqlite_tables_6_to_7
-#   /usr/lib64/bacula/update_sqlite_tables_7_to_8
-#   /usr/lib64/bacula/update_sqlite_tables_8_to_9
-#   /usr/lib64/bacula/update_sqlite_tables_9_to_10.in
-#   /usr/lib64/bpipe-fd.so
-#   /usr/lib64/libbac.la
-#   /usr/lib64/libbac.so
-#   /usr/lib64/libbaccfg.la
-#   /usr/lib64/libbaccfg.so
-#   /usr/lib64/libbacfind.la
-#   /usr/lib64/libbacfind.so
-#   /usr/lib64/libbacpy.la
-#   /usr/lib64/libbacpy.so
-#   /usr/lib64/libbacsql.la
-#   /usr/lib64/libbacsql.so
-#   /usr/sbin/bacula
-#   /usr/share/doc/bacula/html/clients.html
-#   /usr/share/doc/bacula/html/console.html
-#   /usr/share/doc/bacula/html/filesets.html
-#   /usr/share/doc/bacula/html/index.html
-#   /usr/share/doc/bacula/html/joblist.html
-#   /usr/share/doc/bacula/html/jobplot.html
-#   /usr/share/doc/bacula/html/jobs.html
-#   /usr/share/doc/bacula/html/mail-message-new.png
-#   /usr/share/doc/bacula/html/media.html
-#   /usr/share/doc/bacula/html/restore.html
-#   /usr/share/doc/bacula/html/status.png
-#   /usr/share/doc/bacula/html/storage.html
-#
 #
 # Conditional build:
 %bcond_without	console_wx		# wx-console program
@@ -83,7 +46,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	5.0.1
-Release:	0.1
+Release:	0.2
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
@@ -108,7 +71,7 @@ Patch4:		%{name}-conf.patch
 Patch5:		%{name}-desktop.patch
 Patch6:		%{name}-64bitbuild_fix.patch
 Patch7:		%{name}-dbi_fixes.patch
-Patch8:		%{name}-qmake-qt4.patch
+Patch8:		%{name}-dbi_dbcheck.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -457,6 +420,7 @@ danego systemu, należy ponownie uruchomić ./getdiskinfo .
 %patch5 -p1
 #%patch6 -p1
 %{?with_dbi:%patch7 -p1}
+%patch8 -p1
 
 tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
 
@@ -592,6 +556,21 @@ rm $RPM_BUILD_ROOT%{_docdir}/bacula/README
 rm $RPM_BUILD_ROOT%{_docdir}/bacula/ReleaseNotes
 rm $RPM_BUILD_ROOT%{_docdir}/bacula/VERIFYING
 rm $RPM_BUILD_ROOT%{_docdir}/bacula/technotes
+
+# startup scripts, those in /etc/rc.d/init.d are better
+rm $RPM_BUILD_ROOT%{_sbindir}/bacula
+rm $RPM_BUILD_ROOT%{_libexecdir}/%{name}/bacula-ctl-*
+
+# rename to avoid possible conflicts
+mv $RPM_BUILD_ROOT%{_sbindir}/{,bacula-}dbcheck
+mv $RPM_BUILD_ROOT%{_mandir}/man8/{,bacula-}dbcheck.8.gz
+
+# no -devel files packaged, so this is also useless
+rm $RPM_BUILD_ROOT%{_libdir}/libbac{,cfg,find,py,sql}.{so,la}
+
+# sqlite is not supported
+rm $RPM_BUILD_ROOT%{_libexecdir}/%{name}/update_sqlite_*
+
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -784,19 +763,21 @@ fi
 %doc LICENSE
 %dir %{_sysconfdir}
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/*-password
-#%attr(755,root,root) %{_sbindir}/bsmtp
+# do not remove bsmtp from files. Fix build if it is not installed.
+%attr(755,root,root) %{_sbindir}/bsmtp
 %attr(755,root,root) %{_sbindir}/btraceback
-%attr(755,root,root) /%{_libdir}/libbac-%{version}.so
-%attr(755,root,root) /%{_libdir}/libbaccfg-%{version}.so
-%attr(755,root,root) /%{_libdir}/libbacfind-%{version}.so
-%attr(755,root,root) /%{_libdir}/libbacpy-%{version}.so
-%attr(755,root,root) /%{_libdir}/libbacsql-%{version}.so
+%attr(755,root,root) %{_libdir}/libbac-%{version}.so
+%attr(755,root,root) %{_libdir}/libbaccfg-%{version}.so
+%attr(755,root,root) %{_libdir}/libbacfind-%{version}.so
+%attr(755,root,root) %{_libdir}/libbacpy-%{version}.so
+%attr(755,root,root) %{_libdir}/libbacsql-%{version}.so
 %{_mandir}/man8/bacula.8*
 %{_mandir}/man1/bsmtp.1*
 %{_mandir}/man8/btraceback.8*
 %dir %{_libexecdir}/%{name}
 %{_libexecdir}/%{name}/btraceback.dbx
 %{_libexecdir}/%{name}/btraceback.gdb
+%{_libexecdir}/%{name}/bacula_config
 %attr(770,root,bacula) %dir %{_localstatedir}
 %attr(750,bacula,logs) %dir /var/log/bacula
 %attr(640,bacula,logs) %ghost /var/log/bacula/log
@@ -811,11 +792,11 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/bacula-dir
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/bacula-dir
 %attr(755,root,root) %{_sbindir}/bacula-dir
-#%attr(755,root,root) %{_sbindir}/bregex
-#%attr(755,root,root) %{_sbindir}/bwild
-#%attr(755,root,root) %{_sbindir}/dbcheck
+%attr(755,root,root) %{_sbindir}/bregex
+%attr(755,root,root) %{_sbindir}/bwild
+%attr(755,root,root) %{_sbindir}/bacula-dbcheck
 %{_mandir}/man8/bacula-dir.8*
-%{_mandir}/man8/dbcheck.8*
+%{_mandir}/man8/bacula-dbcheck.8*
 %{_libexecdir}/%{name}/query.sql
 %if %{with bdb} || %{with dbi}
 %attr(755,root,root) %{_libexecdir}/%{name}/create_bdb_database
@@ -867,6 +848,7 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/bacula-fd
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/bacula-fd
 %attr(755,root,root) %{_sbindir}/bacula-fd
+%attr(755,root,root) %{_libdir}/bpipe-fd.so
 %{_mandir}/man8/bacula-fd.8*
 
 %files sd
@@ -919,6 +901,7 @@ fi
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bat.conf
 %attr(755,root,root) %{_sbindir}/bat
 %{_mandir}/man1/bat.1*
+%{_docdir}/%{name}
 %endif
 
 %if %{with console_wx}
