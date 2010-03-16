@@ -7,37 +7,13 @@
 %bcond_without	console_wx		# wx-console program
 %bcond_without	bat			# bat Qt4 GUI
 %bcond_without	dbi			# use Database Independent Abstraction Layer (libdbi)
-%bcond_with	mysql			# use MySQL
-%bcond_with	pgsql			# use PostgreSQL
+%bcond_without	mysql			# use MySQL
+%bcond_without	pgsql			# use PostgreSQL
 %bcond_with	python
 %bcond_with	rescue
-%bcond_with	sqlite3			# use SQLite3 instead of SQLite 2
+%bcond_without	sqlite3			# use SQLite3
 %bcond_with	sqlite3_sync_off	# makes SQLite3 backend much faster, but less reliable
-
-%if %{with dbi}
-%define		database	dbi
-%undefine       with_mysql
-%undefine       with_pgsql
-%undefine       with_sqlite3
-%endif
-%if %{with sqlite3}
-%define		database	sqlite3
-%undefine       with_dbi
-%undefine       with_mysql
-%undefine       with_pgsql
-%endif
-%if %{with pgsql}
-%define		database	postgresql
-%undefine       with_dbi
-%undefine       with_mysql
-%undefine       with_sqlite3
-%endif
-%if %{with mysql}
-%define		database	mysql
-%undefine       with_dbi
-%undefine       with_pgsql
-%undefine       with_sqlite3
-%endif
+#
 %if %{without sqlite3}
 %undefine       with_sqlite3_sync_off
 %endif
@@ -50,11 +26,11 @@ Release:	0.2
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
-Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
+Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
 # Source0-md5:	beb9f8da196b3c9ffb0356f087dbdb99
-Source1:	http://downloads.sourceforge.net/bacula/%{name}-docs-%{version}.tar.bz2
+Source1:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.bz2
 # Source1-md5:	ce2ef0dca50ab916fd6701b53b7bb4df
-Source2:	http://downloads.sourceforge.net/bacula/%{name}-rescue-5.0.0.tar.gz
+Source2:	http://dl.sourceforge.net/bacula/%{name}-rescue-5.0.0.tar.gz
 # Source2-md5:	349623581cfe0bcd798dd137abac959a
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
@@ -113,6 +89,8 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_sysconfdir	/etc/%{name}
 %define		_localstatedir	/var/lib/%{name}
 
+%define	databases %{?with_pgsql:postgresql} %{?with_mysql:mysql} %{?with_sqlite3:sqlite3} %{?with_dbi:dbi}
+
 # dependency section is broken. ccache usage is instead to makefiles
 %undefine	with_ccache
 
@@ -133,12 +111,12 @@ Bacula - przychodzi nocą i wysysa żywotny ekstrakt z komputerów.
 
 Bacula to zbiór programów umożliwiających administratorowi na
 zarządzanie kopiami zapasowymi, odzyskiwaniem i weryfikacją danych w
-sieci komputerów różnego rodzaju. W terminologii technicznej jest to
-program do kopii zapasowych pracujący w architekturze klient-serwer.
-Bacula jest stosunkowo łatwa w użyciu i wydajna, oferując przy tym
-wiele zaawansowanych możliwości przy zarządzaniu nośnikami,
-ułatwiających znalezienie i odzyskanie utraconych lub uszkodzonych
-plików.
+sieci komputerów różnego rodzaju. W terminologii technicznej jest
+to program do kopii zapasowych pracujący w architekturze
+klient-serwer. Bacula jest stosunkowo łatwa w użyciu i wydajna,
+oferując przy tym wiele zaawansowanych możliwości przy zarządzaniu
+nośnikami, ułatwiających znalezienie i odzyskanie utraconych lub
+uszkodzonych plików.
 
 %package common
 Summary:	Common files for bacula package
@@ -173,12 +151,12 @@ Bacula - przychodzi nocą i wysysa żywotny ekstrakt z komputerów.
 
 Bacula to zbiór programów umożliwiających administratorowi na
 zarządzanie kopiami zapasowymi, odzyskiwaniem i weryfikacją danych w
-sieci komputerów różnego rodzaju. W terminologii technicznej jest to
-program do kopii zapasowych pracujący w architekturze klient-serwer.
-Bacula jest stosunkowo łatwa w użyciu i wydajna, oferując przy tym
-wiele zaawansowanych możliwości przy zarządzaniu nośnikami,
-ułatwiających znalezienie i odzyskanie utraconych lub uszkodzonych
-plików.
+sieci komputerów różnego rodzaju. W terminologii technicznej jest
+to program do kopii zapasowych pracujący w architekturze
+klient-serwer. Bacula jest stosunkowo łatwa w użyciu i wydajna,
+oferując przy tym wiele zaawansowanych możliwości przy zarządzaniu
+nośnikami, ułatwiających znalezienie i odzyskanie utraconych lub
+uszkodzonych plików.
 
 %package dir
 Summary:	Bacula Director and Catalog services
@@ -186,6 +164,7 @@ Summary(pl.UTF-8):	Usługi Bacula Director i Catalog
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	bacula(db) = %{epoch}:%{version}-%{release}
 Obsoletes:	bacula-updatedb
 
 %description dir
@@ -208,12 +187,12 @@ Bacula Director to program nadzorujący wszystkie operacje wykonywania
 kopii zapasowych, odzyskiwania, weryfikacji i archiwizowania.
 Administrator używa Bacula Directora do szeregowania kopii zapasowych
 oraz odzyskiwania plików. Usługi katalogowe (Catalog services) są
-używane przez programy odpowiedzialne za zarządzanie indeksami plików
-i bazą danych wolumenów dla wszystkich kopiowanych plików. Usługi
-katalogowe umożliwiają administratorowi lub użytkownikowi szybko
-zlokalizować i odtworzyć dowolny plik, ponieważ utrzymują rekord ze
-wszystkimi używanymi wolumenami, uruchomionymi zadaniami i zapisanymi
-plikami.
+używane przez programy odpowiedzialne za zarządzanie indeksami
+plików i bazą danych wolumenów dla wszystkich kopiowanych plików.
+Usługi katalogowe umożliwiają administratorowi lub użytkownikowi
+szybko zlokalizować i odtworzyć dowolny plik, ponieważ utrzymują
+rekord ze wszystkimi używanymi wolumenami, uruchomionymi zadaniami i
+zapisanymi plikami.
 
 %package console
 Summary:	Bacula Console
@@ -320,16 +299,16 @@ Client (for example in Bacula configuration file).
 %description fd -l pl.UTF-8
 Bacula - przychodzi nocą i wysysa żywotny ekstrakt z komputerów.
 
-Usługi Bacula File (inaczej program kliencki) to oprogramowanie, które
-instaluje się na maszynach, z których mają być wykonywane kopie
-zapasowe. Są one specyficzne dla systemu operacyjnego, pod którym
-działa dana maszyna i odpowiadają za dostarczanie atrybutów i danych
-plików na żądanie Directora. Usługi plikowe są także odpowiedzialne za
-zależną od systemu plików część odzyskiwania atrybutów i danych plików
-podczas operacji odzyskiwania danych. Program działa jako demon na
-maszynie, która ma być backupowana i w części dokumentacji demon ten
-(File) jest nazywany klientem (na przykład w pliku konfiguracyjnym
-Baculi).
+Usługi Bacula File (inaczej program kliencki) to oprogramowanie,
+które instaluje się na maszynach, z których mają być wykonywane
+kopie zapasowe. Są one specyficzne dla systemu operacyjnego, pod
+którym działa dana maszyna i odpowiadają za dostarczanie atrybutów
+i danych plików na żądanie Directora. Usługi plikowe są także
+odpowiedzialne za zależną od systemu plików część odzyskiwania
+atrybutów i danych plików podczas operacji odzyskiwania danych.
+Program działa jako demon na maszynie, która ma być backupowana i w
+części dokumentacji demon ten (File) jest nazywany klientem (na
+przykład w pliku konfiguracyjnym Baculi).
 
 %package sd
 Summary:	Bacula Storage services
@@ -355,11 +334,79 @@ Bacula - przychodzi nocą i wysysa żywotny ekstrakt z komputerów.
 
 Usługi Bacula Storage składają się z programów obsługujących
 przechowywanie danych oraz odzyskiwanie atrybutów i danych na
-fizycznych nośnikach lub wolumenach. Innymi słowy, demon Storage jest
-odpowiedzialny za odczyt i zapis taśm (lub innych nośników do
-przechowywania danych, np. plików). Usługi Storage działają jako demon
-na maszynie, która zawiera urządzenie backupowe (zwykle napęd
+fizycznych nośnikach lub wolumenach. Innymi słowy, demon Storage
+jest odpowiedzialny za odczyt i zapis taśm (lub innych nośników do
+przechowywania danych, np. plików). Usługi Storage działają jako
+demon na maszynie, która zawiera urządzenie backupowe (zwykle napęd
 taśmowy).
+
+%package db-postgresql
+Summary:	PostgreSQL database driver for Bacula
+Summary(pl.UTF-8):	Sterownik bazy PostgreSQL dla Baculi
+Group:		Networking/Utilities
+Requires(post):	/sbin/ldconfig
+Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Provides:	bacula(db) = %{epoch}:%{version}-%{release}
+Obsoletes:	bacula-db-dbi
+Obsoletes:	bacula-db-mysql
+Obsoletes:	bacula-db-sqlite3
+
+%description db-postgresql
+PostgreSQL database driver for Bacula.
+
+%description db-postgresql -l pl.UTF-8
+Sterownik bazy PostgreSQL dla Baculi.
+
+%package db-mysql
+Summary:	MySQL database driver for Bacula
+Summary(pl.UTF-8):	Sterownik bazy MySQL dla Baculi
+Group:		Networking/Utilities
+Requires(post):	/sbin/ldconfig
+Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Provides:	bacula(db) = %{epoch}:%{version}-%{release}
+Obsoletes:	bacula-db-dbi
+Obsoletes:	bacula-db-postgresql
+Obsoletes:	bacula-db-sqlite3
+
+%description db-mysql
+MySQL database driver for Bacula.
+
+%description db-mysql -l pl.UTF-8
+Sterownik bazy MySQL dla Baculi.
+
+%package db-sqlite3
+Summary:	SQLite database driver for Bacula
+Summary(pl.UTF-8):	Sterownik bazy SQLite dla Baculi
+Group:		Networking/Utilities
+Requires(post):	/sbin/ldconfig
+Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Provides:	bacula(db) = %{epoch}:%{version}-%{release}
+Obsoletes:	bacula-db-dbi
+Obsoletes:	bacula-db-mysql
+Obsoletes:	bacula-db-postgresql
+
+%description db-sqlite3
+SQLite database driver for Bacula.
+
+%description db-sqlite3 -l pl.UTF-8
+Sterownik bazy SQLite dla Baculi.
+
+%package db-dbi
+Summary:	libdbi database driver for Bacula
+Summary(pl.UTF-8):	Sterownik bazy libdbi dla Baculi
+Group:		Networking/Utilities
+Requires(post):	/sbin/ldconfig
+Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Provides:	bacula(db) = %{epoch}:%{version}-%{release}
+Obsoletes:	bacula-db-mysql
+Obsoletes:	bacula-db-postgresql
+Obsoletes:	bacula-db-sqlite3
+
+%description db-dbi
+libdbi database driver for Bacula.
+
+%description db-dbi -l pl.UTF-8
+Sterownik baz libdbi dla Baculi.
 
 %package rescue
 Summary:	Bacula - The Network Backup Solution
@@ -385,7 +432,7 @@ This package installs scripts for disaster recovery and builds rescue
 floppy disk for bare metal recovery.
 
 To make the bacula rescue disk run "./make_rescue_disk
---copy-static-bacula
+- --copy-static-bacula
 - --copy-etc-files" from the %{_sysconfdir}/rescue directory. To
   recreate the rescue information for this system run ./getdiskinfo
   again.
@@ -395,20 +442,21 @@ Bacula - przychodzi nocą i wysysa żywotny ekstrakt z komputerów.
 
 Bacula to zbiór programów umożliwiających administratorowi na
 zarządzanie kopiami zapasowymi, odzyskiwaniem i weryfikacją danych w
-sieci komputerów różnego rodzaju. W terminologii technicznej jest to
-program do kopii zapasowych pracujący w architekturze klient-serwer.
-Bacula jest stosunkowo łatwa w użyciu i wydajna, oferując przy tym
-wiele zaawansowanych możliwości przy zarządzaniu nośnikami,
-ułatwiających znalezienie i odzyskanie utraconych lub uszkodzonych
-plików.
+sieci komputerów różnego rodzaju. W terminologii technicznej jest
+to program do kopii zapasowych pracujący w architekturze
+klient-serwer. Bacula jest stosunkowo łatwa w użyciu i wydajna,
+oferując przy tym wiele zaawansowanych możliwości przy zarządzaniu
+nośnikami, ułatwiających znalezienie i odzyskanie utraconych lub
+uszkodzonych plików.
 
-Ten pakiet zawiera skrypty do odtwarzania po awarii i tworzy dyskietkę
-ratunkowe do odtwarzania systemu od zera.
+Ten pakiet zawiera skrypty do odtwarzania po awarii i tworzy
+dyskietkę ratunkowe do odtwarzania systemu od zera.
 
-Aby stworzyć dyskietkę ratunkową Baculi, należy uruchomić "./make_rescue_disk
---copy-static-bacula - --copy-etc-files" z katalogu
-%{_sysconfdir}/rescue . Aby ponownie utworzyć informacje ratunkowe dla
-danego systemu, należy ponownie uruchomić ./getdiskinfo .
+Aby stworzyć dyskietkę ratunkową Baculi, należy uruchomić
+"./make_rescue_disk
+- --copy-static-bacula - --copy-etc-files" z katalogu
+  %{_sysconfdir}/rescue . Aby ponownie utworzyć informacje ratunkowe
+  dla danego systemu, należy ponownie uruchomić ./getdiskinfo .
 
 %prep
 %setup -q -a 1
@@ -430,7 +478,7 @@ sed -i -e 's#bindir=.*#bindir=%{_bindir}#g' \
 sed -i -e 's/@hostname@/--hostname--/' src/*/*.conf.in
 
 %if %{with dbi}
-for dbtype in bdb mysql postgresql sqlite3; do
+for dbtype in mysql postgresql sqlite3; do
 	sed -i -e "s,@DB_TYPE@,$dbtype,g" src/cats/*_${dbtype}_*
 done
 %endif
@@ -443,42 +491,57 @@ BUILD_DIR=.. %{__libtoolize}
 cd ..
 %{__autoconf} --prepend-include=$(pwd)/autoconf autoconf/configure.in > configure
 
-CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
-WXCONFIG=%{_bindir}/wx-gtk2-unicode-config \
-%configure \
-	--with-scriptdir=%{_libexecdir}/%{name} \
-	%{?with_bat:--enable-bat} \
-	--disable-conio \
-	--enable-smartalloc \
-	%{?with_console_wx:--enable-bwx-console} \
-	--enable-tray-monitor \
-	%{?with_python:--with-python} \
-	--with-readline \
-	--with-tcp-wrappers \
-	--with-working-dir=%{_var}/lib/%{name} \
-	--with-dump-email="root@localhost" \
-	--with-job-email="root@localhost" \
-	--with-smtp-host=localhost \
-	--with-pid-dir=/var/run \
-	--with-subsys-dir=/var/lock/subsys \
-	--enable-batch-insert \
-	--with-%{database} \
-	%{?with_sqlite3_sync_off:--enable-extra-sqlite3-init="pragma synchronous=0;"} \
-	--with-dir-password="#FAKE-dir-password#" \
-	--with-fd-password="#FAKE-fd-password#" \
-	--with-sd-password="#FAKE-sd-password#" \
-	--with-mon-dir-password="#FAKE-mon-dir-password#" \
-	--with-mon-fd-password="#FAKE-mon-fd-password#" \
-	--with-mon-sd-password="#FAKE-mon-sd-password#" \
-	--with-openssl
+base_built="no"
 
-%if %{with bat}
-cd src/qt-console
-qmake-qt4 bat.pro
-cd ../..
-%endif
+for database in %{databases} ; do
+	CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
+	WXCONFIG=%{_bindir}/wx-gtk2-unicode-config \
+	%configure \
+		--with-scriptdir=%{_libexecdir}/%{name} \
+		%{?with_bat:--enable-bat} \
+		--disable-conio \
+		--enable-smartalloc \
+		%{?with_console_wx:--enable-bwx-console} \
+		--enable-tray-monitor \
+		%{?with_python:--with-python} \
+		--with-readline \
+		--with-tcp-wrappers \
+		--with-working-dir=%{_var}/lib/%{name} \
+		--with-dump-email="root@localhost" \
+		--with-job-email="root@localhost" \
+		--with-smtp-host=localhost \
+		--with-pid-dir=/var/run \
+		--with-subsys-dir=/var/lock/subsys \
+		--enable-batch-insert \
+		--with-$database \
+		%{?with_sqlite3_sync_off:--enable-extra-sqlite3-init="pragma synchronous=0;"} \
+		--with-dir-password="#FAKE-dir-password#" \
+		--with-fd-password="#FAKE-fd-password#" \
+		--with-sd-password="#FAKE-sd-password#" \
+		--with-mon-dir-password="#FAKE-mon-dir-password#" \
+		--with-mon-fd-password="#FAKE-mon-fd-password#" \
+		--with-mon-sd-password="#FAKE-mon-sd-password#" \
+		--with-openssl
 
-%{__make}
+	if [ "$base_built" = "no" ] ; then
+		%if %{with bat}
+		cd src/qt-console
+		qmake-qt4 bat.pro
+		cd ../..
+		%endif
+
+		%{__make}
+
+		base_built="yes"
+	else
+		%{__make} -C src/cats clean
+		%{__make} -C src/cats
+	fi
+
+		# install the database library in a temporary location
+	install -d libbacsql/$database%{_libdir}
+	%{__make} -C src/cats libtool-install DESTDIR=$PWD/libbacsql/$database
+done
 
 %if %{with rescue}
 cd rescue
@@ -497,6 +560,19 @@ install -d $RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir},%{_mandir},%{_bindir},/
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
+
+# install libraries for all the database backends
+# ldconfig will add the soname symlinks when one of the packages is installed
+for database in %{databases} ; do
+	for libfile in libbacsql/$database%{_libdir}/lib*-*.so ; do
+		orig_name=`basename $libfile`
+		file_prefix="${orig_name%%-*.so}"
+		file_suffix="${orig_name#*-}"
+		file_name="$file_prefix-$database-$file_suffix"
+		install "$libfile" "$RPM_BUILD_ROOT/%{_libdir}/$file_name"
+		ln -sf "$file_name" "$RPM_BUILD_ROOT/%{_libdir}/$orig_name"
+	done
+done
 
 install %{SOURCE10} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-dir
 install %{SOURCE11} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-fd
@@ -561,6 +637,9 @@ rm $RPM_BUILD_ROOT%{_docdir}/bacula/technotes
 rm $RPM_BUILD_ROOT%{_sbindir}/bacula
 rm $RPM_BUILD_ROOT%{_libexecdir}/%{name}/bacula-ctl-*
 
+# unsupported
+rm $RPM_BUILD_ROOT%{_libexecdir}/%{name}/*_bdb_*
+
 # rename to avoid possible conflicts
 mv $RPM_BUILD_ROOT%{_sbindir}/{,bacula-}dbcheck
 mv $RPM_BUILD_ROOT%{_mandir}/man8/{,bacula-}dbcheck.8.gz
@@ -568,8 +647,12 @@ mv $RPM_BUILD_ROOT%{_mandir}/man8/{,bacula-}dbcheck.8.gz
 # no -devel files packaged, so this is also useless
 rm $RPM_BUILD_ROOT%{_libdir}/libbac{,cfg,find,py,sql}.{so,la}
 
-# sqlite is not supported
-rm $RPM_BUILD_ROOT%{_libexecdir}/%{name}/update_sqlite_*
+# placeholders for the symlinks set in %%post db-*
+for f in create_bacula_database drop_bacula_database drop_bacula_tables \
+	grant_bacula_privileges make_bacula_tables update_bacula_tables ; do
+
+	ln -sf /dev/null $RPM_BUILD_ROOT%{_libexecdir}/%{name}/$f
+done
 
 
 %clean
@@ -758,6 +841,26 @@ if [ "$1" = "0" ]; then
 	rm -rf %{_sysconfdir}/rescue/diskinfo/*
 fi
 
+%define db_post() \
+/sbin/ldconfig \
+for name in "create database" "drop tables" "drop database" "grant privileges" "make tables" "update tables" ; do \
+	prefix="${name%% *}" \
+	suffix="${name#* }" \
+	ln -sf "${prefix}_%{1}_${suffix}" %{_libexecdir}/%{name}/"${prefix}_bacula_${suffix}" || :  \
+done
+
+%post db-postgresql
+%db_post postgresql
+
+%post db-mysql
+%db_post mysql
+
+%post db-sqlite3
+%db_post sqlite3
+
+%post db-dbi
+/sbin/ldconfig
+
 %files common
 %defattr(644,root,root,755)
 %doc LICENSE
@@ -770,7 +873,6 @@ fi
 %attr(755,root,root) %{_libdir}/libbaccfg-%{version}.so
 %attr(755,root,root) %{_libdir}/libbacfind-%{version}.so
 %attr(755,root,root) %{_libdir}/libbacpy-%{version}.so
-%attr(755,root,root) %{_libdir}/libbacsql-%{version}.so
 %{_mandir}/man8/bacula.8*
 %{_mandir}/man1/bsmtp.1*
 %{_mandir}/man8/btraceback.8*
@@ -798,48 +900,89 @@ fi
 %{_mandir}/man8/bacula-dir.8*
 %{_mandir}/man8/bacula-dbcheck.8*
 %{_libexecdir}/%{name}/query.sql
-%if %{with bdb} || %{with dbi}
-%attr(755,root,root) %{_libexecdir}/%{name}/create_bdb_database
-%attr(755,root,root) %{_libexecdir}/%{name}/drop_bdb_database
-%attr(755,root,root) %{_libexecdir}/%{name}/drop_bdb_tables
-%attr(755,root,root) %{_libexecdir}/%{name}/grant_bdb_privileges
-%attr(755,root,root) %{_libexecdir}/%{name}/make_bdb_tables
-%attr(755,root,root) %{_libexecdir}/%{name}/update_bdb_*
-%endif
-%if %{with sqlite3} || %{with dbi}
-%attr(755,root,root) %{_libexecdir}/%{name}/create_sqlite3_database
-%attr(755,root,root) %{_libexecdir}/%{name}/drop_sqlite3_database
-%attr(755,root,root) %{_libexecdir}/%{name}/drop_sqlite3_tables
-%attr(755,root,root) %{_libexecdir}/%{name}/grant_sqlite3_privileges
-%attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_tables
-%attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite3_*
-%endif
-%if %{with mysql} || %{with dbi}
-%attr(755,root,root) %{_libexecdir}/%{name}/create_mysql_database
-%attr(755,root,root) %{_libexecdir}/%{name}/drop_mysql_database
-%attr(755,root,root) %{_libexecdir}/%{name}/drop_mysql_tables
-%attr(755,root,root) %{_libexecdir}/%{name}/grant_mysql_privileges
-%attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_tables
-%attr(755,root,root) %{_libexecdir}/%{name}/update_mysql_*
-%endif
-%if %{with pgsql} || %{with dbi}
+#%attr(755,root,root) %{_libexecdir}/%{name}/make_catalog_backup
+#%attr(755,root,root) %{_libexecdir}/%{name}/delete_catalog_backup
+
+%files db-postgresql
+%defattr(644,root,root,755)
 %attr(755,root,root) %{_libexecdir}/%{name}/create_postgresql_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_postgresql_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_postgresql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/grant_postgresql_privileges
 %attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_postgresql_*
-%endif
-%if %{without dbi}
-%attr(755,root,root) %{_libexecdir}/%{name}/create_bacula_database
-%attr(755,root,root) %{_libexecdir}/%{name}/drop_bacula_database
-%attr(755,root,root) %{_libexecdir}/%{name}/drop_bacula_tables
-%attr(755,root,root) %{_libexecdir}/%{name}/grant_bacula_privileges
-%attr(755,root,root) %{_libexecdir}/%{name}/make_bacula_tables
-%attr(755,root,root) %{_libexecdir}/%{name}/update_bacula_tables
-%endif
-#%attr(755,root,root) %{_libexecdir}/%{name}/make_catalog_backup
-#%attr(755,root,root) %{_libexecdir}/%{name}/delete_catalog_backup
+%attr(755,root,root) %{_libdir}/libbacsql-postgresql-%{version}.so
+
+%ghost %attr(755,root,root) %{_libdir}/libbacsql-%{version}.so
+%ghost %{_libexecdir}/%{name}/create_bacula_database
+%ghost %{_libexecdir}/%{name}/drop_bacula_tables
+%ghost %{_libexecdir}/%{name}/drop_bacula_database
+%ghost %{_libexecdir}/%{name}/grant_bacula_privileges
+%ghost %{_libexecdir}/%{name}/make_bacula_tables
+%ghost %{_libexecdir}/%{name}/update_bacula_tables
+
+%files db-mysql
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libexecdir}/%{name}/create_mysql_database
+%attr(755,root,root) %{_libexecdir}/%{name}/drop_mysql_database
+%attr(755,root,root) %{_libexecdir}/%{name}/drop_mysql_tables
+%attr(755,root,root) %{_libexecdir}/%{name}/grant_mysql_privileges
+%attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_tables
+%attr(755,root,root) %{_libexecdir}/%{name}/update_mysql_*
+%attr(755,root,root) %{_libdir}/libbacsql-mysql-%{version}.so
+
+%ghost %attr(755,root,root) %{_libdir}/libbacsql-%{version}.so
+%ghost %{_libexecdir}/%{name}/create_bacula_database
+%ghost %{_libexecdir}/%{name}/drop_bacula_tables
+%ghost %{_libexecdir}/%{name}/drop_bacula_database
+%ghost %{_libexecdir}/%{name}/grant_bacula_privileges
+%ghost %{_libexecdir}/%{name}/make_bacula_tables
+%ghost %{_libexecdir}/%{name}/update_bacula_tables
+
+%files db-sqlite3
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libexecdir}/%{name}/create_sqlite3_database
+%attr(755,root,root) %{_libexecdir}/%{name}/drop_sqlite3_database
+%attr(755,root,root) %{_libexecdir}/%{name}/drop_sqlite3_tables
+%attr(755,root,root) %{_libexecdir}/%{name}/grant_sqlite3_privileges
+%attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_tables
+%attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite3_*
+%attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite_*
+%attr(755,root,root) %{_libdir}/libbacsql-sqlite3-%{version}.so
+
+%ghost %attr(755,root,root) %{_libdir}/libbacsql-%{version}.so
+%ghost %{_libexecdir}/%{name}/create_bacula_database
+%ghost %{_libexecdir}/%{name}/drop_bacula_tables
+%ghost %{_libexecdir}/%{name}/drop_bacula_database
+%ghost %{_libexecdir}/%{name}/grant_bacula_privileges
+%ghost %{_libexecdir}/%{name}/make_bacula_tables
+%ghost %{_libexecdir}/%{name}/update_bacula_tables
+
+%files db-dbi
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libexecdir}/%{name}/create_postgresql_database
+%attr(755,root,root) %{_libexecdir}/%{name}/drop_postgresql_database
+%attr(755,root,root) %{_libexecdir}/%{name}/drop_postgresql_tables
+%attr(755,root,root) %{_libexecdir}/%{name}/grant_postgresql_privileges
+%attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_tables
+%attr(755,root,root) %{_libexecdir}/%{name}/update_postgresql_*
+%attr(755,root,root) %{_libexecdir}/%{name}/create_mysql_database
+%attr(755,root,root) %{_libexecdir}/%{name}/drop_mysql_database
+%attr(755,root,root) %{_libexecdir}/%{name}/drop_mysql_tables
+%attr(755,root,root) %{_libexecdir}/%{name}/grant_mysql_privileges
+%attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_tables
+%attr(755,root,root) %{_libexecdir}/%{name}/update_mysql_*
+%attr(755,root,root) %{_libexecdir}/%{name}/create_sqlite3_database
+%attr(755,root,root) %{_libexecdir}/%{name}/drop_sqlite3_database
+%attr(755,root,root) %{_libexecdir}/%{name}/drop_sqlite3_tables
+%attr(755,root,root) %{_libexecdir}/%{name}/grant_sqlite3_privileges
+%attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_tables
+%attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite3_*
+%attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite_*
+%attr(755,root,root) %{_libdir}/libbacsql-dbi-%{version}.so
+
+%ghost %attr(755,root,root) %{_libdir}/libbacsql-%{version}.so
+
 
 %files fd
 %defattr(644,root,root,755)

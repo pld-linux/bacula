@@ -31,12 +31,12 @@
 -	$(INSTALL_SCRIPT) drop_bacula_tables $(DESTDIR)$(scriptdir)/drop_bacula_tables
 -	$(INSTALL_SCRIPT) drop_bacula_database $(DESTDIR)$(scriptdir)/drop_bacula_database
 +	for dbtype in bdb mysql postgresql sqlite3 sqlite; do \
-+		$(INSTALL_SCRIPT) create_$${dbtype}_database $(DESTDIR)$(scriptdir)/create_$${dbtype}_database; \
-+		$(INSTALL_SCRIPT) update_$${dbtype}_tables $(DESTDIR)$(scriptdir)/update_$${dbtype}_tables; \
-+		$(INSTALL_SCRIPT) make_$${dbtype}_tables $(DESTDIR)$(scriptdir)/make_$${dbtype}_tables; \
-+		$(INSTALL_SCRIPT) grant_$${dbtype}_privileges $(DESTDIR)$(scriptdir)/grant_$${dbtype}_privileges; \
-+		$(INSTALL_SCRIPT) drop_$${dbtype}_tables $(DESTDIR)$(scriptdir)/drop_$${dbtype}_tables; \
-+		$(INSTALL_SCRIPT) drop_$${dbtype}_database $(DESTDIR)$(scriptdir)/drop_$${dbtype}_database; \
++		[ -f create_$${dbtype}_database ] && $(INSTALL_SCRIPT) create_$${dbtype}_database $(DESTDIR)$(scriptdir)/create_$${dbtype}_database; \
++		[ -f update_$${dbtype}_tables ] && $(INSTALL_SCRIPT) update_$${dbtype}_tables $(DESTDIR)$(scriptdir)/update_$${dbtype}_tables; \
++		[ -f make_$${dbtype}_tables ] && $(INSTALL_SCRIPT) make_$${dbtype}_tables $(DESTDIR)$(scriptdir)/make_$${dbtype}_tables; \
++		[ -f grant_$${dbtype}_privileges ] && $(INSTALL_SCRIPT) grant_$${dbtype}_privileges $(DESTDIR)$(scriptdir)/grant_$${dbtype}_privileges; \
++		[ -f drop_$${dbtype}_tables ] && $(INSTALL_SCRIPT) drop_$${dbtype}_tables $(DESTDIR)$(scriptdir)/drop_$${dbtype}_tables; \
++		[ -f drop_$${dbtype}_database ] && $(INSTALL_SCRIPT) drop_$${dbtype}_database $(DESTDIR)$(scriptdir)/drop_$${dbtype}_database; \
 +	done
 +
 +		$(INSTALL_SCRIPT) fix_postgresql_tables $(DESTDIR)$(scriptdir)/fix_postgresql_tables
