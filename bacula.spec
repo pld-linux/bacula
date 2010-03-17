@@ -543,23 +543,23 @@ install -d $RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir},%{_mandir},%{_bindir},/
 # install libraries for all the database backends
 # ldconfig will add the soname symlinks when one of the packages is installed
 for database in %{databases} ; do
-	for libfile in libbacsql/$database%{_libdir}/lib*-*.so ; do
-		orig_name=`basename $libfile`
-		file_prefix="${orig_name%%-*.so}"
-		file_suffix="${orig_name#*-}"
-		file_name="$file_prefix-$database-$file_suffix"
-		install "$libfile" "$RPM_BUILD_ROOT/%{_libdir}/$file_name"
-		ln -sf "$file_name" "$RPM_BUILD_ROOT/%{_libdir}/$orig_name"
+	for libfile in libbacsql/$database%{_libdir}/lib*-*.so; do
+		orig_name=${libfile##*/}
+		file_prefix=${orig_name%%-*.so}
+		file_suffix=${orig_name#*-}
+		file_name=$file_prefix-$database-$file_suffix
+		install -p $libfile $RPM_BUILD_ROOT/%{_libdir}/$file_name
+		touch $RPM_BUILD_ROOT/%{_libdir}/$orig_name
 	done
 done
 
-install %{SOURCE10} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-dir
-install %{SOURCE11} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-fd
-install %{SOURCE12} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-sd
-install %{SOURCE13} $RPM_BUILD_ROOT/etc/logrotate.d/%{name}-dir
-install %{SOURCE14} $RPM_BUILD_ROOT/etc/sysconfig/bacula-dir
-install %{SOURCE15} $RPM_BUILD_ROOT/etc/sysconfig/bacula-fd
-install %{SOURCE16} $RPM_BUILD_ROOT/etc/sysconfig/bacula-sd
+install -p %{SOURCE10} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-dir
+install -p %{SOURCE11} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-fd
+install -p %{SOURCE12} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-sd
+cp -a %{SOURCE13} $RPM_BUILD_ROOT/etc/logrotate.d/%{name}-dir
+cp -a %{SOURCE14} $RPM_BUILD_ROOT/etc/sysconfig/bacula-dir
+cp -a %{SOURCE15} $RPM_BUILD_ROOT/etc/sysconfig/bacula-fd
+cp -a %{SOURCE16} $RPM_BUILD_ROOT/etc/sysconfig/bacula-sd
 
 %if %{with console_wx}
 # tray-monitor is for regular users
