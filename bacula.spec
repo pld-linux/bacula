@@ -22,7 +22,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	5.0.1
-Release:	0.5
+Release:	1
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
@@ -48,7 +48,6 @@ Patch5:		%{name}-desktop.patch
 Patch6:		%{name}-64bitbuild_fix.patch
 Patch7:		%{name}-dbi_fixes.patch
 Patch8:		%{name}-dbi_dbcheck.patch
-Patch9:		%{name}-config_no_clean.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -90,7 +89,8 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_sysconfdir	/etc/%{name}
 %define		_localstatedir	/var/lib/%{name}
 
-%define	databases %{?with_pgsql:postgresql} %{?with_mysql:mysql} %{?with_sqlite3:sqlite3} %{?with_dbi:dbi}
+# from 'the worst' to 'the best'
+%define	databases %{?with_dbi:dbi} %{?with_sqlite3:sqlite3} %{?with_mysql:mysql} %{?with_pgsql:postgresql}
 
 # dependency section is broken. ccache usage is instead to makefiles
 %undefine	with_ccache
@@ -450,7 +450,6 @@ ratunkowe do odtwarzania systemu od zera.
 #%patch6 -p1
 %patch7 -p1
 %patch8 -p1
-%patch9 -p1
 
 tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
 
@@ -475,10 +474,8 @@ cd ..
 
 CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
 
-# we wan't the 'base' build built with the first database in the list,
+# we wan't the 'base' build built with the last database in the list,
 # to make sure it is full-featured
-base_built="no"
-
 for database in %{databases} ; do
 	WXCONFIG=%{_bindir}/wx-gtk2-unicode-config \
 	%configure \
@@ -508,25 +505,22 @@ for database in %{databases} ; do
 		--with-mon-sd-password="#FAKE-mon-sd-password#" \
 		--with-openssl
 
-	if [ "$base_built" = "no" ] ; then
-		%if %{with bat}
-		cd src/qt-console
-		qmake-qt4 bat.pro
-		cd ../..
-		%endif
+	# build the database library
+	%{__make} -C src/cats clean
+	%{__make} -C src/cats
 
-		%{__make}
-
-		base_built="yes"
-	else
-		%{__make} -C src/cats clean
-		%{__make} -C src/cats
-	fi
-
-		# install the database library in a temporary location
+	# install the database library in a temporary location
 	install -d libbacsql/$database%{_libdir}
 	%{__make} -C src/cats libtool-install DESTDIR=$PWD/libbacsql/$database
 done
+
+%if %{with bat}
+cd src/qt-console
+qmake-qt4 bat.pro
+cd ../..
+%endif
+
+%{__make}
 
 %if %{with rescue}
 cd rescue
@@ -647,22 +641,26 @@ rm -rf $RPM_BUILD_ROOT
 %groupadd -P %{name}-common -g 136 -r -f bacula
 %useradd -P %{name}-common -u 136 -r -d /var/lib/bacula -s /bin/false -c "Bacula User" -g bacula bacula
 
+
+%define update_configs \
+echo "Updating bacula passwords and names..." | %banner \
+cd /etc/bacula \
+for f in *-password ; do \
+	if [ ! -s $f ] ; then \
+		openssl rand -base64 33 > $f \
+	fi \
+	p=`cat $f` \
+	for cf in *.conf *.conf.rpmnew ; do \
+		[ -f $cf ] && sed -i -e"s:#FAKE-$f#:$p:" "$cf" || : \
+	done \
+done \
+for cf in *.conf *.conf.rpmnew ; do \
+	[ -f $cf ] && sed -i -e"s:--hostname--:`hostname`:" "$cf" || : \
+done
+
 %post common
 /sbin/ldconfig
-echo "Updating bacula passwords and names..."
-cd /etc/bacula
-for f in *-password ; do
-	if [ ! -s $f ] ; then
-		openssl rand -base64 33 > $f
-	fi
-	p=`cat $f`
-	for cf in *.conf *.conf.rpmnew ; do
-		[ -f $cf ] && sed -i -e"s:#FAKE-$f#:$p:" "$cf" || :
-	done
-done
-for cf in *.conf *.conf.rpmnew ; do
-	[ -f $cf ] && sed -i -e"s:--hostname--:`hostname`:" "$cf" || :
-done
+%update_configs
 
 %postun common
 /sbin/ldconfig
@@ -671,54 +669,16 @@ if [ "$1" = "0" ]; then
 	%groupremove bacula
 fi
 
+%triggerpostun dir -- %{name}-dir < 5.0
+%banner bacula-dir -t3 <<EOF
+You have upgraded from an older version of Bacula director.
+
+You will probably need to call %{_libexecdir}/%{name}/update_bacula_tables
+script to upgrade the database.
+EOF
+
 %post dir
-umask 077
-
-# XXX: Most of this upgrade procedure is safe for sqlite only. Other databases would require knowledge
-#      about currently used version so we can't easily support these :(
-
-%if %{with sqlite3}
-[ -s %{_localstatedir}/bacula.db ] && \
-	DB_VER=`echo "select * from Version;" | \
-	%{_bindir}/sqlite%{?with_sqlite3:3} %{_localstatedir}/bacula.db | tail -n 1 2>/dev/null`
-
-if [ -z "$DB_VER" ]; then
-# grant privileges and create tables
-	%{_libexecdir}/%{name}/grant_bacula_privileges > dev/null
-	%{_libexecdir}/%{name}/create_bacula_database > dev/null
-	%{_libexecdir}/%{name}/make_bacula_tables > dev/null
-else
-	echo "Backing up bacula tables"
-	echo ".dump" | sqlite%{?with_sqlite3:3} %{_localstatedir}/bacula.db | bzip2 > %{_localstatedir}/bacula_backup.sql.bz2
-
-	db_type="%{database}"
-
-	next_ver=$(($DB_VER + 1))
-	# support up to version 30; increase this if needed
-	for ver in $(seq $next_ver 30); do
-		prev_ver=$(($ver - 1))
-
-		if [ -x %{_libexecdir}/%{name}/update_${type}_tables_${prev_ver}_to_${ver} ]; then
-			echo "Upgrading bacula database: db=${db_type} from ${prev_ver} to ${ver}..."
-			%{_libexecdir}/%{name}/update_${type}_tables_${prev_ver}_to_${ver}
-		fi
-	done
-
-	%{_libexecdir}/%{name}/update_bacula_tables
-	echo "If bacula works correctly you can remove the backup file %{_localstatedir}/bacula_backup.sql.bz2"
-fi
-chown -R bacula:bacula %{_localstatedir}
-chmod -R u+rX,go-rwx %{_localstatedir}/*
-%endif
-
-echo "Updating Bacula passwords and names..."
-cd /etc/bacula
-for f in *-password; do
-	p=`cat $f`
-	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew 2>/dev/null || :
-done
-sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew 2>/dev/null || :
-
+%update_configs
 /sbin/chkconfig --add bacula-dir
 %service bacula-dir restart "Bacula Director daemon"
 
@@ -729,14 +689,7 @@ if [ "$1" = "0" ]; then
 fi
 
 %post fd
-echo "Updating Bacula passwords and names..."
-cd /etc/bacula
-for f in *-password; do
-	p=`cat $f`
-	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew 2>/dev/null || :
-done
-sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew 2>/dev/null || :
-
+%update_configs
 /sbin/chkconfig --add bacula-fd
 %service bacula-fd restart "Bacula File daemon"
 
@@ -747,14 +700,7 @@ if [ "$1" = "0" ]; then
 fi
 
 %post sd
-echo "Updating Bacula passwords and names..."
-cd /etc/bacula
-for f in *-password; do
-	p=`cat $f`
-	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew 2>/dev/null || :
-done
-sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew 2>/dev/null || :
-
+%update_configs
 /sbin/chkconfig --add bacula-sd
 %service bacula-sd restart "Bacula Storage daemon"
 
@@ -770,40 +716,16 @@ if [ -e %{_sysconfdir}/console.conf -a ! -e %{_sysconfdir}/bconsole.conf ]; then
 fi
 
 %post console
-echo "Updating Bacula passwords and names..."
-cd /etc/bacula
-for f in *-password; do
-	p=`cat $f`
-	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew 2>/dev/null || :
-done
-sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew 2>/dev/null || :
+%update_configs
 
 %post console-wx
-echo "Updating Bacula passwords and names..."
-cd /etc/bacula
-for f in *-password; do
-	p=`cat $f`
-	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew 2>/dev/null || :
-done
-sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew 2>/dev/null || :
+%update_configs
 
 %post console-qt4
-echo "Updating Bacula passwords and names..."
-cd /etc/bacula
-for f in *-password; do
-	p=`cat $f`
-	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew 2>/dev/null || :
-done
-sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew 2>/dev/null || :
+%update_configs
 
 %post tray-monitor
-echo "Updating Bacula passwords and names..."
-cd /etc/bacula
-for f in *-password; do
-	p=`cat $f`
-	sed -i -e"s:#FAKE-$f#:$p:" *.conf *.conf.rpmnew 2>/dev/null || :
-done
-sed -i -e"s:--hostname--:`hostname`:" *.conf *.conf.rpmnew 2>/dev/null || :
+%update_configs
 
 %post rescue
 # link our current installed conf file to the rescue directory
@@ -839,7 +761,7 @@ done \
 /sbin/ldconfig \
 if [ "$1" = "0" ]; then \
 	for f in %{_libexecdir}/%{name}/*_bacula_* ; do \
-		if [ ! -e "$f" ] ; then \
+		if [ -L "$f" -a ! -e "$f" ] ; then \
 			rm "$f" \
 		fi \
 	done \
@@ -866,6 +788,7 @@ fi
 # dbi backend is different, as it is not bound with a specific db engine
 %post db-dbi
 /sbin/ldconfig
+%service bacula-dir restart "Bacula Director daemon"
 
 %postun db-dbi -p /sbin/ldconfig
 
