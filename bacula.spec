@@ -9,9 +9,9 @@
 %bcond_without	dbi			# use Database Independent Abstraction Layer (libdbi)
 %bcond_without	mysql			# use MySQL
 %bcond_without	pgsql			# use PostgreSQL
-%bcond_with	python
-%bcond_with	rescue
 %bcond_without	sqlite3			# use SQLite3
+%bcond_without	python
+%bcond_with	rescue
 %bcond_with	sqlite3_sync_off	# makes SQLite3 backend much faster, but less reliable
 #
 %if %{without sqlite3}
@@ -65,7 +65,7 @@ BuildRequires:	ncurses-devel
 BuildRequires:	openssl-devel
 BuildRequires:	pkgconfig
 %if %{with python}
-BuildRequires:	python-static
+BuildRequires:	python-devel
 %endif
 %if %{with bat}
 BuildRequires:	QtCore-devel
