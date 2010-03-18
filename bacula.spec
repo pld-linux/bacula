@@ -721,7 +721,7 @@ fi
 %post console-wx
 %update_configs
 
-%triggerpostun console-qt4 -- %{name}-console-qt4 < 5.0.1-2
+%triggerpostun common -- %{name}-common < 5.0.1-2
 find /etc/bacula/bat.conf* -perm /007 -print0 | xargs -0 -r chmod 600 || :
 
 %post console-qt4
