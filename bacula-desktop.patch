@@ -6,7 +6,8 @@
  Comment=Bacula Director Console
 -Icon=/usr/share/pixmaps/bat_icon.png
 +Icon=bacula
- Exec=@sbindir@/bat -c @sysconfdir@/bat.conf
+-Exec=@sbindir@/bat -c @sysconfdir@/bat.conf
++Exec=@bindir@/bat -c @sysconfdir@/bat.conf
  Terminal=false
  Type=Application
  Encoding=UTF-8

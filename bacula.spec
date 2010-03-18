@@ -574,7 +574,7 @@ sed -e 's/gnome-console/wx-console/g;s/Console/Wx Console/g' \
 %endif
 
 %if %{with bat}
-install src/qt-console/.libs/bat $RPM_BUILD_ROOT%{_sbindir}
+install src/qt-console/.libs/bat $RPM_BUILD_ROOT%{_bindir}
 install scripts/bat.desktop $RPM_BUILD_ROOT%{_desktopdir}
 %endif
 
@@ -972,8 +972,10 @@ fi
 %doc LICENSE
 %{_pixmapsdir}/%{name}.png
 %{_desktopdir}/bat.desktop
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bat.conf
-%attr(755,root,root) %{_sbindir}/bat
+# Do not make this file world-readable or any user will get full access to the
+# backup system 
+%attr(640,root,bacula) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bat.conf
+%attr(755,root,root) %{_bindir}/bat
 %{_mandir}/man1/bat.1*
 %{_docdir}/%{name}
 %endif
