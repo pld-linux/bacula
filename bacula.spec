@@ -22,7 +22,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	5.0.1
-Release:	1
+Release:	2
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
@@ -721,6 +721,9 @@ fi
 %post console-wx
 %update_configs
 
+%triggerpostun console-qt4 -- %{name}-console-qt4 < 5.0.1-2
+find /etc/bacula/bat.conf* -perm /007 -print0 | xargs -0 -r chmod 600 || :
+
 %post console-qt4
 %update_configs
 
@@ -961,7 +964,7 @@ fi
 %doc LICENSE
 %{_pixmapsdir}/%{name}.png
 %{_desktopdir}/bacula-wx.desktop
-%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bwx-console.conf
+%attr(640,root,bacula) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bwx-console.conf
 %attr(755,root,root) %{_sbindir}/bwx-console
 %{_mandir}/man1/bacula-bwxconsole.1*
 %endif
