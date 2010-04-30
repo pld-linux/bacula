@@ -22,15 +22,14 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	5.0.1
-Release:	3
-Epoch:		0
+Version:	5.0.2
+Release:	0.1
 License:	extended GPL v2
 Group:		Networking/Utilities
 Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	beb9f8da196b3c9ffb0356f087dbdb99
+# Source0-md5:	e9204d2e772f12662de28da3327853de
 Source1:	http://downloads.sourceforge.net/bacula/%{name}-docs-%{version}.tar.bz2
-# Source1-md5:	ce2ef0dca50ab916fd6701b53b7bb4df
+# Source1-md5:	7a6afbf592dde4fae0240d82ed3cb10d
 Source2:	http://downloads.sourceforge.net/bacula/%{name}-rescue-5.0.0.tar.gz
 # Source2-md5:	349623581cfe0bcd798dd137abac959a
 Source10:	%{name}-dir.init
@@ -167,8 +166,8 @@ Summary:	Bacula Director and Catalog services
 Summary(pl.UTF-8):	Usługi Bacula Director i Catalog
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-Requires:	bacula(db) = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common = %{version}-%{release}
+Requires:	bacula(db) = %{version}-%{release}
 Obsoletes:	bacula-updatedb
 
 %description dir
@@ -203,7 +202,7 @@ Summary:	Bacula Console
 Summary(pl.UTF-8):	Konsola Baculi
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common = %{version}-%{release}
 
 %description console
 Bacula - It comes by night and sucks the vital essence from your
@@ -225,7 +224,7 @@ Summary:	Bacula wxWidgets Console
 Summary(pl.UTF-8):	Konsola Baculi oparta na wxWidgets
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common = %{version}-%{release}
 
 %description console-wx
 Bacula - It comes by night and sucks the vital essence from your
@@ -247,7 +246,7 @@ Summary:	Bacula Qt4 Console
 Summary(pl.UTF-8):	Konsola Baculi oparta na Qt4
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common = %{version}-%{release}
 
 %description console-qt4
 Bacula - It comes by night and sucks the vital essence from your
@@ -267,7 +266,7 @@ interfejs graficzny oparty na Qt4.
 Summary:	Bacula Tray Monitor
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common = %{version}-%{release}
 
 %description tray-monitor
 Bacula - It comes by night and sucks the vital essence from your
@@ -284,7 +283,7 @@ Summary:	Bacula File services (Client)
 Summary(pl.UTF-8):	Usługi Bacula File (klient)
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common = %{version}-%{release}
 
 %description fd
 Bacula - It comes by night and sucks the vital essence from your
@@ -319,7 +318,7 @@ Summary:	Bacula Storage services
 Summary(pl.UTF-8):	Usługi Bacula Storage
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common = %{version}-%{release}
 Conflicts:	dvd+rw-tools <= 5.21.4.10.8-1
 
 %description sd
@@ -349,8 +348,8 @@ Summary:	PostgreSQL database driver for Bacula
 Summary(pl.UTF-8):	Sterownik bazy PostgreSQL dla Baculi
 Group:		Networking/Utilities
 Requires(post):	/sbin/ldconfig
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-Provides:	bacula(db) = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common = %{version}-%{release}
+Provides:	bacula(db) = %{version}-%{release}
 Obsoletes:	bacula(db)
 
 %description db-postgresql
@@ -364,8 +363,8 @@ Summary:	MySQL database driver for Bacula
 Summary(pl.UTF-8):	Sterownik bazy MySQL dla Baculi
 Group:		Networking/Utilities
 Requires(post):	/sbin/ldconfig
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-Provides:	bacula(db) = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common = %{version}-%{release}
+Provides:	bacula(db) = %{version}-%{release}
 Obsoletes:	bacula(db)
 
 %description db-mysql
@@ -379,8 +378,8 @@ Summary:	SQLite database driver for Bacula
 Summary(pl.UTF-8):	Sterownik bazy SQLite dla Baculi
 Group:		Networking/Utilities
 Requires(post):	/sbin/ldconfig
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-Provides:	bacula(db) = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common = %{version}-%{release}
+Provides:	bacula(db) = %{version}-%{release}
 Obsoletes:	bacula(db)
 
 %description db-sqlite3
@@ -394,8 +393,8 @@ Summary:	libdbi database driver for Bacula
 Summary(pl.UTF-8):	Sterownik bazy libdbi dla Baculi
 Group:		Networking/Utilities
 Requires(post):	/sbin/ldconfig
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-Provides:	bacula(db) = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common = %{version}-%{release}
+Provides:	bacula(db) = %{version}-%{release}
 Obsoletes:	bacula(db)
 
 %description db-dbi
@@ -408,7 +407,7 @@ Sterownik baz libdbi dla Baculi.
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Group:		Networking/Utilities
-Requires:	%{name}-fd = %{epoch}:%{version}-%{release}
+Requires:	%{name}-fd = %{version}-%{release}
 Requires:	coreutils
 Requires:	util-linux
 
@@ -454,7 +453,7 @@ Nagios plugin to check bacula.
 %setup -q -a 1
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
+#%patch2 -p1 CHECKME
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
@@ -592,6 +591,7 @@ sed -e 's/gnome-console/wx-console/g;s/Console/Wx Console/g' \
 
 %if %{with bat}
 # TODO: libtool install
+#libtool --silent --mode=install install src/qt-console/bat $RPM_BUILD_ROOT%{_bindir}
 install src/qt-console/.libs/bat $RPM_BUILD_ROOT%{_bindir}
 cp -a scripts/bat.desktop $RPM_BUILD_ROOT%{_desktopdir}
 %endif
