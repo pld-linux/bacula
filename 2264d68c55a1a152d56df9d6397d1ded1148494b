@@ -1,0 +1,6 @@
+- SECURITY: limit access to bat.conf to user root and bacula group only. This file
+  contains a password which gives full access to the backup server (this could be
+  used to destroy all backups and even all data on the client machines). Tray
+  monitor is not affected, as it used different credentials with lower
+  privileges.
+- move bat executable to %{_bindir}, as it can be used by users too
