@@ -1,0 +1,2 @@
+- the bat.conf-fixing trigger moved to the common-package. Insecure files may
+  be in place even after old bat has been uninstalled
