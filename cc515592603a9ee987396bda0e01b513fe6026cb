@@ -1,0 +1,1 @@
+- bacula-dir.conf needs to be root:bacula for reload console command to work
