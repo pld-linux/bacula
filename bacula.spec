@@ -1,5 +1,5 @@
 # TODO:
-#	- update desktop files, think about su-wrappers for console
+#	- update desktop files, think about su-wrappers for console (with .desktop files)
 #	- package web admin
 #	- fix log file permissions
 #
@@ -11,6 +11,7 @@
 %bcond_without	pgsql			# use PostgreSQL
 %bcond_without	sqlite3			# use SQLite3
 %bcond_without	python
+%bcond_with	nagios		# build nagios plugin
 %bcond_with	rescue
 %bcond_with	sqlite3_sync_off	# makes SQLite3 backend much faster, but less reliable
 #
@@ -26,11 +27,11 @@ Release:	3
 Epoch:		0
 License:	extended GPL v2
 Group:		Networking/Utilities
-Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
+Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
 # Source0-md5:	beb9f8da196b3c9ffb0356f087dbdb99
-Source1:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.bz2
+Source1:	http://downloads.sourceforge.net/bacula/%{name}-docs-%{version}.tar.bz2
 # Source1-md5:	ce2ef0dca50ab916fd6701b53b7bb4df
-Source2:	http://dl.sourceforge.net/bacula/%{name}-rescue-5.0.0.tar.gz
+Source2:	http://downloads.sourceforge.net/bacula/%{name}-rescue-5.0.0.tar.gz
 # Source2-md5:	349623581cfe0bcd798dd137abac959a
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
@@ -89,6 +90,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/%{name}
 %define		_localstatedir	/var/lib/%{name}
+%define		nagiosplugindir	%{_prefix}/lib/nagios/plugins
 
 # from 'the worst' to 'the best'
 %define	databases %{?with_dbi:dbi} %{?with_sqlite3:sqlite3} %{?with_mysql:mysql} %{?with_pgsql:postgresql}
@@ -440,6 +442,14 @@ plików.
 Ten pakiet zawiera skrypty do odtwarzania po awarii i tworzy dyskietkę
 ratunkowe do odtwarzania systemu od zera.
 
+%package -n nagios-plugin-check_bacula
+Summary:	Nagios plugin to check bacula
+Group:		Networking
+Requires:	nagios-common
+
+%description -n nagios-plugin-check_bacula
+Nagios plugin to check bacula.
+
 %prep
 %setup -q -a 1
 %patch0 -p1
@@ -478,7 +488,7 @@ CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
 
 # we wan't the 'base' build built with the last database in the list,
 # to make sure it is full-featured
-for database in %{databases} ; do
+for database in %{databases}; do
 	WXCONFIG=%{_bindir}/wx-gtk2-unicode-config \
 	%configure \
 		--with-scriptdir=%{_libexecdir}/%{name} \
@@ -524,6 +534,11 @@ cd ../..
 
 %{__make}
 
+%if %{with nagios}
+# nagios plugin
+%{__make} -C examples/nagios/check_bacula
+%endif
+
 %if %{with rescue}
 cd rescue
 %configure \
@@ -544,7 +559,7 @@ install -d $RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir},%{_mandir},%{_bindir},/
 
 # install libraries for all the database backends
 # ldconfig will add the soname symlinks when one of the packages is installed
-for database in %{databases} ; do
+for database in %{databases}; do
 	for libfile in libbacsql/$database%{_libdir}/lib*-*.so; do
 		orig_name=${libfile##*/}
 		file_prefix=${orig_name%%-*.so}
@@ -567,7 +582,7 @@ cp -a %{SOURCE16} $RPM_BUILD_ROOT/etc/sysconfig/bacula-sd
 # tray-monitor is for regular users
 #mv $RPM_BUILD_ROOT%{_sbindir}/bacula-tray-monitor $RPM_BUILD_ROOT%{_bindir}
 
-install scripts/bacula.png $RPM_BUILD_ROOT%{_pixmapsdir}/bacula.png
+cp -a scripts/bacula.png $RPM_BUILD_ROOT%{_pixmapsdir}/bacula.png
 #install src/tray-monitor/generic.xpm $RPM_BUILD_ROOT%{_pixmapsdir}/bacula-tray-monitor.xpm
 sed -e 's/gnome-console/wx-console/g;s/Console/Wx Console/g' \
 	scripts/bacula.desktop.gnome2 > $RPM_BUILD_ROOT%{_desktopdir}/bacula-wx.desktop
@@ -576,22 +591,23 @@ sed -e 's/gnome-console/wx-console/g;s/Console/Wx Console/g' \
 %endif
 
 %if %{with bat}
+# TODO: libtool install
 install src/qt-console/.libs/bat $RPM_BUILD_ROOT%{_bindir}
-install scripts/bat.desktop $RPM_BUILD_ROOT%{_desktopdir}
+cp -a scripts/bat.desktop $RPM_BUILD_ROOT%{_desktopdir}
 %endif
 
 %if %{with rescue}
 # install the rescue stuff, these are the rescue scripts
-install rescue/linux/floppy/backup.etc.list $RPM_BUILD_ROOT%{_sysconfdir}/rescue
-install rescue/linux/floppy/*_* $RPM_BUILD_ROOT%{_sysconfdir}/rescue
-install rescue/linux/floppy/getdiskinfo $RPM_BUILD_ROOT%{_sysconfdir}/rescue
-install rescue/linux/floppy/sfdisk.bz2 $RPM_BUILD_ROOT%{_sysconfdir}/rescue
+cp -a rescue/linux/floppy/backup.etc.list $RPM_BUILD_ROOT%{_sysconfdir}/rescue
+cp -a rescue/linux/floppy/sfdisk.bz2 $RPM_BUILD_ROOT%{_sysconfdir}/rescue
+install -p rescue/linux/floppy/*_* $RPM_BUILD_ROOT%{_sysconfdir}/rescue
+install -p rescue/linux/floppy/getdiskinfo $RPM_BUILD_ROOT%{_sysconfdir}/rescue
 %endif
 
 touch $RPM_BUILD_ROOT/var/log/bacula/log
 
 # install the updatedb scripts
-install updatedb/update_sqlite* $RPM_BUILD_ROOT%{_libexecdir}/%{name}
+install -p updatedb/update_sqlite* $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 # place for site passwords
 touch $RPM_BUILD_ROOT%{_sysconfdir}/{dir-password,fd-password,sd-password}
@@ -635,6 +651,11 @@ for f in create_bacula_database drop_bacula_database drop_bacula_tables \
 	ln -sf /dev/null $RPM_BUILD_ROOT%{_libexecdir}/%{name}/$f
 done
 
+%if %{with nagios}
+%{__make} -C examples/nagios/check_bacula install \
+	sbindir=%{nagiosplugindir} \
+	DESTDIR=$RPM_BUILD_ROOT
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -755,18 +776,18 @@ fi
 
 %define db_post() \
 /sbin/ldconfig \
-for name in "create database" "drop tables" "drop database" "grant privileges" "make tables" "update tables" ; do \
+for name in "create database" "drop tables" "drop database" "grant privileges" "make tables" "update tables"; do \
 	prefix="${name%% *}" \
 	suffix="${name#* }" \
-	ln -sf "${prefix}_%{1}_${suffix}" %{_libexecdir}/%{name}/"${prefix}_bacula_${suffix}" || :  \
+	ln -sf "${prefix}_%{1}_${suffix}" %{_libexecdir}/%{name}/"${prefix}_bacula_${suffix}" || : \
 done \
 %service bacula-dir restart "Bacula Director daemon"
 
 %define db_postun() \
 /sbin/ldconfig \
 if [ "$1" = "0" ]; then \
-	for f in %{_libexecdir}/%{name}/*_bacula_* ; do \
-		if [ -L "$f" -a ! -e "$f" ] ; then \
+	for f in %{_libexecdir}/%{name}/*_bacula_*; do \
+		if [ -L "$f" -a ! -e "$f" ]; then \
 			rm "$f" \
 		fi \
 	done \
@@ -919,7 +940,6 @@ fi
 
 %ghost %attr(755,root,root) %{_libdir}/libbacsql-%{version}.so
 
-
 %files fd
 %defattr(644,root,root,755)
 %doc LICENSE
@@ -978,7 +998,7 @@ fi
 %{_pixmapsdir}/%{name}.png
 %{_desktopdir}/bat.desktop
 # Do not make this file world-readable or any user will get full access to the
-# backup system 
+# backup system
 %attr(640,root,bacula) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bat.conf
 %attr(755,root,root) %{_bindir}/bat
 %{_mandir}/man1/bat.1*
@@ -1011,4 +1031,10 @@ fi
 %attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rescue/run_grub
 %attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rescue/run_lilo
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rescue/sfdisk.bz2
+%endif
+
+%if %{with nagios}
+%files -n nagios-plugin-check_bacula
+%defattr(644,root,root,755)
+%attr(755,root,root) %{nagiosplugindir}/check_bacula
 %endif
