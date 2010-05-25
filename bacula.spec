@@ -2,6 +2,10 @@
 #	- update desktop files, think about su-wrappers for console (with .desktop files)
 #	- package web admin
 #	- fix log file permissions
+#	- no longer builds:
+#make[1]: *** No rule to make target `../lib/libbac.la', needed by `bacula-dir'.  Stop.
+#make[1]: *** Waiting for unfinished jobs....
+#make[1]: Leaving directory `/home/users/glen/rpm/BUILD.x86_64-linux/bacula-5.0.2/src/dird'
 #
 # Conditional build:
 %bcond_without	console_wx		# wx-console program
@@ -14,11 +18,11 @@
 %bcond_with	nagios		# build nagios plugin
 %bcond_with	rescue
 %bcond_with	sqlite3_sync_off	# makes SQLite3 backend much faster, but less reliable
-#
+
 %if %{without sqlite3}
 %undefine       with_sqlite3_sync_off
 %endif
-#
+
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
@@ -48,7 +52,6 @@ Patch5:		%{name}-desktop.patch
 Patch6:		%{name}-64bitbuild_fix.patch
 Patch7:		%{name}-dbi_fixes.patch
 Patch8:		%{name}-dbi_dbcheck.patch
-Patch9:		%{name}-openssl1.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -460,7 +463,6 @@ Nagios plugin to check bacula.
 #%patch6 -p1
 %patch7 -p1
 %patch8 -p1
-%patch9 -p1
 
 tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
 
