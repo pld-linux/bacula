@@ -872,9 +872,9 @@ fi
 %attr(755,root,root) %{_libexecdir}/%{name}/grant_postgresql_privileges
 %attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_postgresql_*
-%attr(755,root,root) %{_libdir}/libbacsql-postgresql-%{version}.so
+%attr(755,root,root) %{_libdir}/libbacsql-postgresql-5*.so
 
-%ghost %attr(755,root,root) %{_libdir}/libbacsql-%{version}.so
+%ghost %attr(755,root,root) %{_libdir}/libbacsql-5*.so
 %ghost %{_libexecdir}/%{name}/create_bacula_database
 %ghost %{_libexecdir}/%{name}/drop_bacula_tables
 %ghost %{_libexecdir}/%{name}/drop_bacula_database
