@@ -830,10 +830,10 @@ fi
 # do not remove bsmtp from files. Fix build if it is not installed.
 %attr(755,root,root) %{_sbindir}/bsmtp
 %attr(755,root,root) %{_sbindir}/btraceback
-%attr(755,root,root) %{_libdir}/libbac-%{version}.so
-%attr(755,root,root) %{_libdir}/libbaccfg-%{version}.so
-%attr(755,root,root) %{_libdir}/libbacfind-%{version}.so
-%attr(755,root,root) %{_libdir}/libbacpy-%{version}.so
+%attr(755,root,root) %{_libdir}/libbac-5*.so
+%attr(755,root,root) %{_libdir}/libbaccfg-5*.so
+%attr(755,root,root) %{_libdir}/libbacfind-5*.so
+%attr(755,root,root) %{_libdir}/libbacpy-5*.so
 %{_mandir}/man8/bacula.8*
 %{_mandir}/man1/bsmtp.1*
 %{_mandir}/man8/btraceback.8*
@@ -890,9 +890,9 @@ fi
 %attr(755,root,root) %{_libexecdir}/%{name}/grant_mysql_privileges
 %attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_mysql_*
-%attr(755,root,root) %{_libdir}/libbacsql-mysql-%{version}.so
+%attr(755,root,root) %{_libdir}/libbacsql-mysql-5*.so
 
-%ghost %attr(755,root,root) %{_libdir}/libbacsql-%{version}.so
+%ghost %attr(755,root,root) %{_libdir}/libbacsql-5*.so
 %ghost %{_libexecdir}/%{name}/create_bacula_database
 %ghost %{_libexecdir}/%{name}/drop_bacula_tables
 %ghost %{_libexecdir}/%{name}/drop_bacula_database
@@ -909,9 +909,9 @@ fi
 %attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite3_*
 %attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite_*
-%attr(755,root,root) %{_libdir}/libbacsql-sqlite3-%{version}.so
+%attr(755,root,root) %{_libdir}/libbacsql-sqlite3-5*.so
 
-%ghost %attr(755,root,root) %{_libdir}/libbacsql-%{version}.so
+%ghost %attr(755,root,root) %{_libdir}/libbacsql-5*.so
 %ghost %{_libexecdir}/%{name}/create_bacula_database
 %ghost %{_libexecdir}/%{name}/drop_bacula_tables
 %ghost %{_libexecdir}/%{name}/drop_bacula_database
@@ -940,9 +940,9 @@ fi
 %attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite3_*
 %attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite_*
-%attr(755,root,root) %{_libdir}/libbacsql-dbi-%{version}.so
+%attr(755,root,root) %{_libdir}/libbacsql-dbi-5*.so
 
-%ghost %attr(755,root,root) %{_libdir}/libbacsql-%{version}.so
+%ghost %attr(755,root,root) %{_libdir}/libbacsql-5*.so
 
 %files fd
 %defattr(644,root,root,755)
