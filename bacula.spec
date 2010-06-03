@@ -58,6 +58,7 @@ BuildRequires:	acl-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	gettext-devel
+BuildRequires:	gtk+2-devel
 BuildRequires:	libcap-devel
 %{?with_dbi:BuildRequires:	libdbi-devel >= 0.8.4}
 BuildRequires:	libtool
@@ -65,26 +66,28 @@ BuildRequires:	libtool
 BuildRequires:	fakeroot
 %endif
 BuildRequires:	libwrap-devel
-BuildRequires:	mtx
 BuildRequires:	ncurses-devel
 BuildRequires:	openssl-devel
 BuildRequires:	pkgconfig
 %if %{with python}
 BuildRequires:	python-devel
+BuildRequires:	python-modules
 %endif
 %if %{with bat}
 BuildRequires:	QtCore-devel
 BuildRequires:	QtGui-devel
 BuildRequires:	qt4-build >= 4.3.3-3
 BuildRequires:	qt4-qmake >= 4.3.3-3
-BuildRequires:	qwt-devel >= 5.0.2-2
+#BuildRequires:	qwt-devel >= 5.0.2-2
 %endif
 %{?with_mysql:BuildRequires:	mysql-devel}
 %{?with_pgsql:BuildRequires:	postgresql-devel}
 BuildRequires:	readline-devel
+BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	sed >= 4.0
 %{?with_sqlite3:BuildRequires:	sqlite3-devel}
+BuildRequires:	which
 %if %{with console_wx}
 BuildRequires:	wxGTK2-unicode-devel >= 2.4.0
 %endif
@@ -493,6 +496,7 @@ CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
 # to make sure it is full-featured
 for database in %{databases}; do
 	WXCONFIG=%{_bindir}/wx-gtk2-unicode-config \
+	QMAKE=%{_bindir}/qt4-qmake \
 	%configure \
 		--with-scriptdir=%{_libexecdir}/%{name} \
 		%{?with_bat:--enable-bat} \
