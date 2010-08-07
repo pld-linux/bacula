@@ -26,16 +26,16 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	5.0.2
-Release:	2
+Version:	5.0.3
+Release:	0.1
 License:	extended GPL v2
 Group:		Networking/Utilities
 Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	e9204d2e772f12662de28da3327853de
+# Source0-md5:	9de254ae39cab0587fdb2f5d8d90b03b
 Source1:	http://downloads.sourceforge.net/bacula/%{name}-docs-%{version}.tar.bz2
-# Source1-md5:	7a6afbf592dde4fae0240d82ed3cb10d
-Source2:	http://downloads.sourceforge.net/bacula/%{name}-rescue-5.0.0.tar.gz
-# Source2-md5:	349623581cfe0bcd798dd137abac959a
+# Source1-md5:	7a00557dcf0dfa40de9e74176fefd1ae
+Source2:	http://downloads.sourceforge.net/bacula/%{name}-rescue-5.0.1.tar.gz
+# Source2-md5:	bb194aed8e204f54bf2f61d7e721f257
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
@@ -458,8 +458,8 @@ Nagios plugin to check bacula.
 %prep
 %setup -q -a 1
 %patch0 -p1
-%patch1 -p1
-%patch2 -p1
+#%patch1 -p1
+#%patch2 -p1
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
@@ -641,7 +641,7 @@ rm $RPM_BUILD_ROOT%{_sbindir}/bacula
 rm $RPM_BUILD_ROOT%{_libexecdir}/%{name}/bacula-ctl-*
 
 # unsupported
-rm $RPM_BUILD_ROOT%{_libexecdir}/%{name}/*_bdb_*
+#rm $RPM_BUILD_ROOT%{_libexecdir}/%{name}/*_bdb_*
 
 # rename to avoid possible conflicts
 mv $RPM_BUILD_ROOT%{_sbindir}/{,bacula-}dbcheck
