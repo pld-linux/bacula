@@ -6,6 +6,7 @@
 #make[1]: *** No rule to make target `../lib/libbac.la', needed by `bacula-dir'.  Stop.
 #make[1]: *** Waiting for unfinished jobs....
 #make[1]: Leaving directory `/home/users/glen/rpm/BUILD.x86_64-linux/bacula-5.0.2/src/dird'
+#	- unpackaged: /usr/lib64/bacula/btraceback.mdb
 #
 # Conditional build:
 %bcond_without	console_wx		# wx-console program
@@ -15,7 +16,7 @@
 %bcond_without	pgsql			# use PostgreSQL
 %bcond_without	sqlite3			# use SQLite3
 %bcond_without	python
-%bcond_with	nagios		# build nagios plugin
+%bcond_without	nagios		# build nagios plugin
 %bcond_with	rescue
 %bcond_with	sqlite3_sync_off	# makes SQLite3 backend much faster, but less reliable
 
@@ -27,7 +28,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	5.0.3
-Release:	1
+Release:	2
 License:	extended GPL v2
 Group:		Networking/Utilities
 Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
@@ -658,6 +659,7 @@ for f in create_bacula_database drop_bacula_database drop_bacula_tables \
 done
 
 %if %{with nagios}
+install -d $RPM_BUILD_ROOT%{nagiosplugindir}
 %{__make} -C examples/nagios/check_bacula install \
 	sbindir=%{nagiosplugindir} \
 	DESTDIR=$RPM_BUILD_ROOT
