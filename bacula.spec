@@ -28,7 +28,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	5.0.3
-Release:	2
+Release:	3
 License:	extended GPL v2
 Group:		Networking/Utilities
 Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
@@ -53,6 +53,7 @@ Patch5:		%{name}-desktop.patch
 Patch7:		%{name}-dbi_fixes.patch
 Patch8:		%{name}-dbi_dbcheck.patch
 Patch9:		%{name}-openssl1.patch
+Patch10:	%{name}-dvd_rewind.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -467,6 +468,7 @@ Nagios plugin to check bacula.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
 
