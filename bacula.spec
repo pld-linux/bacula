@@ -674,9 +674,8 @@ rm -rf $RPM_BUILD_ROOT
 %groupadd -P %{name}-common -g 136 -r -f bacula
 %useradd -P %{name}-common -u 136 -r -d /var/lib/bacula -s /bin/false -c "Bacula User" -g bacula bacula
 
-
 %define update_configs \
-echo "Updating bacula passwords and names..." | %banner \
+echo "Updating bacula passwords and names..." | %banner -a %{name} \
 cd /etc/bacula \
 for f in *-password ; do \
 	if [ ! -s $f ] ; then \
