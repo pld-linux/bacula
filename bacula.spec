@@ -658,7 +658,7 @@ rm $RPM_BUILD_ROOT%{_libdir}/libbac{,cfg,find,py,sql}.{so,la}
 for f in create_bacula_database drop_bacula_database drop_bacula_tables \
 	grant_bacula_privileges make_bacula_tables update_bacula_tables ; do
 
-	ln -sf /dev/null $RPM_BUILD_ROOT%{_libexecdir}/%{name}/$f
+	touch $RPM_BUILD_ROOT%{_libexecdir}/%{name}/$f
 done
 
 %if %{with nagios}
