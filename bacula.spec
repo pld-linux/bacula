@@ -12,9 +12,6 @@
 #*** WARNING: identical binaries are copied, not linked:
 #        /usr/sbin/bat
 #   and  /usr/bin/bat
-#*** WARNING: identical binaries are copied, not linked:
-#        /usr/lib64/libbacsql-postgresql-5.0.3.so
-#   and  /usr/lib64/libbacsql-5.0.3.so
 #
 # Conditional build:
 %bcond_without	console_wx		# wx-console program
@@ -565,7 +562,6 @@ fakeroot %{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-
 install -d $RPM_BUILD_ROOT/etc/{rc.d/init.d,logrotate.d,pam.d,sysconfig}
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/rescue
 install -d $RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir},%{_mandir},%{_bindir},/var/log/bacula}
@@ -585,6 +581,10 @@ for database in %{databases}; do
 		touch $RPM_BUILD_ROOT%{_libdir}/$orig_name
 	done
 done
+
+# replace with empty file, replaced by ldconfig from each db-* package on intsall
+rm -f $RPM_BUILD_ROOT%{_libdir}/libbacsql-%{version}.so
+touch $RPM_BUILD_ROOT%{_libdir}/libbacsql-%{version}.so
 
 install -p %{SOURCE10} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-dir
 install -p %{SOURCE11} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-fd
