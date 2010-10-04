@@ -6,8 +6,6 @@
 #make[1]: *** No rule to make target `../lib/libbac.la', needed by `bacula-dir'.  Stop.
 #make[1]: *** Waiting for unfinished jobs....
 #make[1]: Leaving directory `/home/users/glen/rpm/BUILD.x86_64-linux/bacula-5.0.2/src/dird'
-#warning: Installed (but unpackaged) file(s) found:
-#   /usr/lib64/bacula/btraceback.mdb
 #
 # Conditional build:
 %bcond_without	console_wx		# wx-console program
@@ -647,7 +645,7 @@ rm $RPM_BUILD_ROOT%{_sbindir}/bacula
 rm $RPM_BUILD_ROOT%{_libexecdir}/%{name}/bacula-ctl-*
 
 # unsupported
-#rm $RPM_BUILD_ROOT%{_libexecdir}/%{name}/*_bdb_*
+rm $RPM_BUILD_ROOT%{_libexecdir}/%{name}/btraceback.mdb
 
 # rename to avoid possible conflicts
 mv $RPM_BUILD_ROOT%{_sbindir}/{,bacula-}dbcheck
