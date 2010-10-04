@@ -8,10 +8,6 @@
 #make[1]: Leaving directory `/home/users/glen/rpm/BUILD.x86_64-linux/bacula-5.0.2/src/dird'
 #warning: Installed (but unpackaged) file(s) found:
 #   /usr/lib64/bacula/btraceback.mdb
-#   /usr/sbin/bat
-#*** WARNING: identical binaries are copied, not linked:
-#        /usr/sbin/bat
-#   and  /usr/bin/bat
 #
 # Conditional build:
 %bcond_without	console_wx		# wx-console program
@@ -607,9 +603,7 @@ sed -e 's/gnome-console/wx-console/g;s/Console/Wx Console/g' \
 %endif
 
 %if %{with bat}
-# TODO: libtool install
-#libtool --silent --mode=install install src/qt-console/bat $RPM_BUILD_ROOT%{_bindir}
-install src/qt-console/.libs/bat $RPM_BUILD_ROOT%{_bindir}
+mv $RPM_BUILD_ROOT{%{_sbindir},%{_bindir}}/bat
 cp -a scripts/bat.desktop $RPM_BUILD_ROOT%{_desktopdir}
 %endif
 
