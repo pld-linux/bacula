@@ -6,7 +6,15 @@
 #make[1]: *** No rule to make target `../lib/libbac.la', needed by `bacula-dir'.  Stop.
 #make[1]: *** Waiting for unfinished jobs....
 #make[1]: Leaving directory `/home/users/glen/rpm/BUILD.x86_64-linux/bacula-5.0.2/src/dird'
-#	- unpackaged: /usr/lib64/bacula/btraceback.mdb
+#warning: Installed (but unpackaged) file(s) found:
+#   /usr/lib64/bacula/btraceback.mdb
+#   /usr/sbin/bat
+#*** WARNING: identical binaries are copied, not linked:
+#        /usr/sbin/bat
+#   and  /usr/bin/bat
+#*** WARNING: identical binaries are copied, not linked:
+#        /usr/lib64/libbacsql-postgresql-5.0.3.so
+#   and  /usr/lib64/libbacsql-5.0.3.so
 #
 # Conditional build:
 %bcond_without	console_wx		# wx-console program
@@ -28,7 +36,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	5.0.3
-Release:	3
+Release:	4
 License:	extended GPL v2
 Group:		Networking/Utilities
 Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
@@ -573,8 +581,8 @@ for database in %{databases}; do
 		file_prefix=${orig_name%%-*.so}
 		file_suffix=${orig_name#*-}
 		file_name=$file_prefix-$database-$file_suffix
-		install -p $libfile $RPM_BUILD_ROOT/%{_libdir}/$file_name
-		touch $RPM_BUILD_ROOT/%{_libdir}/$orig_name
+		install -p $libfile $RPM_BUILD_ROOT%{_libdir}/$file_name
+		touch $RPM_BUILD_ROOT%{_libdir}/$orig_name
 	done
 done
 
@@ -615,8 +623,9 @@ install -p rescue/linux/floppy/getdiskinfo $RPM_BUILD_ROOT%{_sysconfdir}/rescue
 
 touch $RPM_BUILD_ROOT/var/log/bacula/log
 
-# install the updatedb scripts
-install -p updatedb/update_sqlite* $RPM_BUILD_ROOT%{_libexecdir}/%{name}
+# install the updatedb scripts for older versions that last full release
+# 2.0 -> 3.0 : 10_to_11
+install -p updatedb/update_*_tables_10_to_11 $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 # place for site passwords
 touch $RPM_BUILD_ROOT%{_sysconfdir}/{dir-password,fd-password,sd-password}
@@ -677,16 +686,16 @@ rm -rf $RPM_BUILD_ROOT
 %define update_configs \
 echo "Updating bacula passwords and names..." | %banner -a %{name} \
 cd /etc/bacula \
-for f in *-password ; do \
-	if [ ! -s $f ] ; then \
+for f in *-password; do \
+	if [ ! -s $f ]; then \
 		openssl rand -base64 33 > $f \
 	fi \
-	p=`cat $f` \
-	for cf in *.conf *.conf.rpmnew ; do \
+	p=$(cat $f) \
+	for cf in *.conf *.conf.rpmnew; do \
 		[ -f $cf ] && sed -i -e"s:#FAKE-$f#:$p:" "$cf" || : \
 	done \
 done \
-for cf in *.conf *.conf.rpmnew ; do \
+for cf in *.conf *.conf.rpmnew; do \
 	[ -f $cf ] && sed -i -e"s:--hostname--:`hostname`:" "$cf" || : \
 done
 
@@ -913,7 +922,6 @@ fi
 %attr(755,root,root) %{_libexecdir}/%{name}/grant_sqlite3_privileges
 %attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite3_*
-%attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite_*
 %attr(755,root,root) %{_libdir}/libbacsql-sqlite3-5*.so
 
 %ghost %attr(755,root,root) %{_libdir}/libbacsql-5*.so
@@ -944,7 +952,6 @@ fi
 %attr(755,root,root) %{_libexecdir}/%{name}/grant_sqlite3_privileges
 %attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite3_*
-%attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite_*
 %attr(755,root,root) %{_libdir}/libbacsql-dbi-5*.so
 
 %ghost %attr(755,root,root) %{_libdir}/libbacsql-5*.so
