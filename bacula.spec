@@ -27,7 +27,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	5.0.3
-Release:	5
+Release:	6
 License:	extended GPL v2
 Group:		Networking/Utilities
 Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
@@ -94,9 +94,9 @@ BuildRequires:	wxGTK2-unicode-devel >= 2.4.0
 BuildRequires:	zlib-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		_sysconfdir	/etc/%{name}
+%define		_sysconfdir		/etc/%{name}
 %define		_localstatedir	/var/lib/%{name}
-%define		nagiosplugindir	%{_prefix}/lib/nagios/plugins
+%define		nagiosplugindir	%{_libdir}/nagios/plugins
 
 # from 'the worst' to 'the best'
 %define	databases %{?with_dbi:dbi} %{?with_sqlite3:sqlite3} %{?with_mysql:mysql} %{?with_pgsql:postgresql}
