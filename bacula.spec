@@ -10,7 +10,11 @@
 # Conditional build:
 %bcond_without	console_wx		# wx-console program
 %bcond_without	bat			# bat Qt4 GUI
+%if "%{pld_release}" != "ac"
 %bcond_without	dbi			# use Database Independent Abstraction Layer (libdbi)
+%else
+%bcond_with		dbi			# use Database Independent Abstraction Layer (libdbi)
+%endif
 %bcond_without	mysql			# use MySQL
 %bcond_without	pgsql			# use PostgreSQL
 %bcond_without	sqlite3			# use SQLite3
