@@ -601,6 +601,8 @@ sed -e 's/gnome-console/wx-console/g;s/Console/Wx Console/g' \
 %endif
 
 %if %{with bat}
+%{__make} -C src/qt-console install \
+	DESTDIR=$RPM_BUILD_ROOT
 mv $RPM_BUILD_ROOT{%{_sbindir},%{_bindir}}/bat
 cp -a scripts/bat.desktop $RPM_BUILD_ROOT%{_desktopdir}
 %endif
