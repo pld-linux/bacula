@@ -925,6 +925,7 @@ fi
 %ghost %{_libexecdir}/%{name}/make_bacula_tables
 %ghost %{_libexecdir}/%{name}/update_bacula_tables
 
+%if %{with dbi}
 %files db-dbi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libexecdir}/%{name}/create_postgresql_database
@@ -948,6 +949,7 @@ fi
 %attr(755,root,root) %{_libdir}/libbacsql-dbi-5*.so
 
 %ghost %attr(755,root,root) %{_libdir}/libbacsql-5*.so
+%endif
 
 %files fd
 %defattr(644,root,root,755)
