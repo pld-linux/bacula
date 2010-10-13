@@ -5,7 +5,7 @@
  
     if test "$support_crypto" = "yes"; then
 -      AC_CHECK_LIB(ssl, EVP_PKEY_encrypt_old, AC_DEFINE(HAVE_OPENSSLv1, 1, [Set if have OpenSSL version 1.x]))
-+      AC_DEFINE(HAVE_OPENSSLv1, 1, [Set if have OpenSSL version 1.x])
++      AC_CHECK_LIB(crypto, EVP_PKEY_encrypt_old, AC_DEFINE(HAVE_OPENSSLv1, 1, [Set if have OpenSSL version 1.x]))
     fi
  
     LIBS="${saved_LIBS}"
