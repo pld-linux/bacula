@@ -37,25 +37,24 @@ stop() {
 	# Stop daemons.
 	msg_stopping "Bacula Director"
 	killproc /usr/sbin/bacula-dir
-	RETVAL=$?
 	rm -f /var/lock/subsys/bacula-dir
 }
 
 RETVAL=0
 case "$1" in
-start)
+  start)
 	start
 	;;
-stop)
+  stop)
 	stop
 	;;
-restart)
+  restart)
 	stop
    	sleep 5
 	start
 	;;
-status)
-	status /usr/sbin/bacula-dir
+  status)
+	status bacula-dir
 	RETVAL=$?
 	;;
 *)

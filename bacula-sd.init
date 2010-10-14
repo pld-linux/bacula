@@ -37,24 +37,23 @@ stop() {
 	# Stop daemons.
 	msg_stopping "Bacula Storage"
 	killproc /usr/sbin/bacula-sd
-	RETVAL=$?
 	rm -f /var/lock/subsys/bacula-sd
 }
 
 case "$1" in
-start)
+  start)
 	start
 	;;
-stop)
+  stop)
 	stop
 	;;
-restart)
+  restart)
 	stop
    	sleep 5
 	start
 	;;
-status)
-	status /usr/sbin/bacula-sd
+  status)
+	status bacula-sd
 	RETVAL=$?
 	;;
 *)
