@@ -10,6 +10,10 @@
 # Source function library
 . /etc/rc.d/init.d/functions
 
+BACULA_DIR_USER="bacula"
+BACULA_DIR_GROUP="bacula"
+[ -f /etc/sysconfig/bacula-dir ] && . /etc/sysconfig/bacula-dir
+
 start() {
 	# Check if the service is already running?
 	if [ -f /var/lock/subsys/bacula-dir ]; then
@@ -18,7 +22,7 @@ start() {
 	fi
 
 	msg_starting "Bacula Director"
-	daemon /usr/sbin/bacula-dir -u bacula -g bacula $2 -c /etc/bacula/bacula-dir.conf
+	daemon /usr/sbin/bacula-dir -u  "$BACULA_DIR_USER" -g "$BACULA_DIR_GROUP" $2 -c /etc/bacula/bacula-dir.conf
 	RETVAL=$?
 	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/bacula-dir
 }
