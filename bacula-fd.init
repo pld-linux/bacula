@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/sh
 #
 # bacula	   This shell script takes care of starting and stopping
 #		   the bacula File daemon.
@@ -16,26 +16,28 @@ BACULA_FD_GROUP="bacula"
 
 start() {
 	# Check if the service is already running?
-	if [ ! -f /var/lock/subsys/bacula-fd ]; then
-		msg_starting "Bacula File"
-		daemon /usr/sbin/bacula-fd -u "$BACULA_FD_USER" -g "$BACULA_FD_GROUP" $2 -c /etc/bacula/bacula-fd.conf
-		RETVAL=$?
-		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/bacula-fd
-	else
+	if [ -f /var/lock/subsys/bacula-fd ]; then
 		msg_already_running "Bacula File"
+		return
 	fi
+
+	msg_starting "Bacula File"
+	daemon /usr/sbin/bacula-fd -u "$BACULA_FD_USER" -g "$BACULA_FD_GROUP" $2 -c /etc/bacula/bacula-fd.conf
+	RETVAL=$?
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/bacula-fd
 }
 
 stop() {
-	if [ -f /var/lock/subsys/bacula-fd ]; then
-		# Stop daemons.
-		msg_stopping "Bacula File"
-		killproc /usr/sbin/bacula-fd
-		RETVAL=$?
-		rm -f /var/lock/subsys/bacula-fd
-	else
+	if [ ! -f /var/lock/subsys/bacula-fd ]; then
 		msg_not_running "Bacula File"
+		return
 	fi
+
+	# Stop daemons.
+	msg_stopping "Bacula File"
+	killproc /usr/sbin/bacula-fd
+	RETVAL=$?
+	rm -f /var/lock/subsys/bacula-fd
 }
 
 case "$1" in
