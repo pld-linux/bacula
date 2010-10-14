@@ -7,3 +7,6 @@ SERVICE_RUN_NICE_LEVEL="+5"
 # The user/group must be able to access the backup devices used
 BACULA_SD_USER=bacula
 BACULA_SD_GROUP=bacula
+
+# Extra options passed to bacula-sd on startup
+#BACULA_SD_OPTIONS=""

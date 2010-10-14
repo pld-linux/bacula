@@ -12,6 +12,7 @@
 
 BACULA_SD_USER="bacula"
 BACULA_SD_GROUP="bacula"
+BACULA_SD_OPTIONS=""
 [ -f /etc/sysconfig/bacula-sd ] && . /etc/sysconfig/bacula-sd
 
 start() {
@@ -22,7 +23,7 @@ start() {
 	fi
 
 	msg_starting "Bacula Storage"
-	daemon /usr/sbin/bacula-sd -u "$BACULA_SD_USER" -g "$BACULA_SD_GROUP" $2 -c /etc/bacula/bacula-sd.conf
+	daemon /usr/sbin/bacula-sd -u "$BACULA_SD_USER" -g "$BACULA_SD_GROUP" -c /etc/bacula/bacula-sd.conf $BACULA_SD_OPTIONS
 	RETVAL=$?
 	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/bacula-sd
 }

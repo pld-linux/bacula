@@ -2,3 +2,11 @@
 
 # Define nice level for Bacula Direcror
 SERVICE_RUN_NICE_LEVEL="+5"
+
+# Define user and group for Bacula Dir services
+# The user/group must be able to access config and database for director
+BACULA_FD_USER=bacula
+BACULA_FD_GROUP=bacula
+
+# Extra options passed to bacula-dir on startup
+#BACULA_DIR_OPTIONS=""
