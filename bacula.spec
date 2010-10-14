@@ -605,9 +605,9 @@ sed -e 's/gnome-console/wx-console/g;s/Console/Wx Console/g' \
 %endif
 
 %if %{with bat}
-%{__make} -C src/qt-console install \
-	DESTDIR=$RPM_BUILD_ROOT
-mv $RPM_BUILD_ROOT{%{_sbindir},%{_bindir}}/bat
+# qmake somewhy does not always create install_bins target. install our own the bin
+rm -f $RPM_BUILD_ROOT%{_sbindir}/bat
+libtool --silent --mode=install install src/qt-console/bat $RPM_BUILD_ROOT%{_bindir}
 cp -a scripts/bat.desktop $RPM_BUILD_ROOT%{_desktopdir}
 %endif
 
