@@ -1,9 +1,9 @@
-#! /bin/sh
+#!/bin/sh
 #
 # bacula	   This shell script takes care of starting and stopping
 #		   the bacula Storage daemon.
 #
-# chkconfig: 2345 90 99
+# chkconfig: 2345 90 10
 # description: It comes by night and sucks the vital essence from your computers.
 #
 
