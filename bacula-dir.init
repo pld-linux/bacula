@@ -40,6 +40,17 @@ stop() {
 	rm -f /var/lock/subsys/bacula-dir
 }
 
+condrestart() {
+	if [ ! -f /var/lock/subsys/bacula-dir ]; then
+		msg_not_running  "Bacula Director"
+		RETVAL=$1
+		return
+	fi
+
+	stop
+	start
+}
+
 RETVAL=0
 case "$1" in
   start)
@@ -53,12 +64,18 @@ case "$1" in
    	sleep 5
 	start
 	;;
+  try-restart)
+	condrestart 0
+	;;
+  force-reload)
+	condrestart 7
+	;;
   status)
 	status bacula-dir
 	RETVAL=$?
 	;;
 *)
-	msg_usage "$0 {start|stop|restart|status}"
+	msg_usage "$0 {start|stop|restart|try-restart|force-reload|status}"
 	exit 3
 	;;
 esac

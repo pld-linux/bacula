@@ -40,6 +40,17 @@ stop() {
 	rm -f /var/lock/subsys/bacula-fd
 }
 
+condrestart() {
+	if [ ! -f /var/lock/subsys/bacula-fd ]; then
+		msg_not_running "Bacula File"
+		RETVAL=$1
+		return
+	fi
+
+	stop
+	start
+}
+
 case "$1" in
   start)
 	start
@@ -52,12 +63,18 @@ case "$1" in
    	sleep 5
 	start
 	;;
+  try-restart)
+	condrestart 0
+	;;
+  force-reload)
+	condrestart 7
+	;;
   status)
 	status bacula-fd
 	RETVAL=$?
 	;;
 *)
-	msg_usage "$0 {start|stop|restart|status}"
+	msg_usage "$0 {start|stop|restart|try-restart|force-reload|status}"
 	exit 3
 	;;
 esac
