@@ -1,0 +1,17 @@
+--- bacula-5.0.3/autoconf/configure.in~	2010-10-22 12:48:37.000000000 +0300
++++ bacula-5.0.3/autoconf/configure.in	2010-10-22 12:50:14.083764096 +0300
+@@ -3195,13 +3195,12 @@
+       AC_MSG_ERROR([Could not find qmake $PATH. Check your Qt installation])
+    fi
+ 
+-   QMAKEBIN="qmake"
+    cd src/qt-console
+    echo "Creating bat Makefile"
+    touch bat
+    chmod 755 bat
+    rm -f Makefile
+-   $QMAKEBIN
++   $QMAKE
+    ${MAKE:-make} clean
+    cd ${BUILD_DIR}
+ fi
