@@ -1,0 +1,16 @@
+--- bacula-5.0.3/./src/cats/make_catalog_backup.in~	2010-10-22 17:51:14.000000000 +0300
++++ bacula-5.0.3/./src/cats/make_catalog_backup.in	2010-10-22 17:53:17.329321909 +0300
+@@ -13,11 +13,13 @@
+ #     line arguments and the environment using ps.  Please consult your
+ #     MySQL or PostgreSQL manual for secure methods of specifying the
+ #     password.
++#     In MySQL, you can create @working_dir@/.my.cnf and put password there in [client] section
+ #  $4 is the host on which the database is located
+ #     (default "")
+ #
+ #
+ BINDIR=@SQL_BINDIR@
++HOME=@working_dir@
+ 
+ cd @working_dir@
+ rm -f $1.sql
