@@ -587,8 +587,8 @@ done
 
 # placeholders for the symlinks set in %%post db-*
 for f in create_bacula_database drop_bacula_database drop_bacula_tables \
-	grant_bacula_privileges make_bacula_tables update_bacula_tables; do
-	touch $RPM_BUILD_ROOT%{_libexecdir}/%{name}/$f
+	grant_bacula_privileges make_bacula_tables update_bacula_tables make_catalog_backup; do
+	> $RPM_BUILD_ROOT%{_libexecdir}/%{name}/$f
 done
 
 # we use db dependant (at compile time) shell script only
