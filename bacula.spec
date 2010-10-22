@@ -2,10 +2,6 @@
 #	- update desktop files, think about su-wrappers for console (with .desktop files)
 #	- package web admin
 #	- fix log file permissions
-#	- no longer builds:
-#make[1]: *** No rule to make target `../lib/libbac.la', needed by `bacula-dir'.  Stop.
-#make[1]: *** Waiting for unfinished jobs....
-#make[1]: Leaving directory `/home/users/glen/rpm/BUILD.x86_64-linux/bacula-5.0.2/src/dird'
 #
 # Conditional build:
 %bcond_without	console_wx		# wx-console program
@@ -31,7 +27,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	5.0.3
-Release:	7
+Release:	8
 License:	AGPL v3
 Group:		Networking/Utilities
 Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
@@ -812,33 +808,20 @@ done \
 ln -sf "make_%{1}_catalog_backup" %{_libexecdir}/%{name}/make_catalog_backup || : \
 %service bacula-dir restart "Bacula Director daemon"
 
-%define db_postun() \
-/sbin/ldconfig \
-if [ "$1" = "0" ]; then \
-	for f in %{_libexecdir}/%{name}/*_bacula_*; do \
-		if [ -L "$f" -a ! -e "$f" ]; then \
-			rm "$f" \
-		fi \
-	done \
-fi
-
 %post db-postgresql
 %db_post postgresql
 
-%postun db-postgresql
-%db_postun postgresql
+%postun db-postgresql -p /sbin/ldconfig
 
 %post db-mysql
 %db_post mysql
 
-%postun db-mysql
-%db_postun mysql
+%postun db-mysql -p /sbin/ldconfig
 
 %post db-sqlite3
 %db_post sqlite3
 
-%postun db-sqlite3
-%db_postun sqlite3
+%postun db-sqlite3 -p /sbin/ldconfig
 
 # dbi backend is different, as it is not bound with a specific db engine
 %post db-dbi
