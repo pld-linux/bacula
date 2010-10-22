@@ -32,7 +32,7 @@ Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po siec
 Name:		bacula
 Version:	5.0.3
 Release:	7
-License:	extended GPL v2
+License:	AGPL v3
 Group:		Networking/Utilities
 Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
 # Source0-md5:	9de254ae39cab0587fdb2f5d8d90b03b
