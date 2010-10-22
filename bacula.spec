@@ -537,8 +537,8 @@ for database in %{databases}; do
 	%{__make} -C src/cats
 
 	# install the database library in a temporary location
-	install -d libbacsql/$database%{_libdir}
-	%{__make} -C src/cats libtool-install DESTDIR=$PWD/libbacsql/$database
+	install -d libbacsql/$database%{_libdir}/%{name}
+	%{__make} -C src/cats install DESTDIR=$PWD/libbacsql/$database
 done
 
 %if %{with bat}
@@ -582,7 +582,21 @@ for database in %{databases}; do
 		install -p $libfile $RPM_BUILD_ROOT%{_libdir}/$file_name
 		touch $RPM_BUILD_ROOT%{_libdir}/$orig_name
 	done
+
+	install -p libbacsql/$database%{_libdir}/%{name}/make_catalog_backup \
+		$RPM_BUILD_ROOT%{_libdir}/%{name}/make_${database}_catalog_backup
 done
+
+# placeholders for the symlinks set in %%post db-*
+for f in create_bacula_database drop_bacula_database drop_bacula_tables \
+	grant_bacula_privileges make_bacula_tables update_bacula_tables; do
+	touch $RPM_BUILD_ROOT%{_libexecdir}/%{name}/$f
+done
+
+# we use db dependant (at compile time) shell script only
+rm -f $RPM_BUILD_ROOT%{_libexecdir}/%{name}/make_catalog_backup.pl
+# dbi is not actual dbtype
+rm -f $RPM_BUILD_ROOT%{_libexecdir}/%{name}/make_dbi_catalog_backup
 
 # replace with empty file, replaced by ldconfig from each db-* package on intsall
 rm -f $RPM_BUILD_ROOT%{_libdir}/libbacsql-%{version}.so
@@ -633,7 +647,7 @@ install -p updatedb/update_*_tables_10_to_11 $RPM_BUILD_ROOT%{_libexecdir}/%{nam
 touch $RPM_BUILD_ROOT%{_sysconfdir}/{dir-password,fd-password,sd-password}
 touch $RPM_BUILD_ROOT%{_sysconfdir}/{mon-dir-password,mon-fd-password,mon-sd-password}
 
-mv $RPM_BUILD_ROOT%{_libdir}/bacula/mtx-changer.conf $RPM_BUILD_ROOT/etc/bacula/mtx-changer.conf
+mv $RPM_BUILD_ROOT%{_libexecdir}/%{name}/mtx-changer.conf $RPM_BUILD_ROOT%{_sysconfdir}/mtx-changer.conf
 
 # some file changes
 rm -f $RPM_BUILD_ROOT%{_libexecdir}/%{name}/{gconsole,startmysql,stopmysql,bacula,bconsole,fd}
@@ -664,13 +678,6 @@ mv $RPM_BUILD_ROOT%{_mandir}/man8/{,bacula-}dbcheck.8.gz
 # no -devel files packaged, so this is also useless
 rm $RPM_BUILD_ROOT%{_libdir}/libbac{,cfg,find,py,sql}.{so,la}
 
-# placeholders for the symlinks set in %%post db-*
-for f in create_bacula_database drop_bacula_database drop_bacula_tables \
-	grant_bacula_privileges make_bacula_tables update_bacula_tables ; do
-
-	touch $RPM_BUILD_ROOT%{_libexecdir}/%{name}/$f
-done
-
 %if %{with nagios}
 install -d $RPM_BUILD_ROOT%{nagiosplugindir}
 %{__make} -C examples/nagios/check_bacula install \
@@ -688,7 +695,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %define update_configs \
 echo "Updating bacula passwords and names..." | %banner -a %{name} \
-cd /etc/bacula \
+cd %{_sysconfdir} \
 for f in *-password; do \
 	if [ ! -s $f ]; then \
 		openssl rand -base64 33 > $f \
@@ -766,7 +773,7 @@ fi
 %update_configs
 
 %triggerpostun common -- %{name}-common < 5.0.1-2
-find /etc/bacula/bat.conf* -perm /007 -print0 | xargs -0 -r chmod 600 || :
+find %{_sysconfdir}/bat.conf* -perm /007 -print0 | xargs -0 -r chmod 600 || :
 
 %post console-qt4
 %update_configs
@@ -802,6 +809,7 @@ for name in "create database" "drop tables" "drop database" "grant privileges" "
 	suffix="${name#* }" \
 	ln -sf "${prefix}_%{1}_${suffix}" %{_libexecdir}/%{name}/"${prefix}_bacula_${suffix}" || : \
 done \
+ln -sf "make_%{1}_catalog_backup" %{_libexecdir}/%{name}/make_catalog_backup || : \
 %service bacula-dir restart "Bacula Director daemon"
 
 %define db_postun() \
@@ -878,17 +886,18 @@ fi
 %{_mandir}/man8/bacula-dir.8*
 %{_mandir}/man8/bacula-dbcheck.8*
 %{_libexecdir}/%{name}/query.sql
-#%attr(755,root,root) %{_libexecdir}/%{name}/make_catalog_backup
-#%attr(755,root,root) %{_libexecdir}/%{name}/delete_catalog_backup
+%attr(755,root,root) %{_libexecdir}/%{name}/delete_catalog_backup
 
 %files db-postgresql
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_libexecdir}/%{name}/fix_postgresql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/create_postgresql_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_postgresql_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_postgresql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/grant_postgresql_privileges
 %attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_postgresql_*
+%attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_catalog_backup
 %attr(755,root,root) %{_libdir}/libbacsql-postgresql-5*.so
 
 %ghost %attr(755,root,root) %{_libdir}/libbacsql-5*.so
@@ -898,6 +907,7 @@ fi
 %ghost %{_libexecdir}/%{name}/grant_bacula_privileges
 %ghost %{_libexecdir}/%{name}/make_bacula_tables
 %ghost %{_libexecdir}/%{name}/update_bacula_tables
+%ghost %{_libexecdir}/%{name}/make_catalog_backup
 
 %files db-mysql
 %defattr(644,root,root,755)
@@ -907,6 +917,7 @@ fi
 %attr(755,root,root) %{_libexecdir}/%{name}/grant_mysql_privileges
 %attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_mysql_*
+%attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_catalog_backup
 %attr(755,root,root) %{_libdir}/libbacsql-mysql-5*.so
 
 %ghost %attr(755,root,root) %{_libdir}/libbacsql-5*.so
@@ -916,6 +927,7 @@ fi
 %ghost %{_libexecdir}/%{name}/grant_bacula_privileges
 %ghost %{_libexecdir}/%{name}/make_bacula_tables
 %ghost %{_libexecdir}/%{name}/update_bacula_tables
+%ghost %{_libexecdir}/%{name}/make_catalog_backup
 
 %files db-sqlite3
 %defattr(644,root,root,755)
@@ -925,6 +937,7 @@ fi
 %attr(755,root,root) %{_libexecdir}/%{name}/grant_sqlite3_privileges
 %attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite3_*
+%attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_catalog_backup
 %attr(755,root,root) %{_libdir}/libbacsql-sqlite3-5*.so
 
 %ghost %attr(755,root,root) %{_libdir}/libbacsql-5*.so
@@ -934,6 +947,7 @@ fi
 %ghost %{_libexecdir}/%{name}/grant_bacula_privileges
 %ghost %{_libexecdir}/%{name}/make_bacula_tables
 %ghost %{_libexecdir}/%{name}/update_bacula_tables
+%ghost %{_libexecdir}/%{name}/make_catalog_backup
 
 %if %{with dbi}
 %files db-dbi
@@ -943,12 +957,14 @@ fi
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_postgresql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/grant_postgresql_privileges
 %attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_tables
+%attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_catalog_backup
 %attr(755,root,root) %{_libexecdir}/%{name}/update_postgresql_*
 %attr(755,root,root) %{_libexecdir}/%{name}/create_mysql_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_mysql_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_mysql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/grant_mysql_privileges
 %attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_tables
+%attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_catalog_backup
 %attr(755,root,root) %{_libexecdir}/%{name}/update_mysql_*
 %attr(755,root,root) %{_libexecdir}/%{name}/create_sqlite3_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_sqlite3_database
@@ -956,6 +972,7 @@ fi
 %attr(755,root,root) %{_libexecdir}/%{name}/grant_sqlite3_privileges
 %attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite3_*
+%attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_catalog_backup
 %attr(755,root,root) %{_libdir}/libbacsql-dbi-5*.so
 
 %ghost %attr(755,root,root) %{_libdir}/libbacsql-5*.so
