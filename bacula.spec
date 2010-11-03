@@ -14,7 +14,7 @@
 %bcond_without	mysql			# use MySQL
 %bcond_without	pgsql			# use PostgreSQL
 %bcond_without	sqlite3			# use SQLite3
-%bcond_without	python
+%bcond_without	python		# Python Scripting support, http://www.bacula.org/3.0.x-manuals/en/concepts/concepts/Python_Scripting.html
 %bcond_without	nagios		# build nagios plugin
 %bcond_with	rescue
 %bcond_with	sqlite3_sync_off	# makes SQLite3 backend much faster, but less reliable
@@ -835,6 +835,7 @@ ln -sf "make_%{1}_catalog_backup" %{_libexecdir}/%{name}/make_catalog_backup || 
 %files common
 %defattr(644,root,root,755)
 %doc LICENSE
+%{?with_python:%doc examples/python}
 %dir %{_sysconfdir}
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/*-password
 # do not remove bsmtp from files. Fix build if it is not installed.
