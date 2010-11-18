@@ -27,7 +27,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	5.0.3
-Release:	9
+Release:	10
 License:	AGPL v3
 Group:		Networking/Utilities
 Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
@@ -481,6 +481,7 @@ sed -i -e 's#bindir=.*#bindir=%{_bindir}#g' \
 	src/cats/create_* src/cats/delete_* src/cats/drop_* \
 	src/cats/grant_* src/cats/make_* src/cats/update_*
 sed -i -e 's/@hostname@/--hostname--/' src/*/*.conf.in
+sed -i -e 's/@basename@/--hostname--/' src/*/*.conf.in
 
 %if %{with dbi}
 for dbtype in mysql postgresql sqlite3; do
@@ -967,7 +968,7 @@ ln -sf "make_%{1}_catalog_backup" %{_libexecdir}/%{name}/make_catalog_backup || 
 %files fd
 %defattr(644,root,root,755)
 %doc LICENSE
-%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bacula-fd.conf
+%attr(640,root,bacula) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bacula-fd.conf
 %attr(754,root,root) /etc/rc.d/init.d/bacula-fd
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/bacula-fd
 %attr(755,root,root) %{_sbindir}/bacula-fd
@@ -977,8 +978,8 @@ ln -sf "make_%{1}_catalog_backup" %{_libexecdir}/%{name}/make_catalog_backup || 
 %files sd
 %defattr(644,root,root,755)
 %doc LICENSE
-%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bacula-sd.conf
-%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/mtx-changer.conf
+%attr(640,root,bacula) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bacula-sd.conf
+%attr(640,root,bacula) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/mtx-changer.conf
 %attr(754,root,root) /etc/rc.d/init.d/bacula-sd
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/bacula-sd
 %attr(755,root,root) %{_sbindir}/bacula-sd
@@ -1000,7 +1001,7 @@ ln -sf "make_%{1}_catalog_backup" %{_libexecdir}/%{name}/make_catalog_backup || 
 %files console
 %defattr(644,root,root,755)
 %doc LICENSE
-%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bconsole.conf
+%attr(640,root,bacula) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bconsole.conf
 %attr(755,root,root) %{_sbindir}/bconsole
 %{_mandir}/man8/bconsole.8*
 
