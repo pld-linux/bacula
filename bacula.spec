@@ -54,7 +54,6 @@ Patch8:		%{name}-dbi_dbcheck.patch
 Patch9:		%{name}-openssl1.patch
 Patch10:	%{name}-dvd_rewind.patch
 Patch11:	qmake-bin.patch
-Patch12:	install-cats-no-fail.patch
 Patch13:	make_catalog_backup-setup-home.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-devel
@@ -472,7 +471,6 @@ Nagios plugin to check bacula.
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
-%patch12 -p1
 %patch13 -p1
 
 tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
