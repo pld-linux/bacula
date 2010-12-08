@@ -772,7 +772,7 @@ fi
 %update_configs
 
 %triggerpostun common -- %{name}-common < 5.0.1-2
-find %{_sysconfdir}/bat.conf* -perm /007 -print0 | xargs -0 -r chmod 600 || :
+find %{_sysconfdir}/bat.conf* -perm /007 -print0 2>/dev/null | xargs -0 -r chmod 600 || :
 
 %post console-qt4
 %update_configs
