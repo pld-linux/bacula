@@ -1,0 +1,10 @@
+--- bacula-5.0.3/src/cats/mysql.c        2011-04-04 16:48:12.878931913 +0200
++++ bacula-5.0.3/src/cats/mysql.c.new    2011-04-04 16:48:53.169522177 +0200
+@@ -292,7 +292,7 @@
+ void db_thread_cleanup()
+ { 
+ #ifndef HAVE_WIN32
+-   my_thread_end();
++   mysql_thread_end();
+ #endif
+ }
