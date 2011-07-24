@@ -61,7 +61,7 @@ BuildRequires:	acl-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	gettext-devel
-BuildRequires:	gtk+2-devel
+%{?with_console_wx:BuildRequires:	gtk+2-devel}
 BuildRequires:	libcap-devel
 %{?with_dbi:BuildRequires:	libdbi-devel >= 0.8.4}
 BuildRequires:	libtool >= 2:2.2
