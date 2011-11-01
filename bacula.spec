@@ -67,9 +67,8 @@ BuildRequires:	python-modules
 %if %{with bat}
 BuildRequires:	QtCore-devel
 BuildRequires:	QtGui-devel
-BuildRequires:	qt4-build >= 4.3.3-3
-BuildRequires:	qt4-qmake >= 4.3.3-3
-#BuildRequires:	qwt-devel >= 5.0.2-2
+BuildRequires:	qt4-build >= 4.6.2
+BuildRequires:	qt4-qmake >= 4.6.2
 %endif
 %{?with_mysql:BuildRequires:	mysql-devel}
 %{?with_pgsql:BuildRequires:	postgresql-devel}
@@ -244,6 +243,7 @@ Summary:	Bacula Qt4 Console
 Summary(pl.UTF-8):	Konsola Baculi oparta na Qt4
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
+Requires:	QtCore >= 4.6.2
 Requires:	%{name}-common = %{version}-%{release}
 
 %description console-qt4
