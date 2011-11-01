@@ -1,0 +1,20 @@
+--- bacula-5.2.1/src/wx-console/console_thread.cpp.org	2011-11-01 21:39:04.664311911 +0100
++++ bacula-5.2.1/src/wx-console/console_thread.cpp	2011-11-01 21:52:51.874066263 +0100
+@@ -483,7 +483,7 @@
+          csprint(UA_sock->msg);
+       }
+       else if (stat == BNET_SIGNAL) {
+-         if (UA_sock->msglen == BNET_PROMPT) {
++         if (UA_sock->msglen == BNET_SUB_PROMPT) {
+             csprint(NULL, CS_PROMPT);
+          } else if (UA_sock->msglen == BNET_EOD) {
+             last_is_eod = 1;
+@@ -534,7 +534,7 @@
+    if (UA_sock) {
+       UA_sock->msglen = (int32_t)strlen(str);
+       pm_strcpy(&UA_sock->msg, str);
+-      UA_sock->_send();
++      UA_sock->send();
+    } else if (choosingdirector) {
+ //      wxString number = str;
+ //      number.RemoveLast(); /* Removes \n */

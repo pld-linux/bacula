@@ -45,6 +45,7 @@ Patch2:		%{name}-conf.patch
 Patch3:		%{name}-desktop.patch
 Patch4:		make_catalog_backup-setup-home.patch
 Patch5:		%{name}-mysql_thread.patch
+Patch6:		%{name}-wxconsole.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -440,6 +441,7 @@ Nagios plugin to check bacula.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
 
@@ -496,7 +498,9 @@ qmake-qt4 bat.pro
 cd ../..
 %endif
 
-%{__make}
+%{__make} 2>&1 | tee log
+# check for build errors
+grep "Error in" log && exit 1
 
 %if %{with nagios}
 # nagios plugin
@@ -914,8 +918,8 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %doc LICENSE
 %{_pixmapsdir}/%{name}.png
 %{_desktopdir}/bacula-wx.desktop
-#%attr(640,root,bacula) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bwx-console.conf
-#%attr(755,root,root) %{_sbindir}/bwx-console
+%attr(640,root,bacula) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bwx-console.conf
+%attr(755,root,root) %{_sbindir}/bwx-console
 %{_mandir}/man1/bacula-bwxconsole.1*
 %endif
 
