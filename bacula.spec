@@ -5,7 +5,6 @@
 #
 # Conditional build:
 %bcond_without	console_wx		# wx-console program
-%bcond_without	console_gnome		# gnome console
 %bcond_without	bat			# bat Qt4 GUI
 %bcond_without	mysql			# use MySQL
 %bcond_without	pgsql			# use PostgreSQL
@@ -467,7 +466,6 @@ QMAKE=%{_bindir}/qt4-qmake \
 	--disable-conio \
 	--enable-smartalloc \
 	%{?with_console_wx:--enable-bwx-console} \
-	%{?with_console_gnome:--enable-gnome} \
 	--enable-tray-monitor \
 	%{?with_python:--with-python} \
 	--with-readline \
@@ -545,7 +543,7 @@ cp -a %{SOURCE16} $RPM_BUILD_ROOT/etc/sysconfig/bacula-sd
 cp -a scripts/bacula.png $RPM_BUILD_ROOT%{_pixmapsdir}/bacula.png
 #install src/tray-monitor/generic.xpm $RPM_BUILD_ROOT%{_pixmapsdir}/bacula-tray-monitor.xpm
 sed -e 's/gnome-console/wx-console/g;s/Console/Wx Console/g' \
-	scripts/bacula.desktop.gnome2 > $RPM_BUILD_ROOT%{_desktopdir}/bacula-wx.desktop
+	scripts/wxconsole.desktop.consolehelper > $RPM_BUILD_ROOT%{_desktopdir}/bacula-wx.desktop
 #sed -e 's#%{_sbindir}#%{_bindir}#' \
 #	scripts/bacula-tray-monitor.desktop > $RPM_BUILD_ROOT%{_desktopdir}/bacula-tray-monitor.desktop
 %endif
