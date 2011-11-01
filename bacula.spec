@@ -5,12 +5,8 @@
 #
 # Conditional build:
 %bcond_without	console_wx		# wx-console program
+%bcond_without	console_gnome		# gnome console
 %bcond_without	bat			# bat Qt4 GUI
-%if "%{pld_release}" != "ac"
-%bcond_without	dbi			# use Database Independent Abstraction Layer (libdbi)
-%else
-%bcond_with		dbi			# use Database Independent Abstraction Layer (libdbi)
-%endif
 %bcond_without	mysql			# use MySQL
 %bcond_without	pgsql			# use PostgreSQL
 %bcond_without	sqlite3			# use SQLite3
@@ -26,14 +22,14 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	5.0.3
-Release:	15
+Version:	5.2.1
+Release:	0.1
 License:	AGPL v3
 Group:		Networking/Utilities
 Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	9de254ae39cab0587fdb2f5d8d90b03b
+# Source0-md5:	793da9f89fc5e024b6b95eb16a3120e5
 Source1:	http://downloads.sourceforge.net/bacula/%{name}-docs-%{version}.tar.bz2
-# Source1-md5:	7a00557dcf0dfa40de9e74176fefd1ae
+# Source1-md5:	d4db495def9e7843bcca8aff2d4d493b
 Source2:	http://downloads.sourceforge.net/bacula/%{name}-rescue-5.0.1.tar.gz
 # Source2-md5:	bb194aed8e204f54bf2f61d7e721f257
 Source10:	%{name}-dir.init
@@ -44,18 +40,11 @@ Source14:	%{name}-dir.sysconfig
 Source15:	%{name}-fd.sysconfig
 Source16:	%{name}-sd.sysconfig
 Patch0:		%{name}-mtx-changer.patch
-Patch1:		%{name}-link.patch
-Patch2:		%{name}-tinfo-readline.patch
-Patch3:		%{name}-branding.patch
-Patch4:		%{name}-conf.patch
-Patch5:		%{name}-desktop.patch
-Patch7:		%{name}-dbi_fixes.patch
-Patch8:		%{name}-dbi_dbcheck.patch
-Patch9:		%{name}-openssl1.patch
-Patch10:	%{name}-dvd_rewind.patch
-Patch11:	qmake-bin.patch
-Patch13:	make_catalog_backup-setup-home.patch
-Patch14:	%{name}-mysql_thread.patch
+Patch1:		%{name}-branding.patch
+Patch2:		%{name}-conf.patch
+Patch3:		%{name}-desktop.patch
+Patch4:		make_catalog_backup-setup-home.patch
+Patch5:		%{name}-mysql_thread.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -63,7 +52,6 @@ BuildRequires:	automake
 BuildRequires:	gettext-devel
 %{?with_console_wx:BuildRequires:	gtk+2-devel}
 BuildRequires:	libcap-devel
-%{?with_dbi:BuildRequires:	libdbi-devel >= 0.8.4}
 BuildRequires:	libtool >= 2:2.2
 %if %{with rescue}
 BuildRequires:	fakeroot
@@ -102,7 +90,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		nagiosplugindir	%{_libdir}/nagios/plugins
 
 # from 'the worst' to 'the best'
-%define	databases %{?with_dbi:dbi} %{?with_sqlite3:sqlite3} %{?with_mysql:mysql} %{?with_pgsql:postgresql}
+%define	databases %{?with_sqlite3:sqlite3} %{?with_mysql:mysql} %{?with_pgsql:postgresql}
 
 # dependency section is broken. ccache usage is instead to makefiles
 %undefine	with_ccache
@@ -398,21 +386,6 @@ SQLite database driver for Bacula.
 %description db-sqlite3 -l pl.UTF-8
 Sterownik bazy SQLite dla Baculi.
 
-%package db-dbi
-Summary:	libdbi database driver for Bacula
-Summary(pl.UTF-8):	Sterownik bazy libdbi dla Baculi
-Group:		Networking/Utilities
-Requires(post):	/sbin/ldconfig
-Requires:	%{name}-common = %{version}-%{release}
-Provides:	bacula(db) = %{version}-%{release}
-Obsoletes:	bacula(db)
-
-%description db-dbi
-libdbi database driver for Bacula.
-
-%description db-dbi -l pl.UTF-8
-Sterownik baz libdbi dla Baculi.
-
 %package rescue
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
@@ -462,18 +435,11 @@ Nagios plugin to check bacula.
 %prep
 %setup -q -a 1
 %patch0 -p1
-%patch1 -p0
+%patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
-%patch10 -p1
-%patch11 -p1
-%patch13 -p1
-%patch14 -p1
 
 tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
 
@@ -482,12 +448,6 @@ sed -i -e 's#bindir=.*#bindir=%{_bindir}#g' \
 	src/cats/grant_* src/cats/make_* src/cats/update_*
 sed -i -e 's/@hostname@/--hostname--/' src/*/*.conf.in
 sed -i -e 's/@basename@/--hostname--/' src/*/*.conf.in
-
-%if %{with dbi}
-for dbtype in mysql postgresql sqlite3; do
-	sed -i -e "s,@DB_TYPE@,$dbtype,g" src/cats/*_${dbtype}_*
-done
-%endif
 
 %build
 cd autoconf
@@ -499,46 +459,37 @@ cd ..
 
 CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
 
-# we wan't the 'base' build built with the last database in the list,
-# to make sure it is full-featured
-for database in %{databases}; do
-	WXCONFIG=%{_bindir}/wx-gtk2-unicode-config \
-	QMAKE=%{_bindir}/qt4-qmake \
-	%configure \
-		--with-scriptdir=%{_libexecdir}/%{name} \
-		%{?with_bat:--enable-bat} \
-		--disable-conio \
-		--enable-smartalloc \
-		%{?with_console_wx:--enable-bwx-console} \
-		--enable-tray-monitor \
-		%{?with_python:--with-python} \
-		--with-readline \
-		--with-tcp-wrappers \
-		--with-working-dir=%{_var}/lib/%{name} \
-		--with-dump-email="root@localhost" \
-		--with-job-email="root@localhost" \
-		--with-smtp-host=localhost \
-		--with-pid-dir=/var/run \
-		--with-subsys-dir=/var/lock/subsys \
-		--enable-batch-insert \
-		--with-$database \
-		%{?with_sqlite3_sync_off:--enable-extra-sqlite3-init="pragma synchronous=0;"} \
-		--with-dir-password="#FAKE-dir-password#" \
-		--with-fd-password="#FAKE-fd-password#" \
-		--with-sd-password="#FAKE-sd-password#" \
-		--with-mon-dir-password="#FAKE-mon-dir-password#" \
-		--with-mon-fd-password="#FAKE-mon-fd-password#" \
-		--with-mon-sd-password="#FAKE-mon-sd-password#" \
-		--with-openssl
-
-	# build the database library
-	%{__make} -C src/cats clean
-	%{__make} -C src/cats
-
-	# install the database library in a temporary location
-	install -d libbacsql/$database%{_libdir}/%{name}
-	%{__make} -C src/cats install DESTDIR=$PWD/libbacsql/$database
-done
+WXCONFIG=%{_bindir}/wx-gtk2-unicode-config \
+QMAKE=%{_bindir}/qt4-qmake \
+%configure \
+	--with-scriptdir=%{_libexecdir}/%{name} \
+	%{?with_bat:--enable-bat} \
+	--disable-conio \
+	--enable-smartalloc \
+	%{?with_console_wx:--enable-bwx-console} \
+	%{?with_console_gnome:--enable-gnome} \
+	--enable-tray-monitor \
+	%{?with_python:--with-python} \
+	--with-readline \
+	--with-tcp-wrappers \
+	--with-working-dir=%{_var}/lib/%{name} \
+	--with-dump-email="root@localhost" \
+	--with-job-email="root@localhost" \
+	--with-smtp-host=localhost \
+	--with-pid-dir=/var/run \
+	--with-subsys-dir=/var/lock/subsys \
+	--enable-batch-insert \
+	%{?with_pgsql:--with-postgresql} \
+	%{?with_mysql:--with-mysql} \
+	%{?with_sqlite3:--with-sqlite3} \
+	%{?with_sqlite3_sync_off:--enable-extra-sqlite3-init="pragma synchronous=0;"} \
+	--with-dir-password="#FAKE-dir-password#" \
+	--with-fd-password="#FAKE-fd-password#" \
+	--with-sd-password="#FAKE-sd-password#" \
+	--with-mon-dir-password="#FAKE-mon-dir-password#" \
+	--with-mon-fd-password="#FAKE-mon-fd-password#" \
+	--with-mon-sd-password="#FAKE-mon-sd-password#" \
+	--with-openssl
 
 %if %{with bat}
 cd src/qt-console
@@ -570,36 +521,14 @@ install -d $RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir},%{_mandir},%{_bindir},/
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-# install libraries for all the database backends
-# ldconfig will add the soname symlinks when one of the packages is installed
-for database in %{databases}; do
-	for libfile in libbacsql/$database%{_libdir}/lib*-*.so; do
-		orig_name=${libfile##*/}
-		file_prefix=${orig_name%%-*.so}
-		file_suffix=${orig_name#*-}
-		file_name=$file_prefix-$database-$file_suffix
-		install -p $libfile $RPM_BUILD_ROOT%{_libdir}/$file_name
-		touch $RPM_BUILD_ROOT%{_libdir}/$orig_name
-	done
-
-	install -p libbacsql/$database%{_libdir}/%{name}/make_catalog_backup \
-		$RPM_BUILD_ROOT%{_libdir}/%{name}/make_${database}_catalog_backup
-done
-
-# placeholders for the symlinks set in %%post db-*
-for f in create_bacula_database drop_bacula_database drop_bacula_tables \
-	grant_bacula_privileges make_bacula_tables update_bacula_tables make_catalog_backup; do
-	> $RPM_BUILD_ROOT%{_libexecdir}/%{name}/$f
-done
-
 # we use db dependant (at compile time) shell script only
-rm -f $RPM_BUILD_ROOT%{_libexecdir}/%{name}/make_catalog_backup.pl
-# dbi is not actual dbtype
-rm -f $RPM_BUILD_ROOT%{_libexecdir}/%{name}/make_dbi_catalog_backup
+rm $RPM_BUILD_ROOT%{_libexecdir}/%{name}/make_catalog_backup.pl
+## dbi is not actual dbtype
+#rm $RPM_BUILD_ROOT%{_libexecdir}/%{name}/make_dbi_catalog_backup
 
-# replace with empty file, replaced by ldconfig from each db-* package on intsall
-rm -f $RPM_BUILD_ROOT%{_libdir}/libbacsql-%{version}.so
-touch $RPM_BUILD_ROOT%{_libdir}/libbacsql-%{version}.so
+## replace with empty file, replaced by ldconfig from each db-* package on intsall
+#rm $RPM_BUILD_ROOT%{_libdir}/libbaccats-%{version}.so
+#touch $RPM_BUILD_ROOT%{_libdir}/libbaccats-%{version}.so
 
 install -p %{SOURCE10} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-dir
 install -p %{SOURCE11} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-fd
@@ -676,6 +605,9 @@ mv $RPM_BUILD_ROOT%{_mandir}/man8/{,bacula-}dbcheck.8.gz
 
 # no -devel files packaged, so this is also useless
 rm $RPM_BUILD_ROOT%{_libdir}/libbac{,cfg,find,py,sql}.{so,la}
+
+# FIXME, something in post
+rm $RPM_BUILD_ROOT/usr/lib64/libbaccats-5.2.1.so
 
 %if %{with nagios}
 install -d $RPM_BUILD_ROOT%{nagiosplugindir}
@@ -826,13 +758,6 @@ ln -sf "make_%{1}_catalog_backup" %{_libexecdir}/%{name}/make_catalog_backup || 
 
 %postun db-sqlite3 -p /sbin/ldconfig
 
-# dbi backend is different, as it is not bound with a specific db engine
-%post db-dbi
-/sbin/ldconfig
-%service bacula-dir restart "Bacula Director daemon"
-
-%postun db-dbi -p /sbin/ldconfig
-
 %files common
 %defattr(644,root,root,755)
 %doc LICENSE
@@ -877,24 +802,24 @@ ln -sf "make_%{1}_catalog_backup" %{_libexecdir}/%{name}/make_catalog_backup || 
 
 %files db-postgresql
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libexecdir}/%{name}/fix_postgresql_tables
+#%attr(755,root,root) %{_libexecdir}/%{name}/fix_postgresql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/create_postgresql_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_postgresql_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_postgresql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/grant_postgresql_privileges
 %attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_postgresql_*
-%attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_catalog_backup
-%attr(755,root,root) %{_libdir}/libbacsql-postgresql-5*.so
+#attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_catalog_backup
+%attr(755,root,root) %{_libdir}/libbaccats-postgresql-5*.so
 
-%ghost %attr(755,root,root) %{_libdir}/libbacsql-5*.so
+#%ghost %attr(755,root,root) %{_libdir}/libbaccats-5*.so
 %ghost %{_libexecdir}/%{name}/create_bacula_database
 %ghost %{_libexecdir}/%{name}/drop_bacula_tables
 %ghost %{_libexecdir}/%{name}/drop_bacula_database
 %ghost %{_libexecdir}/%{name}/grant_bacula_privileges
 %ghost %{_libexecdir}/%{name}/make_bacula_tables
 %ghost %{_libexecdir}/%{name}/update_bacula_tables
-%ghost %{_libexecdir}/%{name}/make_catalog_backup
+#%ghost %{_libexecdir}/%{name}/make_catalog_backup
 
 %files db-mysql
 %defattr(644,root,root,755)
@@ -904,17 +829,17 @@ ln -sf "make_%{1}_catalog_backup" %{_libexecdir}/%{name}/make_catalog_backup || 
 %attr(755,root,root) %{_libexecdir}/%{name}/grant_mysql_privileges
 %attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_mysql_*
-%attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_catalog_backup
-%attr(755,root,root) %{_libdir}/libbacsql-mysql-5*.so
+#%attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_catalog_backup
+%attr(755,root,root) %{_libdir}/libbaccats-mysql-5*.so
 
-%ghost %attr(755,root,root) %{_libdir}/libbacsql-5*.so
+#%ghost %attr(755,root,root) %{_libdir}/libbaccats-5*.so
 %ghost %{_libexecdir}/%{name}/create_bacula_database
 %ghost %{_libexecdir}/%{name}/drop_bacula_tables
 %ghost %{_libexecdir}/%{name}/drop_bacula_database
 %ghost %{_libexecdir}/%{name}/grant_bacula_privileges
 %ghost %{_libexecdir}/%{name}/make_bacula_tables
 %ghost %{_libexecdir}/%{name}/update_bacula_tables
-%ghost %{_libexecdir}/%{name}/make_catalog_backup
+#%ghost %{_libexecdir}/%{name}/make_catalog_backup
 
 %files db-sqlite3
 %defattr(644,root,root,755)
@@ -924,46 +849,17 @@ ln -sf "make_%{1}_catalog_backup" %{_libexecdir}/%{name}/make_catalog_backup || 
 %attr(755,root,root) %{_libexecdir}/%{name}/grant_sqlite3_privileges
 %attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite3_*
-%attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_catalog_backup
-%attr(755,root,root) %{_libdir}/libbacsql-sqlite3-5*.so
+#%attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_catalog_backup
+%attr(755,root,root) %{_libdir}/libbaccats-sqlite3-5*.so
 
-%ghost %attr(755,root,root) %{_libdir}/libbacsql-5*.so
+#%ghost %attr(755,root,root) %{_libdir}/libbaccats-5*.so
 %ghost %{_libexecdir}/%{name}/create_bacula_database
 %ghost %{_libexecdir}/%{name}/drop_bacula_tables
 %ghost %{_libexecdir}/%{name}/drop_bacula_database
 %ghost %{_libexecdir}/%{name}/grant_bacula_privileges
 %ghost %{_libexecdir}/%{name}/make_bacula_tables
 %ghost %{_libexecdir}/%{name}/update_bacula_tables
-%ghost %{_libexecdir}/%{name}/make_catalog_backup
-
-%if %{with dbi}
-%files db-dbi
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libexecdir}/%{name}/create_postgresql_database
-%attr(755,root,root) %{_libexecdir}/%{name}/drop_postgresql_database
-%attr(755,root,root) %{_libexecdir}/%{name}/drop_postgresql_tables
-%attr(755,root,root) %{_libexecdir}/%{name}/grant_postgresql_privileges
-%attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_tables
-%attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_catalog_backup
-%attr(755,root,root) %{_libexecdir}/%{name}/update_postgresql_*
-%attr(755,root,root) %{_libexecdir}/%{name}/create_mysql_database
-%attr(755,root,root) %{_libexecdir}/%{name}/drop_mysql_database
-%attr(755,root,root) %{_libexecdir}/%{name}/drop_mysql_tables
-%attr(755,root,root) %{_libexecdir}/%{name}/grant_mysql_privileges
-%attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_tables
-%attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_catalog_backup
-%attr(755,root,root) %{_libexecdir}/%{name}/update_mysql_*
-%attr(755,root,root) %{_libexecdir}/%{name}/create_sqlite3_database
-%attr(755,root,root) %{_libexecdir}/%{name}/drop_sqlite3_database
-%attr(755,root,root) %{_libexecdir}/%{name}/drop_sqlite3_tables
-%attr(755,root,root) %{_libexecdir}/%{name}/grant_sqlite3_privileges
-%attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_tables
-%attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite3_*
-%attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_catalog_backup
-%attr(755,root,root) %{_libdir}/libbacsql-dbi-5*.so
-
-%ghost %attr(755,root,root) %{_libdir}/libbacsql-5*.so
-%endif
+#%ghost %{_libexecdir}/%{name}/make_catalog_backup
 
 %files fd
 %defattr(644,root,root,755)
@@ -1011,8 +907,8 @@ ln -sf "make_%{1}_catalog_backup" %{_libexecdir}/%{name}/make_catalog_backup || 
 %doc LICENSE
 %{_pixmapsdir}/%{name}.png
 %{_desktopdir}/bacula-wx.desktop
-%attr(640,root,bacula) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bwx-console.conf
-%attr(755,root,root) %{_sbindir}/bwx-console
+#%attr(640,root,bacula) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bwx-console.conf
+#%attr(755,root,root) %{_sbindir}/bwx-console
 %{_mandir}/man1/bacula-bwxconsole.1*
 %endif
 
