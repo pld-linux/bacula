@@ -2,6 +2,7 @@
 #	- update desktop files, think about su-wrappers for console (with .desktop files)
 #	- package web admin
 #	- fix log file permissions
+#	- check on upgrade (5.0 and 5.2 databases are NOT compatible)
 #
 # Conditional build:
 %bcond_without	console_wx		# wx-console program
@@ -519,14 +520,21 @@ install -d $RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir},%{_mandir},%{_bindir},/
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
+# create copies of make_catalog_backup for specific databases; zeore default one (will be ghost)
+for database in %{databases}; do
+	sed -e "s#default_db_type=.*#default_db_type=${database}#g" \
+		$RPM_BUILD_ROOT%{_libdir}/%{name}/make_catalog_backup \
+		> $RPM_BUILD_ROOT%{_libdir}/%{name}/make_${database}_catalog_backup
+		chmod 755 $RPM_BUILD_ROOT%{_libdir}/%{name}/make_${database}_catalog_backup
+done
+:> $RPM_BUILD_ROOT%{_libdir}/%{name}/make_catalog_backup
+
 # we use db dependant (at compile time) shell script only
 rm $RPM_BUILD_ROOT%{_libexecdir}/%{name}/make_catalog_backup.pl
-## dbi is not actual dbtype
-#rm $RPM_BUILD_ROOT%{_libexecdir}/%{name}/make_dbi_catalog_backup
 
 ## replace with empty file, replaced by ldconfig from each db-* package on intsall
-#rm $RPM_BUILD_ROOT%{_libdir}/libbaccats-%{version}.so
-#touch $RPM_BUILD_ROOT%{_libdir}/libbaccats-%{version}.so
+rm $RPM_BUILD_ROOT%{_libdir}/libbaccats-%{version}.so
+touch $RPM_BUILD_ROOT%{_libdir}/libbaccats-%{version}.so
 
 install -p %{SOURCE10} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-dir
 install -p %{SOURCE11} $RPM_BUILD_ROOT/etc/rc.d/init.d/bacula-fd
@@ -567,7 +575,10 @@ touch $RPM_BUILD_ROOT/var/log/bacula/log
 
 # install the updatedb scripts for older versions that last full release
 # 2.0 -> 3.0 : 10_to_11
+# 5.0 -> 5.2 : 12_to_14
 install -p updatedb/update_*_tables_10_to_11 $RPM_BUILD_ROOT%{_libexecdir}/%{name}
+install -p updatedb/update_*_tables_11_to_12 $RPM_BUILD_ROOT%{_libexecdir}/%{name}
+install -p updatedb/update_*_tables_12_to_14 $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 # place for site passwords
 touch $RPM_BUILD_ROOT%{_sysconfdir}/{dir-password,fd-password,sd-password}
@@ -603,9 +614,6 @@ mv $RPM_BUILD_ROOT%{_mandir}/man8/{,bacula-}dbcheck.8.gz
 
 # no -devel files packaged, so this is also useless
 rm $RPM_BUILD_ROOT%{_libdir}/libbac{,cfg,find,py,sql}.{so,la}
-
-# FIXME, something in post
-rm $RPM_BUILD_ROOT/usr/lib64/libbaccats-5.2.1.so
 
 %if %{with nagios}
 install -d $RPM_BUILD_ROOT%{nagiosplugindir}
@@ -739,6 +747,7 @@ for name in "create database" "drop tables" "drop database" "grant privileges" "
 	ln -sf "${prefix}_%{1}_${suffix}" %{_libexecdir}/%{name}/"${prefix}_bacula_${suffix}" || : \
 done \
 ln -sf "make_%{1}_catalog_backup" %{_libexecdir}/%{name}/make_catalog_backup || : \
+ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %service bacula-dir restart "Bacula Director daemon"
 
 %post db-postgresql
@@ -769,6 +778,7 @@ ln -sf "make_%{1}_catalog_backup" %{_libexecdir}/%{name}/make_catalog_backup || 
 %attr(755,root,root) %{_libdir}/libbaccfg-5*.so
 %attr(755,root,root) %{_libdir}/libbacfind-5*.so
 %attr(755,root,root) %{_libdir}/libbacpy-5*.so
+%attr(755,root,root) %{_libdir}/libbacsql-5*.so
 %{_mandir}/man8/bacula.8*
 %{_mandir}/man1/bsmtp.1*
 %{_mandir}/man8/btraceback.8*
@@ -800,24 +810,23 @@ ln -sf "make_%{1}_catalog_backup" %{_libexecdir}/%{name}/make_catalog_backup || 
 
 %files db-postgresql
 %defattr(644,root,root,755)
-#%attr(755,root,root) %{_libexecdir}/%{name}/fix_postgresql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/create_postgresql_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_postgresql_database
 %attr(755,root,root) %{_libexecdir}/%{name}/drop_postgresql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/grant_postgresql_privileges
 %attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_postgresql_*
-#attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_catalog_backup
+%attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_catalog_backup
 %attr(755,root,root) %{_libdir}/libbaccats-postgresql-5*.so
 
-#%ghost %attr(755,root,root) %{_libdir}/libbaccats-5*.so
+%ghost %attr(755,root,root) %{_libdir}/libbaccats-5*.so
 %ghost %{_libexecdir}/%{name}/create_bacula_database
 %ghost %{_libexecdir}/%{name}/drop_bacula_tables
 %ghost %{_libexecdir}/%{name}/drop_bacula_database
 %ghost %{_libexecdir}/%{name}/grant_bacula_privileges
 %ghost %{_libexecdir}/%{name}/make_bacula_tables
 %ghost %{_libexecdir}/%{name}/update_bacula_tables
-#%ghost %{_libexecdir}/%{name}/make_catalog_backup
+%ghost %{_libexecdir}/%{name}/make_catalog_backup
 
 %files db-mysql
 %defattr(644,root,root,755)
@@ -827,17 +836,17 @@ ln -sf "make_%{1}_catalog_backup" %{_libexecdir}/%{name}/make_catalog_backup || 
 %attr(755,root,root) %{_libexecdir}/%{name}/grant_mysql_privileges
 %attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_mysql_*
-#%attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_catalog_backup
+%attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_catalog_backup
 %attr(755,root,root) %{_libdir}/libbaccats-mysql-5*.so
 
-#%ghost %attr(755,root,root) %{_libdir}/libbaccats-5*.so
+%ghost %attr(755,root,root) %{_libdir}/libbaccats-5*.so
 %ghost %{_libexecdir}/%{name}/create_bacula_database
 %ghost %{_libexecdir}/%{name}/drop_bacula_tables
 %ghost %{_libexecdir}/%{name}/drop_bacula_database
 %ghost %{_libexecdir}/%{name}/grant_bacula_privileges
 %ghost %{_libexecdir}/%{name}/make_bacula_tables
 %ghost %{_libexecdir}/%{name}/update_bacula_tables
-#%ghost %{_libexecdir}/%{name}/make_catalog_backup
+%ghost %{_libexecdir}/%{name}/make_catalog_backup
 
 %files db-sqlite3
 %defattr(644,root,root,755)
@@ -847,17 +856,17 @@ ln -sf "make_%{1}_catalog_backup" %{_libexecdir}/%{name}/make_catalog_backup || 
 %attr(755,root,root) %{_libexecdir}/%{name}/grant_sqlite3_privileges
 %attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite3_*
-#%attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_catalog_backup
+%attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_catalog_backup
 %attr(755,root,root) %{_libdir}/libbaccats-sqlite3-5*.so
 
-#%ghost %attr(755,root,root) %{_libdir}/libbaccats-5*.so
+%ghost %attr(755,root,root) %{_libdir}/libbaccats-5*.so
 %ghost %{_libexecdir}/%{name}/create_bacula_database
 %ghost %{_libexecdir}/%{name}/drop_bacula_tables
 %ghost %{_libexecdir}/%{name}/drop_bacula_database
 %ghost %{_libexecdir}/%{name}/grant_bacula_privileges
 %ghost %{_libexecdir}/%{name}/make_bacula_tables
 %ghost %{_libexecdir}/%{name}/update_bacula_tables
-#%ghost %{_libexecdir}/%{name}/make_catalog_backup
+%ghost %{_libexecdir}/%{name}/make_catalog_backup
 
 %files fd
 %defattr(644,root,root,755)
