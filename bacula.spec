@@ -433,6 +433,9 @@ Requires:	nagios-common
 %description -n nagios-plugin-check_bacula
 Nagios plugin to check bacula.
 
+# provided by various db libraries as a symlink
+%define	_noautoreq	libbaccats-%{version}.so
+
 %prep
 %setup -q -a 1
 %patch0 -p1
