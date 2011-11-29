@@ -22,14 +22,14 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	5.2.1
-Release:	0.1
+Version:	5.2.2
+Release:	1
 License:	AGPL v3
 Group:		Networking/Utilities
 Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	793da9f89fc5e024b6b95eb16a3120e5
+# Source0-md5:	227b88f56ae085da8f48823b220d4c87
 Source1:	http://downloads.sourceforge.net/bacula/%{name}-docs-%{version}.tar.bz2
-# Source1-md5:	d4db495def9e7843bcca8aff2d4d493b
+# Source1-md5:	478273c0229f24d6690fdbedbeb50fa4
 Source2:	http://downloads.sourceforge.net/bacula/%{name}-rescue-5.0.1.tar.gz
 # Source2-md5:	bb194aed8e204f54bf2f61d7e721f257
 Source10:	%{name}-dir.init
@@ -45,7 +45,6 @@ Patch2:		%{name}-conf.patch
 Patch3:		%{name}-desktop.patch
 Patch4:		make_catalog_backup-setup-home.patch
 Patch5:		%{name}-mysql_thread.patch
-Patch6:		%{name}-wxconsole.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -444,7 +443,6 @@ Nagios plugin to check bacula.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
 
 tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
 
@@ -482,6 +480,7 @@ QMAKE=%{_bindir}/qt4-qmake \
 	--with-smtp-host=localhost \
 	--with-pid-dir=/var/run \
 	--with-subsys-dir=/var/lock/subsys \
+	--with-systemd=/lib/systemd/system \
 	--enable-batch-insert \
 	%{?with_pgsql:--with-postgresql} \
 	%{?with_mysql:--with-mysql} \
@@ -812,6 +811,8 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(755,root,root) %{_sbindir}/bacula-dbcheck
 %{_mandir}/man8/bacula-dir.8*
 %{_mandir}/man8/bacula-dbcheck.8*
+%{_mandir}/man8/bregex.8*
+%{_mandir}/man8/bwild.8*
 %{_libexecdir}/%{name}/query.sql
 %attr(755,root,root) %{_libexecdir}/%{name}/delete_catalog_backup
 

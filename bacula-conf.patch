@@ -6,7 +6,7 @@ diff -urN bacula-2.2.6.org/src/dird/bacula-dir.conf.in bacula-2.2.6/src/dird/bac
  Catalog {
    Name = MyCatalog
 -# Uncomment the following line if you want the dbi driver
--@uncomment_dbi@ dbdriver = "dbi:@DB_TYPE@"; dbaddress = 127.0.0.1; dbport = @db_port@
+-@uncomment_dbi@ dbdriver = "dbi:@DEFAULT_DB_TYPE@"; dbaddress = 127.0.0.1; dbport = @db_port@
 +  dbdriver = "dbi:mysql"; dbaddress = 127.0.0.1; dbport = 3306
    dbname = "@db_name@"; dbuser = "@db_user@"; dbpassword = "@db_password@"
  }
