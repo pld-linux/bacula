@@ -664,7 +664,7 @@ if [ "$1" = "0" ]; then
 	%groupremove bacula
 fi
 
-%triggerpostun dir -- %{name}-dir < 5.0
+%triggerpostun dir -- %{name}-dir < %{version}-0
 %banner bacula-dir -t3 <<EOF
 You have upgraded from an older version of Bacula director.
 
