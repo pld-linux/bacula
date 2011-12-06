@@ -19,6 +19,7 @@
 %undefine       with_sqlite3_sync_off
 %endif
 
+%define	qtver	4.6.2
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
@@ -67,8 +68,8 @@ BuildRequires:	python-modules
 %if %{with bat}
 BuildRequires:	QtCore-devel
 BuildRequires:	QtGui-devel
-BuildRequires:	qt4-build >= 4.6.2
-BuildRequires:	qt4-qmake >= 4.6.2
+BuildRequires:	qt4-build >= %{qtver}
+BuildRequires:	qt4-qmake >= %{qtver}
 %endif
 %{?with_mysql:BuildRequires:	mysql-devel}
 %{?with_pgsql:BuildRequires:	postgresql-devel}
@@ -243,7 +244,7 @@ Summary:	Bacula Qt4 Console
 Summary(pl.UTF-8):	Konsola Baculi oparta na Qt4
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
-Requires:	QtCore >= 4.6.2
+Requires:	QtCore >= %{qtver}
 Requires:	%{name}-common = %{version}-%{release}
 
 %description console-qt4
