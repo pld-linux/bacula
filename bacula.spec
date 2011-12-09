@@ -670,6 +670,11 @@ You have upgraded from an older version of Bacula director.
 
 You will probably need to call %{_libexecdir}/%{name}/update_bacula_tables
 script to upgrade the database.
+
+Ensure you database partition has enough free space before you run the upgrade,
+i.e check that there is enough room to rebuild 'File' table (it is the largest
+in bacula db).
+
 EOF
 
 %post dir
