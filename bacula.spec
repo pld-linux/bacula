@@ -6,7 +6,11 @@
 #
 # Conditional build:
 %bcond_without	console_wx		# wx-console program
+%if "%{pld_release}" == "ac"
+%bcond_with		bat			# bat Qt4 GUI
+%else
 %bcond_without	bat			# bat Qt4 GUI
+%endif
 %bcond_without	mysql			# use MySQL
 %bcond_without	pgsql			# use PostgreSQL
 %bcond_without	sqlite3			# use SQLite3
@@ -74,6 +78,7 @@ BuildRequires:	qt4-qmake >= %{qtver}
 %{?with_mysql:BuildRequires:	mysql-devel}
 %{?with_pgsql:BuildRequires:	postgresql-devel}
 BuildRequires:	readline-devel
+BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	sed >= 4.0
@@ -244,8 +249,8 @@ Summary:	Bacula Qt4 Console
 Summary(pl.UTF-8):	Konsola Baculi oparta na Qt4
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
-Requires:	QtCore >= %{qtver}
 Requires:	%{name}-common = %{version}-%{release}
+Requires:	QtCore >= %{qtver}
 
 %description console-qt4
 Bacula - It comes by night and sucks the vital essence from your
