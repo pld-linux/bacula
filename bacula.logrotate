@@ -7,7 +7,7 @@
 #      /etc/logrotate.d/bacula
 #
 /var/lib/bacula/log {
-	su bacula logs
+	su root bacula
 	monthly
 	rotate 5
 	notifempty
