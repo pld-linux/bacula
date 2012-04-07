@@ -1,6 +1,5 @@
 # TODO:
 #	- update desktop files, think about su-wrappers for console (with .desktop files)
-#	- package web admin
 #	- fix log file permissions
 #	- check on upgrade (5.0 and 5.2 databases are NOT compatible)
 #
