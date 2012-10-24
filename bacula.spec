@@ -26,15 +26,15 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	5.2.6
-Release:	2
+Version:	5.2.12
+Release:	1
 License:	AGPL v3
 Group:		Networking/Utilities
-Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	914483b92539598678542bd2ddb28043
-Source1:	http://downloads.sourceforge.net/bacula/%{name}-docs-%{version}.tar.bz2
-# Source1-md5:	30b340fefc46c8148b1ba89cd1db60e4
-Source2:	http://downloads.sourceforge.net/bacula/%{name}-rescue-5.0.1.tar.gz
+Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
+# Source0-md5:	b04c22b128b73359e4bbc9de06652c38
+Source1:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.bz2
+# Source1-md5:	909b85db6da2dbe6b1099688ad4ec7c3
+Source2:	http://dl.sourceforge.net/bacula/%{name}-rescue-5.0.1.tar.gz
 # Source2-md5:	bb194aed8e204f54bf2f61d7e721f257
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
@@ -570,6 +570,7 @@ sed -e 's/gnome-console/wx-console/g;s/Console/Wx Console/g' \
 # qmake somewhy does not always create install_bins target. install our own the bin
 rm -f $RPM_BUILD_ROOT%{_sbindir}/bat
 libtool --silent --mode=install install src/qt-console/bat $RPM_BUILD_ROOT%{_bindir}
+cp -a scripts/bacula.png $RPM_BUILD_ROOT%{_pixmapsdir}/bacula.png
 cp -a scripts/bat.desktop $RPM_BUILD_ROOT%{_desktopdir}
 %endif
 

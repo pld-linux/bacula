@@ -1,7 +1,6 @@
-diff -urN bacula-2.2.6.org/src/dird/bacula-dir.conf.in bacula-2.2.6/src/dird/bacula-dir.conf.in
---- bacula-2.2.6.org/src/dird/bacula-dir.conf.in	2007-10-03 18:22:07.000000000 +0200
-+++ bacula-2.2.6/src/dird/bacula-dir.conf.in	2007-11-24 22:44:44.660275104 +0100
-@@ -231,8 +231,7 @@
+--- bacula-5.2.12/src/dird/bacula-dir.conf.in.orig	2012-09-13 10:51:19.000000000 +0200
++++ bacula-5.2.12/src/dird/bacula-dir.conf.in	2012-10-22 17:09:44.886778298 +0200
+@@ -230,8 +230,7 @@
  # Generic catalog service
  Catalog {
    Name = MyCatalog
@@ -11,21 +10,21 @@ diff -urN bacula-2.2.6.org/src/dird/bacula-dir.conf.in bacula-2.2.6/src/dird/bac
    dbname = "@db_name@"; dbuser = "@db_user@"; dbpassword = "@db_password@"
  }
  
-@@ -256,7 +256,7 @@
+@@ -261,7 +260,7 @@
  #          time to time as it will grow indefinitely. However, it will
  #          also keep all your messages if they scroll off the console.
  #
--  append = "@working_dir@/log" = all, !skipped
+-  append = "@logdir@/bacula.log" = all, !skipped
 +  append = "/var/log/bacula/log" = all, !skipped
    catalog = all
  }
  
-@@ -267,7 +267,7 @@
+@@ -273,7 +272,7 @@
    mailcommand = "@sbindir@/bsmtp -h @smtp_host@ -f \"\(Bacula\) \<%r\>\" -s \"Bacula daemon message\" %r"
    mail = @job_email@ = all, !skipped            
    console = all, !skipped, !saved
--  append = "@working_dir@/log" = all, !skipped
+-  append = "@logdir@/bacula.log" = all, !skipped
 +  append = "/var/log/bacula/log" = all, !skipped
  }
  
- 
+ # Default pool definition
