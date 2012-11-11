@@ -9,4 +9,4 @@ BACULA_FD_USER=root
 BACULA_FD_GROUP=root
 
 # Extra options passed to bacula-fd on startup
-#BACULA_DIR_OPTIONS=""
+#BACULA_FD_OPTIONS=""
