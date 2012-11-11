@@ -467,7 +467,7 @@ cd ..
 CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
 
 WXCONFIG=%{_bindir}/wx-gtk2-unicode-config \
-QMAKE=%{_bindir}/qt4-qmake \
+QMAKE=%{_bindir}/qmake-qt4 \
 %configure \
 	--with-scriptdir=%{_libexecdir}/%{name} \
 	%{?with_bat:--enable-bat} \
