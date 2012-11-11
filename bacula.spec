@@ -30,11 +30,11 @@ Version:	5.2.12
 Release:	1
 License:	AGPL v3
 Group:		Networking/Utilities
-Source0:	http://dl.sourceforge.net/bacula/%{name}-%{version}.tar.gz
+Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
 # Source0-md5:	b04c22b128b73359e4bbc9de06652c38
-Source1:	http://dl.sourceforge.net/bacula/%{name}-docs-%{version}.tar.bz2
+Source1:	http://downloads.sourceforge.net/bacula/%{name}-docs-%{version}.tar.bz2
 # Source1-md5:	909b85db6da2dbe6b1099688ad4ec7c3
-Source2:	http://dl.sourceforge.net/bacula/%{name}-rescue-5.0.1.tar.gz
+Source2:	http://downloads.sourceforge.net/bacula/%{name}-rescue-5.0.1.tar.gz
 # Source2-md5:	bb194aed8e204f54bf2f61d7e721f257
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
