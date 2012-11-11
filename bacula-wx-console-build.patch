@@ -1,0 +1,143 @@
+diff -dur -x '*~' bacula-5.2.12.orig/src/wx-console/authenticate.c bacula-5.2.12/src/wx-console/authenticate.c
+--- bacula-5.2.12.orig/src/wx-console/authenticate.c	2012-09-13 10:51:19.000000000 +0200
++++ bacula-5.2.12/src/wx-console/authenticate.c	2012-11-11 15:54:51.436987760 +0100
+@@ -48,6 +48,7 @@
+ 
+ #undef _DEBUG
+ 
++#include <wx/string.h>
+ #include "bacula.h"
+ #include "console_conf.h"
+ #include "jcr.h"
+diff -dur -x '*~' bacula-5.2.12.orig/src/wx-console/console_conf.c bacula-5.2.12/src/wx-console/console_conf.c
+--- bacula-5.2.12.orig/src/wx-console/console_conf.c	2012-09-13 10:51:19.000000000 +0200
++++ bacula-5.2.12/src/wx-console/console_conf.c	2012-11-11 15:54:56.003685331 +0100
+@@ -57,6 +57,7 @@
+ 
+ #undef _DEBUG
+ 
++#include <wx/string.h>
+ #include "bacula.h"
+ #include "console_conf.h"
+ 
+diff -dur -x '*~' bacula-5.2.12.orig/src/wx-console/console_thread.cpp bacula-5.2.12/src/wx-console/console_thread.cpp
+--- bacula-5.2.12.orig/src/wx-console/console_thread.cpp	2012-09-13 10:51:19.000000000 +0200
++++ bacula-5.2.12/src/wx-console/console_thread.cpp	2012-11-11 15:55:02.753731018 +0100
+@@ -46,6 +46,7 @@
+ 
+ #undef _DEBUG
+ 
++#include <wx/string.h>
+ #include "bacula.h"
+ #include "console_conf.h"
+ 
+diff -dur -x '*~' bacula-5.2.12.orig/src/wx-console/main.cpp bacula-5.2.12/src/wx-console/main.cpp
+--- bacula-5.2.12.orig/src/wx-console/main.cpp	2012-09-13 10:51:19.000000000 +0200
++++ bacula-5.2.12/src/wx-console/main.cpp	2012-11-11 15:55:09.187107901 +0100
+@@ -50,6 +50,7 @@
+ 
+ #undef _DEBUG
+ 
++#include <wx/string.h>
+ #include "bacula.h"
+ 
+ #include <wx/wxprec.h>
+diff -dur -x '*~' bacula-5.2.12.orig/src/wx-console/wxbconfigfileeditor.cpp bacula-5.2.12/src/wx-console/wxbconfigfileeditor.cpp
+--- bacula-5.2.12.orig/src/wx-console/wxbconfigfileeditor.cpp	2012-09-13 10:51:19.000000000 +0200
++++ bacula-5.2.12/src/wx-console/wxbconfigfileeditor.cpp	2012-11-11 15:55:13.980473688 +0100
+@@ -41,6 +41,7 @@
+ 
+ #undef _DEBUG
+ 
++#include <wx/string.h>
+ #include "bacula.h"
+ #include "wxbconfigfileeditor.h"
+ #include <wx/file.h>
+diff -dur -x '*~' bacula-5.2.12.orig/src/wx-console/wxbconfigpanel.cpp bacula-5.2.12/src/wx-console/wxbconfigpanel.cpp
+--- bacula-5.2.12.orig/src/wx-console/wxbconfigpanel.cpp	2012-09-13 10:51:19.000000000 +0200
++++ bacula-5.2.12/src/wx-console/wxbconfigpanel.cpp	2012-11-11 15:55:19.013841104 +0100
+@@ -41,6 +41,7 @@
+ 
+ #undef _DEBUG
+ 
++#include <wx/string.h>
+ #include "bacula.h"
+ #include "wxbconfigpanel.h"
+ #include <wx/arrimpl.cpp>
+diff -dur -x '*~' bacula-5.2.12.orig/src/wx-console/wxbhistorytextctrl.cpp bacula-5.2.12/src/wx-console/wxbhistorytextctrl.cpp
+--- bacula-5.2.12.orig/src/wx-console/wxbhistorytextctrl.cpp	2012-09-13 10:51:19.000000000 +0200
++++ bacula-5.2.12/src/wx-console/wxbhistorytextctrl.cpp	2012-11-11 15:55:36.350625198 +0100
+@@ -41,6 +41,7 @@
+ 
+ #undef _DEBUG
+ 
++#include <wx/string.h>
+ #include "bacula.h"
+ #include "wxbhistorytextctrl.h"
+ 
+diff -dur -x '*~' bacula-5.2.12.orig/src/wx-console/wxblistctrl.cpp bacula-5.2.12/src/wx-console/wxblistctrl.cpp
+--- bacula-5.2.12.orig/src/wx-console/wxblistctrl.cpp	2012-09-13 10:51:19.000000000 +0200
++++ bacula-5.2.12/src/wx-console/wxblistctrl.cpp	2012-11-11 15:55:43.314005711 +0100
+@@ -42,6 +42,7 @@
+ 
+ #undef _DEBUG
+ 
++#include <wx/string.h>
+ #include "bacula.h"
+ 
+ #include "wxblistctrl.h"
+diff -dur -x '*~' bacula-5.2.12.orig/src/wx-console/wxbmainframe.cpp bacula-5.2.12/src/wx-console/wxbmainframe.cpp
+--- bacula-5.2.12.orig/src/wx-console/wxbmainframe.cpp	2012-09-13 10:51:19.000000000 +0200
++++ bacula-5.2.12/src/wx-console/wxbmainframe.cpp	2012-11-11 15:55:48.770709354 +0100
+@@ -41,6 +41,7 @@
+ 
+ #undef _DEBUG
+ 
++#include <wx/string.h>
+ #include "bacula.h"
+ 
+ #include "wxbmainframe.h" // class's header file
+diff -dur -x '*~' bacula-5.2.12.orig/src/wx-console/wxbrestorepanel.cpp bacula-5.2.12/src/wx-console/wxbrestorepanel.cpp
+--- bacula-5.2.12.orig/src/wx-console/wxbrestorepanel.cpp	2012-09-13 10:51:19.000000000 +0200
++++ bacula-5.2.12/src/wx-console/wxbrestorepanel.cpp	2012-11-11 15:55:55.700756326 +0100
+@@ -69,6 +69,7 @@
+ 
+ #undef _DEBUG
+ 
++#include <wx/string.h>
+ #include "bacula.h"
+ 
+ #include "wxbrestorepanel.h"
+diff -dur -x '*~' bacula-5.2.12.orig/src/wx-console/wxbtableparser.cpp bacula-5.2.12/src/wx-console/wxbtableparser.cpp
+--- bacula-5.2.12.orig/src/wx-console/wxbtableparser.cpp	2012-09-13 10:51:19.000000000 +0200
++++ bacula-5.2.12/src/wx-console/wxbtableparser.cpp	2012-11-11 15:56:01.374128112 +0100
+@@ -48,6 +48,7 @@
+ 
+ #undef _DEBUG
+ 
++#include <wx/string.h>
+ #include "bacula.h"
+ 
+ #include "wxbtableparser.h" // class's header file
+diff -dur -x '*~' bacula-5.2.12.orig/src/wx-console/wxbtreectrl.cpp bacula-5.2.12/src/wx-console/wxbtreectrl.cpp
+--- bacula-5.2.12.orig/src/wx-console/wxbtreectrl.cpp	2012-09-13 10:51:19.000000000 +0200
++++ bacula-5.2.12/src/wx-console/wxbtreectrl.cpp	2012-11-11 15:56:06.807498286 +0100
+@@ -42,6 +42,7 @@
+ 
+ #undef _DEBUG
+ 
++#include <wx/string.h>
+ #include "bacula.h"
+ 
+ #include "wxbtreectrl.h"
+diff -dur -x '*~' bacula-5.2.12.orig/src/wx-console/wxbutils.cpp bacula-5.2.12/src/wx-console/wxbutils.cpp
+--- bacula-5.2.12.orig/src/wx-console/wxbutils.cpp	2012-09-13 10:51:19.000000000 +0200
++++ bacula-5.2.12/src/wx-console/wxbutils.cpp	2012-11-11 15:56:11.697531443 +0100
+@@ -41,6 +41,7 @@
+ 
+ #undef _DEBUG
+ 
++#include <wx/string.h>
+ #include "bacula.h"
+ #include "wxbutils.h"
+ #include "wxbmainframe.h"
