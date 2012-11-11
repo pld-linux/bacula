@@ -43,6 +43,9 @@ Source13:	%{name}.logrotate
 Source14:	%{name}-dir.sysconfig
 Source15:	%{name}-fd.sysconfig
 Source16:	%{name}-sd.sysconfig
+Source17:	%{name}-dir.service
+Source18:	%{name}-fd.service
+Source19:	%{name}-sd.service
 Patch0:		%{name}-mtx-changer.patch
 Patch1:		%{name}-branding.patch
 Patch2:		%{name}-conf.patch
@@ -79,9 +82,10 @@ BuildRequires:	qt4-qmake >= %{qtver}
 BuildRequires:	readline-devel
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpm-pythonprov
-BuildRequires:	rpmbuild(macros) >= 1.268
+BuildRequires:	rpmbuild(macros) >= 1.644
 BuildRequires:	sed >= 4.0
 %{?with_sqlite3:BuildRequires:	sqlite3-devel}
+Requires:	systemd-units >= 38
 BuildRequires:	which
 %if %{with console_wx}
 BuildRequires:	wxGTK2-unicode-devel >= 2.4.0
@@ -525,9 +529,11 @@ fakeroot %{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/etc/{rc.d/init.d,logrotate.d,pam.d,sysconfig}
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/rescue
-install -d $RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir},%{_mandir},%{_bindir},/var/log/bacula}
+install -d $RPM_BUILD_ROOT/etc/{rc.d/init.d,logrotate.d,pam.d,sysconfig} \
+		$RPM_BUILD_ROOT%{_sysconfdir}/rescue \
+		$RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir}} \
+		$RPM_BUILD_ROOT{%{_mandir},%{_bindir},/var/log/bacula} \
+		$RPM_BUILD_ROOT%{systemdunitdir}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -555,6 +561,9 @@ cp -a %{SOURCE13} $RPM_BUILD_ROOT/etc/logrotate.d/%{name}-dir
 cp -a %{SOURCE14} $RPM_BUILD_ROOT/etc/sysconfig/bacula-dir
 cp -a %{SOURCE15} $RPM_BUILD_ROOT/etc/sysconfig/bacula-fd
 cp -a %{SOURCE16} $RPM_BUILD_ROOT/etc/sysconfig/bacula-sd
+cp -a %{SOURCE17} $RPM_BUILD_ROOT%{systemdunitdir}/bacula-dir.service
+cp -a %{SOURCE18} $RPM_BUILD_ROOT%{systemdunitdir}/bacula-fd.service
+cp -a %{SOURCE19} $RPM_BUILD_ROOT%{systemdunitdir}/bacula-sd.service
 
 %if %{with console_wx}
 # tray-monitor is for regular users
@@ -687,34 +696,49 @@ EOF
 %update_configs
 /sbin/chkconfig --add bacula-dir
 %service bacula-dir restart "Bacula Director daemon"
+%systemd_post bacula-dir.service
 
 %preun dir
 if [ "$1" = "0" ]; then
 	%service bacula-dir stop
 	/sbin/chkconfig --del bacula-dir
 fi
+%systemd_preun bacula-dir.service
+
+%postun dir
+%systemd_reload
 
 %post fd
 %update_configs
 /sbin/chkconfig --add bacula-fd
 %service bacula-fd restart "Bacula File daemon"
+%systemd_post bacula-fd.service
 
 %preun fd
 if [ "$1" = "0" ]; then
 	%service bacula-fd stop
 	/sbin/chkconfig --del bacula-fd
 fi
+%systemd_preun bacula-fd.service
+
+%postun fd
+%systemd_reload
 
 %post sd
 %update_configs
 /sbin/chkconfig --add bacula-sd
 %service bacula-sd restart "Bacula Storage daemon"
+%systemd_post bacula-sd.service
 
 %preun sd
 if [ "$1" = "0" ]; then
 	%service bacula-sd stop
 	/sbin/chkconfig --del bacula-sd
 fi
+%systemd_preun bacula-sd.service
+
+%postun sd
+%systemd_reload
 
 %pre console
 if [ -e %{_sysconfdir}/console.conf -a ! -e %{_sysconfdir}/bconsole.conf ]; then
@@ -817,6 +841,7 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(640,root,root) %config(noreplace) /etc/logrotate.d/bacula-dir
 %attr(754,root,root) /etc/rc.d/init.d/bacula-dir
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/bacula-dir
+%{systemdunitdir}/bacula-dir.service
 %attr(755,root,root) %{_sbindir}/bacula-dir
 %attr(755,root,root) %{_sbindir}/bregex
 %attr(755,root,root) %{_sbindir}/bwild
@@ -894,6 +919,7 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(640,root,bacula) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bacula-fd.conf
 %attr(754,root,root) /etc/rc.d/init.d/bacula-fd
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/bacula-fd
+%{systemdunitdir}/bacula-fd.service
 %attr(755,root,root) %{_sbindir}/bacula-fd
 %attr(755,root,root) %{_libdir}/bpipe-fd.so
 %{_mandir}/man8/bacula-fd.8*
@@ -905,6 +931,7 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(640,root,bacula) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/mtx-changer.conf
 %attr(754,root,root) /etc/rc.d/init.d/bacula-sd
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/bacula-sd
+%{systemdunitdir}/bacula-sd.service
 %attr(755,root,root) %{_sbindir}/bacula-sd
 %attr(755,root,root) %{_sbindir}/bcopy
 %attr(755,root,root) %{_sbindir}/bextract

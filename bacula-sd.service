@@ -1,0 +1,14 @@
+[Unit]
+Description=Bacula Storage Daemon
+After=syslog.target network.target
+
+[Service]
+Environment=BACULA_SD_USER=bacula
+Environment=BACULA_SD_GROUP=bacula
+EnvironmentFile=-/etc/sysconfig/bacula-sd
+ExecStartPre=/usr/sbin/bacula-sd -t -c /etc/bacula/bacula-sd.conf -u ${BACULA_SD_USER} -g ${BACULA_SD_GROUP}
+ExecStart=/usr/sbin/bacula-sd -f -c /etc/bacula/bacula-sd.conf -u ${BACULA_SD_USER} -g ${BACULA_SD_GROUP} $BACULA_SD_OPTIONS
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

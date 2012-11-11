@@ -1,0 +1,15 @@
+[Unit]
+Description=Bacula File Daemon
+After=syslog.target network.target local-fs.target
+
+[Service]
+Environment=BACULA_FD_USER=bacula
+Environment=BACULA_FD_GROUP=bacula
+EnvironmentFile=-/etc/sysconfig/bacula-fd
+ExecStartPre=/usr/sbin/bacula-fd -t -c /etc/bacula/bacula-fd.conf -u ${BACULA_FD_USER} -g ${BACULA_FD_GROUP}
+ExecStart=/usr/sbin/bacula-fd -f -c /etc/bacula/bacula-fd.conf -u ${BACULA_FD_USER} -g ${BACULA_FD_GROUP} $BACULA_FD_OPTIONS
+IOSchedulingClass=idle
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
