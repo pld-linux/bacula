@@ -613,7 +613,6 @@ rm -f $RPM_BUILD_ROOT%{_libexecdir}/%{name}/{gconsole,startmysql,stopmysql,bacul
 %if %{without console_wx}
 rm -f $RPM_BUILD_ROOT%{_desktopdir}/bacula-wx.desktop
 %endif
-touch $RPM_BUILD_ROOT%{_sysconfdir}/.pw.sed
 
 rm $RPM_BUILD_ROOT%{_docdir}/bacula/ChangeLog
 rm $RPM_BUILD_ROOT%{_docdir}/bacula/INSTALL
@@ -837,7 +836,6 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %doc ChangeLog CheckList ReleaseNotes kernstodo LICENSE
 #%doc examples %{name}-docs-%{version}/manual/{*.pdf,bacula}
 %attr(640,root,bacula) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bacula-dir.conf
-%ghost %{_sysconfdir}/.pw.sed
 %attr(640,root,root) %config(noreplace) /etc/logrotate.d/bacula-dir
 %attr(754,root,root) /etc/rc.d/init.d/bacula-dir
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/bacula-dir
