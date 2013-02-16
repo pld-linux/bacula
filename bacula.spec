@@ -97,6 +97,9 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_localstatedir	/var/lib/%{name}
 %define		nagiosplugindir	%{_libdir}/nagios/plugins
 
+# db packages contain duplicates
+%define		_duplicate_files_terminate_build	0
+
 # from 'the worst' to 'the best'
 %define	databases %{?with_sqlite3:sqlite3} %{?with_mysql:mysql} %{?with_pgsql:postgresql}
 
