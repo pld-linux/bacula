@@ -22,18 +22,18 @@
 %undefine       with_sqlite3_sync_off
 %endif
 
-%define	qtver	4.6.2
+%define	qtver	4.8.4
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	5.2.12
-Release:	1
+Version:	5.2.13
+Release:	0.1
 License:	AGPL v3
 Group:		Networking/Utilities
 Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	b04c22b128b73359e4bbc9de06652c38
+# Source0-md5:	43417bae0c221afb1f30a581c9e0f2fe
 Source1:	http://downloads.sourceforge.net/bacula/%{name}-docs-%{version}.tar.bz2
-# Source1-md5:	909b85db6da2dbe6b1099688ad4ec7c3
+# Source1-md5:	0e7af41cc3b1c59662457679b02bf873
 Source2:	http://downloads.sourceforge.net/bacula/%{name}-rescue-5.0.1.tar.gz
 # Source2-md5:	bb194aed8e204f54bf2f61d7e721f257
 Source10:	%{name}-dir.init
@@ -836,7 +836,7 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 
 %files dir
 %defattr(644,root,root,755)
-%doc ChangeLog CheckList ReleaseNotes kernstodo LICENSE
+%doc ChangeLog CheckList ReleaseNotes LICENSE
 #%doc examples %{name}-docs-%{version}/manual/{*.pdf,bacula}
 %attr(640,root,bacula) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bacula-dir.conf
 %attr(640,root,root) %config(noreplace) /etc/logrotate.d/bacula-dir
