@@ -295,6 +295,7 @@ Summary(pl.UTF-8):	Usługi Bacula File (klient)
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
 Requires:	%{name}-common = %{version}-%{release}
+Suggests:   mtx
 
 %description fd
 Bacula - It comes by night and sucks the vital essence from your
