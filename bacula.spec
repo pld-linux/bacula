@@ -32,7 +32,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	5.2.13
-Release:	0.1
+Release:	0.2
 License:	AGPL v3
 Group:		Networking/Utilities
 Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
@@ -256,27 +256,27 @@ Bacula Console to program umożliwiający administratorowi lub
 użytkownikowi komunikowanie się z programem Bacula Director. To jest
 interfejs graficzny oparty na wxWidgets.
 
-%package console-qt4
-Summary:	Bacula Qt4 Console
-Summary(pl.UTF-8):	Konsola Baculi oparta na Qt4
+%package console-qt
+Summary:	bat – The Bacula Administration Tool
+Summary(pl.UTF-8):	bat – narzędzie administratora Baculi
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
 Requires:	%{name}-common = %{version}-%{release}
 Requires:	QtCore >= %{qtver}
+Obsoletes:	%{name}-console-qt4 < %{version}-%{release}
 
-%description console-qt4
+%description console-qt
 Bacula - It comes by night and sucks the vital essence from your
 computers.
 
-Bacula Console is the program that allows the administrator or user to
-communicate with the Bacula Director. This is the Qt4 GUI interface.
+bat is short for Bacula Administration Tool. It is a GUI form of bconsole, but
+with many additional features.
 
-%description console-qt4 -l pl.UTF-8
+%description console-qt -l pl.UTF-8
 Bacula - przychodzi nocą i wysysa żywotny ekstrakt z komputerów.
 
-Bacula Console to program umożliwiający administratorowi lub
-użytkownikowi komunikowanie się z programem Bacula Director. To jest
-interfejs graficzny oparty na Qt4.
+bat, czyli Bacula Administration Tool, jest graficznym odpowiednikiem
+bconsole, z wieloma dodatkowymi funkcjami.
 
 %package tray-monitor
 Summary:	Bacula Tray Monitor
@@ -760,7 +760,7 @@ fi
 %triggerpostun common -- %{name}-common < 5.0.1-2
 find %{_sysconfdir}/bat.conf* -perm /007 -print0 2>/dev/null | xargs -0 -r chmod 600 || :
 
-%post console-qt4
+%post console-qt
 %update_configs
 
 %post tray-monitor
@@ -972,7 +972,7 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %endif
 
 %if %{with qt}
-%files console-qt4
+%files console-qt
 %defattr(644,root,root,755)
 %doc LICENSE
 %{_pixmapsdir}/%{name}.png
