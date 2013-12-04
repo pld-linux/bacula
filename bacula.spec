@@ -57,6 +57,7 @@ Patch2:		%{name}-conf.patch
 Patch3:		%{name}-desktop.patch
 Patch4:		make_catalog_backup-setup-home.patch
 Patch5:		%{name}-wx-console-build.patch
+Patch6:		%{name}-no_lockmgr.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -462,6 +463,7 @@ Nagios plugin to check bacula.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
 
