@@ -637,7 +637,11 @@ mv $RPM_BUILD_ROOT%{_sbindir}/{,bacula-}dbcheck
 mv $RPM_BUILD_ROOT%{_mandir}/man8/{,bacula-}dbcheck.8.gz
 
 # no -devel files packaged, so this is also useless
-rm $RPM_BUILD_ROOT%{_libdir}/libbac{,cfg,find,py,sql}.{so,la}
+rm $RPM_BUILD_ROOT%{_libdir}/libbac{,cfg,find,py,sql,cats}.{so,la}
+#rm $RPM_BUILD_ROOT%{_libdir}/libbaccats*.{so,la}
+%{?with_mysql:rm $RPM_BUILD_ROOT%{_libdir}/libbaccats-mysql.{la,so}}
+%{?with_pgsql:rm $RPM_BUILD_ROOT%{_libdir}/libbaccats-postgresql.{la,so}}
+%{?with_sqlite3:rm $RPM_BUILD_ROOT%{_libdir}/libbaccats-sqlite3.{la,so}}
 
 %if %{with nagios}
 install -d $RPM_BUILD_ROOT%{nagiosplugindir}
