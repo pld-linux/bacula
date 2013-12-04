@@ -4,11 +4,12 @@
 #	- check on upgrade (5.0 and 5.2 databases are NOT compatible)
 #
 # Conditional build:
-%bcond_without	console_wx		# wx-console program
+%bcond_without	wx		# wx-console program
+%bcond_without	gtk		# the GTK tray-monitor and wx-console
 %if "%{pld_release}" == "ac"
-%bcond_with		bat			# bat Qt4 GUI
+%bcond_with	qt		# BAT / qt-console Qt4 GUI
 %else
-%bcond_without	bat			# bat Qt4 GUI
+%bcond_without	qt		# BAT / qt-console Qt4 GUI
 %endif
 %bcond_without	mysql			# use MySQL
 %bcond_without	pgsql			# use PostgreSQL
@@ -20,6 +21,10 @@
 
 %if %{without sqlite3}
 %undefine       with_sqlite3_sync_off
+%endif
+
+%if %{without gtk}
+%undefine       with_wx
 %endif
 
 %define	qtver	4.8.4
@@ -57,7 +62,7 @@ BuildRequires:	acl-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	gettext-devel
-%{?with_console_wx:BuildRequires:	gtk+2-devel}
+%{?with_gtk:BuildRequires:	gtk+2-devel}
 BuildRequires:	libcap-devel
 BuildRequires:	libtool >= 2:2.2
 %if %{with rescue}
@@ -71,7 +76,7 @@ BuildRequires:	pkgconfig
 BuildRequires:	python-devel
 BuildRequires:	python-modules
 %endif
-%if %{with bat}
+%if %{with qt}
 BuildRequires:	QtCore-devel
 BuildRequires:	QtGui-devel
 BuildRequires:	qt4-build >= %{qtver}
@@ -87,7 +92,7 @@ BuildRequires:	sed >= 4.0
 %{?with_sqlite3:BuildRequires:	sqlite3-devel}
 Requires:	systemd-units >= 38
 BuildRequires:	which
-%if %{with console_wx}
+%if %{with wx}
 BuildRequires:	wxGTK2-unicode-devel >= 2.4.0
 %endif
 BuildRequires:	zlib-devel
@@ -480,11 +485,11 @@ WXCONFIG=%{_bindir}/wx-gtk2-unicode-config \
 QMAKE=%{_bindir}/qmake-qt4 \
 %configure \
 	--with-scriptdir=%{_libexecdir}/%{name} \
-	%{?with_bat:--enable-bat} \
+	%{?with_qt:--enable-bat} \
 	--disable-conio \
 	--enable-smartalloc \
-	%{?with_console_wx:--enable-bwx-console} \
-	--enable-tray-monitor \
+	%{?with_wx:--enable-bwx-console} \
+	%{?with_gtk:--enable-tray-monitor} \
 	%{?with_python:--with-python} \
 	--with-readline \
 	--with-tcp-wrappers \
@@ -508,7 +513,7 @@ QMAKE=%{_bindir}/qmake-qt4 \
 	--with-mon-sd-password="#FAKE-mon-sd-password#" \
 	--with-openssl
 
-%if %{with bat}
+%if %{with qt}
 cd src/qt-console
 qmake-qt4 bat.pro
 cd ../..
@@ -569,19 +574,13 @@ cp -a %{SOURCE17} $RPM_BUILD_ROOT%{systemdunitdir}/bacula-dir.service
 cp -a %{SOURCE18} $RPM_BUILD_ROOT%{systemdunitdir}/bacula-fd.service
 cp -a %{SOURCE19} $RPM_BUILD_ROOT%{systemdunitdir}/bacula-sd.service
 
-%if %{with console_wx}
-# tray-monitor is for regular users
-#mv $RPM_BUILD_ROOT%{_sbindir}/bacula-tray-monitor $RPM_BUILD_ROOT%{_bindir}
-
+%if %{with wx}
 cp -a scripts/bacula.png $RPM_BUILD_ROOT%{_pixmapsdir}/bacula.png
-#install src/tray-monitor/generic.xpm $RPM_BUILD_ROOT%{_pixmapsdir}/bacula-tray-monitor.xpm
 sed -e 's/gnome-console/wx-console/g;s/Console/Wx Console/g' \
 	scripts/wxconsole.desktop.consolehelper > $RPM_BUILD_ROOT%{_desktopdir}/bacula-wx.desktop
-#sed -e 's#%{_sbindir}#%{_bindir}#' \
-#	scripts/bacula-tray-monitor.desktop > $RPM_BUILD_ROOT%{_desktopdir}/bacula-tray-monitor.desktop
 %endif
 
-%if %{with bat}
+%if %{with qt}
 # qmake somewhy does not always create install_bins target. install our own the bin
 rm -f $RPM_BUILD_ROOT%{_sbindir}/bat
 libtool --silent --mode=install install src/qt-console/bat $RPM_BUILD_ROOT%{_bindir}
@@ -614,7 +613,7 @@ mv $RPM_BUILD_ROOT%{_libexecdir}/%{name}/mtx-changer.conf $RPM_BUILD_ROOT%{_sysc
 
 # some file changes
 rm -f $RPM_BUILD_ROOT%{_libexecdir}/%{name}/{gconsole,startmysql,stopmysql,bacula,bconsole,fd}
-%if %{without console_wx}
+%if %{without wx}
 rm -f $RPM_BUILD_ROOT%{_desktopdir}/bacula-wx.desktop
 %endif
 
@@ -957,7 +956,7 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(755,root,root) %{_sbindir}/bconsole
 %{_mandir}/man8/bconsole.8*
 
-%if %{with console_wx}
+%if %{with wx}
 %files console-wx
 %defattr(644,root,root,755)
 %doc LICENSE
@@ -968,7 +967,7 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %{_mandir}/man1/bacula-bwxconsole.1*
 %endif
 
-%if %{with bat}
+%if %{with qt}
 %files console-qt4
 %defattr(644,root,root,755)
 %doc LICENSE
@@ -982,7 +981,7 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %{_docdir}/%{name}
 %endif
 
-%if %{with console_wx}
+%if %{with gtk}
 %files tray-monitor
 %defattr(644,root,root,755)
 %doc LICENSE
