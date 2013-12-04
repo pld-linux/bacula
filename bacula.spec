@@ -860,6 +860,7 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %{_libexecdir}/%{name}/query.sql
 %attr(755,root,root) %{_libexecdir}/%{name}/delete_catalog_backup
 
+%if %{with pgsql}
 %files db-postgresql
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libexecdir}/%{name}/create_postgresql_database
@@ -879,7 +880,9 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %ghost %{_libexecdir}/%{name}/make_bacula_tables
 %ghost %{_libexecdir}/%{name}/update_bacula_tables
 %ghost %{_libexecdir}/%{name}/make_catalog_backup
+%endif
 
+%if %{with mysql}
 %files db-mysql
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libexecdir}/%{name}/create_mysql_database
@@ -899,7 +902,9 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %ghost %{_libexecdir}/%{name}/make_bacula_tables
 %ghost %{_libexecdir}/%{name}/update_bacula_tables
 %ghost %{_libexecdir}/%{name}/make_catalog_backup
+%endif
 
+%if %{with sqlite3}
 %files db-sqlite3
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libexecdir}/%{name}/create_sqlite3_database
@@ -919,6 +924,7 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %ghost %{_libexecdir}/%{name}/make_bacula_tables
 %ghost %{_libexecdir}/%{name}/update_bacula_tables
 %ghost %{_libexecdir}/%{name}/make_catalog_backup
+%endif
 
 %files fd
 %defattr(644,root,root,755)
