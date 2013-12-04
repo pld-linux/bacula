@@ -91,8 +91,8 @@ BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.644
 BuildRequires:	sed >= 4.0
 %{?with_sqlite3:BuildRequires:	sqlite3-devel}
-Requires:	systemd-units >= 38
 BuildRequires:	which
+Requires:	systemd-units >= 38
 %if %{with wx}
 BuildRequires:	wxGTK2-unicode-devel >= 2.4.0
 %endif
@@ -264,14 +264,14 @@ Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
 Requires:	%{name}-common = %{version}-%{release}
 Requires:	QtCore >= %{qtver}
-Obsoletes:	%{name}-console-qt4 < %{version}-%{release}
+Obsoletes:	bacula-console-qt4 < %{version}-%{release}
 
 %description console-qt
 Bacula - It comes by night and sucks the vital essence from your
 computers.
 
-bat is short for Bacula Administration Tool. It is a GUI form of bconsole, but
-with many additional features.
+bat is short for Bacula Administration Tool. It is a GUI form of
+bconsole, but with many additional features.
 
 %description console-qt -l pl.UTF-8
 Bacula - przychodzi nocą i wysysa żywotny ekstrakt z komputerów.
@@ -336,8 +336,8 @@ Summary(pl.UTF-8):	Usługi Bacula Storage
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
 Requires:	%{name}-common = %{version}-%{release}
+Suggests:	mtx
 Conflicts:	dvd+rw-tools <= 5.21.4.10.8-1
-Suggests:   mtx
 
 %description sd
 Bacula - It comes by night and sucks the vital essence from your
@@ -452,8 +452,8 @@ Requires:	nagios-common
 %description -n nagios-plugin-check_bacula
 Nagios plugin to check bacula.
 
-# provided by various db libraries as a symlink
 %define	_noautoreq	libbaccats-%{version}.so
+# provided by various db libraries as a symlink
 
 %prep
 %setup -q -a 1
@@ -501,7 +501,7 @@ QMAKE=%{_bindir}/qmake-qt4 \
 	--with-smtp-host=localhost \
 	--with-pid-dir=/var/run \
 	--with-subsys-dir=/var/lock/subsys \
-	--with-systemd=/lib/systemd/system \
+	--with-systemd=%{systemdunitdir} \
 	--enable-batch-insert \
 	%{?with_pgsql:--with-postgresql} \
 	%{?with_mysql:--with-mysql} \
