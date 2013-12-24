@@ -32,7 +32,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	5.2.13
-Release:	1
+Release:	2
 License:	AGPL v3
 Group:		Networking/Utilities
 Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
@@ -543,7 +543,7 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{rc.d/init.d,logrotate.d,pam.d,sysconfig} \
 		$RPM_BUILD_ROOT%{_sysconfdir}/rescue \
 		$RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir}} \
-		$RPM_BUILD_ROOT{%{_mandir},%{_bindir},/var/log/bacula} \
+		$RPM_BUILD_ROOT{%{_mandir},%{_bindir},/var/log{,/archive}/bacula} \
 		$RPM_BUILD_ROOT%{systemdunitdir}
 
 %{__make} install \
@@ -839,6 +839,7 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(770,root,bacula) %dir %{_localstatedir}
 %attr(750,bacula,logs) %dir /var/log/bacula
 %attr(640,bacula,logs) %ghost /var/log/bacula/log
+%attr(750,bacula,logs) %dir /var/log/archive/bacula
 
 %files dir
 %defattr(644,root,root,755)
