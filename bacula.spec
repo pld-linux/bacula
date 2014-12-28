@@ -63,7 +63,7 @@ URL:		http://www.bacula.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
-BuildRequires:	gettext-devel
+BuildRequires:	gettext-tools
 %{?with_gtk:BuildRequires:	gtk+2-devel}
 BuildRequires:	libcap-devel
 BuildRequires:	libtool >= 2:2.2
