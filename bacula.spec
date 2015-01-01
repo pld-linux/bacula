@@ -51,7 +51,7 @@ Patch3:		%{name}-desktop.patch
 Patch4:		make_catalog_backup-setup-home.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-devel
-BuildRequires:	autoconf
+BuildRequires:	autoconf >= 2.61
 BuildRequires:	automake
 BuildRequires:	gettext-devel
 %{?with_console_wx:BuildRequires:	gtk+2-devel}
