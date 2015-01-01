@@ -61,7 +61,7 @@ Patch6:		%{name}-no_lockmgr.patch
 Patch7:		wxWidgets3.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-devel
-BuildRequires:	autoconf
+BuildRequires:	autoconf >= 2.61
 BuildRequires:	automake
 BuildRequires:	gettext-tools
 %{?with_gtk:BuildRequires:	gtk+2-devel}
