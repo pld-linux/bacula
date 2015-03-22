@@ -1,11 +1,10 @@
-# TODO:
+## TODO:
+#	- fix libtoolize
 #	- update desktop files, think about su-wrappers for console (with .desktop files)
 #	- fix log file permissions
 #	- check on upgrade (5.0 and 5.2 databases are NOT compatible)
 #
 # Conditional build:
-%bcond_without	wx		# wx-console program
-%bcond_without	gtk		# the GTK tray-monitor and wx-console
 %if "%{pld_release}" == "ac"
 %bcond_with	qt		# BAT / qt-console Qt4 GUI
 %else
@@ -14,33 +13,23 @@
 %bcond_without	mysql			# use MySQL
 %bcond_without	pgsql			# use PostgreSQL
 %bcond_without	sqlite3			# use SQLite3
-%bcond_without	python		# Python Scripting support, http://www.bacula.org/3.0.x-manuals/en/concepts/concepts/Python_Scripting.html
 %bcond_without	nagios		# build nagios plugin
-%bcond_with	rescue
 %bcond_with	sqlite3_sync_off	# makes SQLite3 backend much faster, but less reliable
 
 %if %{without sqlite3}
 %undefine       with_sqlite3_sync_off
 %endif
 
-%if %{without gtk}
-%undefine       with_wx
-%endif
-
 %define	qtver	4.8.4
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	5.2.13
-Release:	4
+Version:	7.0.5
+Release:	0.1
 License:	AGPL v3
 Group:		Networking/Utilities
 Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	43417bae0c221afb1f30a581c9e0f2fe
-Source1:	http://downloads.sourceforge.net/bacula/%{name}-docs-%{version}.tar.bz2
-# Source1-md5:	0e7af41cc3b1c59662457679b02bf873
-Source2:	http://downloads.sourceforge.net/bacula/%{name}-rescue-5.0.1.tar.gz
-# Source2-md5:	bb194aed8e204f54bf2f61d7e721f257
+# Source0-md5:	b4a99d673f5e1eaae8b257ccc610241f
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
@@ -53,31 +42,22 @@ Source18:	%{name}-fd.service
 Source19:	%{name}-sd.service
 Patch0:		%{name}-mtx-changer.patch
 Patch1:		%{name}-branding.patch
-Patch2:		%{name}-conf.patch
-Patch3:		%{name}-desktop.patch
-Patch4:		make_catalog_backup-setup-home.patch
-Patch5:		%{name}-wx-console-build.patch
-Patch6:		%{name}-no_lockmgr.patch
-Patch7:		wxWidgets3.patch
+Patch2:		%{name}-desktop.patch
+Patch3:		make_catalog_backup-setup-home.patch
+Patch4:		%{name}-no_lockmgr.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf >= 2.61
 BuildRequires:	automake
 BuildRequires:	gettext-tools
-%{?with_gtk:BuildRequires:	gtk+2-devel}
 BuildRequires:	libcap-devel
 BuildRequires:	libtool >= 2:2.2
-%if %{with rescue}
-BuildRequires:	fakeroot
-%endif
 BuildRequires:	libwrap-devel
 BuildRequires:	ncurses-devel
 BuildRequires:	openssl-devel
 BuildRequires:	pkgconfig
-%if %{with python}
-BuildRequires:	python-devel
+BuildRequires:	python
 BuildRequires:	python-modules
-%endif
 %if %{with qt}
 BuildRequires:	QtCore-devel
 BuildRequires:	QtGui-devel
@@ -94,9 +74,6 @@ BuildRequires:	sed >= 4.0
 %{?with_sqlite3:BuildRequires:	sqlite3-devel}
 BuildRequires:	which
 Requires:	systemd-units >= 38
-%if %{with wx}
-BuildRequires:	wxGTK2-unicode-devel >= 2.4.0
-%endif
 BuildRequires:	zlib-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -235,28 +212,6 @@ Bacula - przychodzi nocą i wysysa żywotny ekstrakt z komputerów.
 Bacula Console to program umożliwiający administratorowi lub
 użytkownikowi komunikowanie się z programem Bacula Director. To jest
 interfejs czysto tekstowy.
-
-%package console-wx
-Summary:	Bacula wxWidgets Console
-Summary(pl.UTF-8):	Konsola Baculi oparta na wxWidgets
-Group:		Networking/Utilities
-Requires(post):	sed >= 4.0
-Requires:	%{name}-common = %{version}-%{release}
-
-%description console-wx
-Bacula - It comes by night and sucks the vital essence from your
-computers.
-
-Bacula Console is the program that allows the administrator or user to
-communicate with the Bacula Director. This is the wxWidgets GUI
-interface.
-
-%description console-wx -l pl.UTF-8
-Bacula - przychodzi nocą i wysysa żywotny ekstrakt z komputerów.
-
-Bacula Console to program umożliwiający administratorowi lub
-użytkownikowi komunikowanie się z programem Bacula Director. To jest
-interfejs graficzny oparty na wxWidgets.
 
 %package console-qt
 Summary:	bat – The Bacula Administration Tool
@@ -407,44 +362,6 @@ SQLite database driver for Bacula.
 %description db-sqlite3 -l pl.UTF-8
 Sterownik bazy SQLite dla Baculi.
 
-%package rescue
-Summary:	Bacula - The Network Backup Solution
-Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
-Group:		Networking/Utilities
-Requires:	%{name}-fd = %{version}-%{release}
-Requires:	coreutils
-Requires:	util-linux
-
-%description rescue
-Bacula - It comes by night and sucks the vital essence from your
-computers.
-
-Bacula is a set of computer programs that permit you (or the system
-administrator) to manage backup, recovery, and verification of
-computer data across a network of computers of different kinds. In
-technical terms, it is a network client/server based backup program.
-Bacula is relatively easy to use and efficient, while offering many
-advanced storage management features that make it easy to find and
-recover lost or damaged files.
-
-This package installs scripts for disaster recovery and builds rescue
-floppy disk for bare metal recovery.
-
-%description rescue -l pl.UTF-8
-Bacula - przychodzi nocą i wysysa żywotny ekstrakt z komputerów.
-
-Bacula to zbiór programów umożliwiających administratorowi na
-zarządzanie kopiami zapasowymi, odzyskiwaniem i weryfikacją danych w
-sieci komputerów różnego rodzaju. W terminologii technicznej jest to
-program do kopii zapasowych pracujący w architekturze klient-serwer.
-Bacula jest stosunkowo łatwa w użyciu i wydajna, oferując przy tym
-wiele zaawansowanych możliwości przy zarządzaniu nośnikami,
-ułatwiających znalezienie i odzyskanie utraconych lub uszkodzonych
-plików.
-
-Ten pakiet zawiera skrypty do odtwarzania po awarii i tworzy dyskietkę
-ratunkowe do odtwarzania systemu od zera.
-
 %package -n nagios-plugin-check_bacula
 Summary:	Nagios plugin to check bacula
 Group:		Networking
@@ -457,17 +374,12 @@ Nagios plugin to check bacula.
 # provided by various db libraries as a symlink
 
 %prep
-%setup -q -a 1
+%setup -q
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-
-tar -xf %{SOURCE2} && ln -s bacula-rescue-* rescue
 
 sed -i -e 's#bindir=.*#bindir=%{_bindir}#g' \
 	src/cats/create_* src/cats/delete_* src/cats/drop_* \
@@ -477,24 +389,21 @@ sed -i -e 's/@basename@/--hostname--/' src/*/*.conf.in
 
 %build
 cd autoconf
-%{__aclocal} -I bacula-macros -I gettext-macros
-# $BUILD_DIR not seen by libtoolize, export it
-BUILD_DIR=.. %{__libtoolize}
+%{__aclocal} -I bacula-macros -I gettext-macros -I libtool
+## $BUILD_DIR not seen by libtoolize, export it
+#BUILD_DIR=.. %%{__libtoolize}
 cd ..
 %{__autoconf} --prepend-include=$(pwd)/autoconf autoconf/configure.in > configure
 
 CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
 
-WXCONFIG=%{_bindir}/wx-gtk2-unicode-config \
 QMAKE=%{_bindir}/qmake-qt4 \
 %configure \
+	DISTNAME=pld-linux \
 	--with-scriptdir=%{_libexecdir}/%{name} \
 	%{?with_qt:--enable-bat} \
 	--disable-conio \
 	--enable-smartalloc \
-	%{?with_wx:--enable-bwx-console} \
-	%{?with_gtk:--enable-tray-monitor} \
-	%{?with_python:--with-python} \
 	--with-readline \
 	--with-tcp-wrappers \
 	--with-working-dir=%{_var}/lib/%{name} \
@@ -532,18 +441,9 @@ grep "Error in" log && exit 1
 %{__make} -C examples/nagios/check_bacula
 %endif
 
-%if %{with rescue}
-cd rescue
-%configure \
-	--with-bacula=../
-cd linux/cdrom
-fakeroot %{__make}
-%endif
-
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{rc.d/init.d,logrotate.d,pam.d,sysconfig} \
-		$RPM_BUILD_ROOT%{_sysconfdir}/rescue \
 		$RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir}} \
 		$RPM_BUILD_ROOT{%{_mandir},%{_bindir},/var/log{,/archive}/bacula} \
 		$RPM_BUILD_ROOT%{systemdunitdir}
@@ -578,26 +478,12 @@ cp -a %{SOURCE17} $RPM_BUILD_ROOT%{systemdunitdir}/bacula-dir.service
 cp -a %{SOURCE18} $RPM_BUILD_ROOT%{systemdunitdir}/bacula-fd.service
 cp -a %{SOURCE19} $RPM_BUILD_ROOT%{systemdunitdir}/bacula-sd.service
 
-%if %{with wx}
-cp -a scripts/bacula.png $RPM_BUILD_ROOT%{_pixmapsdir}/bacula.png
-sed -e 's/gnome-console/wx-console/g;s/Console/Wx Console/g' \
-	scripts/wxconsole.desktop.consolehelper > $RPM_BUILD_ROOT%{_desktopdir}/bacula-wx.desktop
-%endif
-
 %if %{with qt}
 # qmake somewhy does not always create install_bins target. install our own the bin
 rm -f $RPM_BUILD_ROOT%{_sbindir}/bat
 libtool --silent --mode=install install src/qt-console/bat $RPM_BUILD_ROOT%{_bindir}
 cp -a scripts/bacula.png $RPM_BUILD_ROOT%{_pixmapsdir}/bacula.png
 cp -a scripts/bat.desktop $RPM_BUILD_ROOT%{_desktopdir}
-%endif
-
-%if %{with rescue}
-# install the rescue stuff, these are the rescue scripts
-cp -a rescue/linux/floppy/backup.etc.list $RPM_BUILD_ROOT%{_sysconfdir}/rescue
-cp -a rescue/linux/floppy/sfdisk.bz2 $RPM_BUILD_ROOT%{_sysconfdir}/rescue
-install -p rescue/linux/floppy/*_* $RPM_BUILD_ROOT%{_sysconfdir}/rescue
-install -p rescue/linux/floppy/getdiskinfo $RPM_BUILD_ROOT%{_sysconfdir}/rescue
 %endif
 
 touch $RPM_BUILD_ROOT/var/log/bacula/log
@@ -617,9 +503,6 @@ mv $RPM_BUILD_ROOT%{_libexecdir}/%{name}/mtx-changer.conf $RPM_BUILD_ROOT%{_sysc
 
 # some file changes
 rm -f $RPM_BUILD_ROOT%{_libexecdir}/%{name}/{gconsole,startmysql,stopmysql,bacula,bconsole,fd}
-%if %{without wx}
-rm -f $RPM_BUILD_ROOT%{_desktopdir}/bacula-wx.desktop
-%endif
 
 rm $RPM_BUILD_ROOT%{_docdir}/bacula/ChangeLog
 rm $RPM_BUILD_ROOT%{_docdir}/bacula/INSTALL
@@ -641,7 +524,7 @@ mv $RPM_BUILD_ROOT%{_sbindir}/{,bacula-}dbcheck
 mv $RPM_BUILD_ROOT%{_mandir}/man8/{,bacula-}dbcheck.8.gz
 
 # no -devel files packaged, so this is also useless
-rm $RPM_BUILD_ROOT%{_libdir}/libbac{,cfg,find,py,sql,cats}.{so,la}
+rm $RPM_BUILD_ROOT%{_libdir}/libbac{,cfg,find,sql,cats}.{so,la}
 #rm $RPM_BUILD_ROOT%{_libdir}/libbaccats*.{so,la}
 %{?with_mysql:rm $RPM_BUILD_ROOT%{_libdir}/libbaccats-mysql.{la,so}}
 %{?with_pgsql:rm $RPM_BUILD_ROOT%{_libdir}/libbaccats-postgresql.{la,so}}
@@ -651,7 +534,6 @@ rm $RPM_BUILD_ROOT%{_libdir}/libbac{,cfg,find,py,sql,cats}.{so,la}
 install -d $RPM_BUILD_ROOT%{nagiosplugindir}
 %{__make} -C examples/nagios/check_bacula install \
 	sbindir=%{nagiosplugindir} \
-	INSTALL_PROGRAM="libtool --mode=install install -p" \
 	DESTDIR=$RPM_BUILD_ROOT
 %endif
 
@@ -758,9 +640,6 @@ fi
 %post console
 %update_configs
 
-%post console-wx
-%update_configs
-
 %triggerpostun common -- %{name}-common < 5.0.1-2
 find %{_sysconfdir}/bat.conf* -perm /007 -print0 2>/dev/null | xargs -0 -r chmod 600 || :
 
@@ -769,27 +648,6 @@ find %{_sysconfdir}/bat.conf* -perm /007 -print0 2>/dev/null | xargs -0 -r chmod
 
 %post tray-monitor
 %update_configs
-
-%post rescue
-# link our current installed conf file to the rescue directory
-ln -sf %{_sysconfdir}/bacula-fd.conf %{_sysconfdir}/rescue/bacula-fd.conf
-
-# run getdiskinfo
-echo "Creating rescue files for this system..."
-cd %{_sysconfdir}/rescue
-./getdiskinfo
-
-%preun rescue
-# remove the files created after the initial rpm installation
-if [ "$1" = "0" ]; then
-	rm -f %{_sysconfdir}/rescue/bacula-fd.conf
-	rm -f %{_sysconfdir}/rescue/partition.*
-	rm -f %{_sysconfdir}/rescue/format.*
-	rm -f %{_sysconfdir}/rescue/mount_drives
-	rm -f %{_sysconfdir}/rescue/start_network
-	rm -f %{_sysconfdir}/rescue/sfdisk
-	rm -rf %{_sysconfdir}/rescue/diskinfo/*
-fi
 
 %define db_post() \
 /sbin/ldconfig \
@@ -820,18 +678,18 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %files common
 %defattr(644,root,root,755)
 %doc LICENSE
-%{?with_python:%doc examples/python}
 %dir %{_sysconfdir}
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/*-password
 # do not remove bsmtp from files. Fix build if it is not installed.
+%attr(755,root,root) %{_sbindir}/bpluginfo
 %attr(755,root,root) %{_sbindir}/bsmtp
 %attr(755,root,root) %{_sbindir}/btraceback
-%attr(755,root,root) %{_libdir}/libbac-5*.so
-%attr(755,root,root) %{_libdir}/libbaccfg-5*.so
-%attr(755,root,root) %{_libdir}/libbacfind-5*.so
-%attr(755,root,root) %{_libdir}/libbacpy-5*.so
-%attr(755,root,root) %{_libdir}/libbacsql-5*.so
+%attr(755,root,root) %{_libdir}/libbac-7*.so
+%attr(755,root,root) %{_libdir}/libbaccfg-7*.so
+%attr(755,root,root) %{_libdir}/libbacfind-7*.so
+%attr(755,root,root) %{_libdir}/libbacsql-7*.so
 %{_mandir}/man8/bacula.8*
+%{_mandir}/man8/bpluginfo.8*
 %{_mandir}/man1/bsmtp.1*
 %{_mandir}/man8/btraceback.8*
 %dir %{_libexecdir}/%{name}
@@ -845,7 +703,7 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 
 %files dir
 %defattr(644,root,root,755)
-%doc ChangeLog CheckList ReleaseNotes LICENSE
+%doc ChangeLog ReleaseNotes LICENSE
 #%doc examples %{name}-docs-%{version}/manual/{*.pdf,bacula}
 %attr(640,root,bacula) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bacula-dir.conf
 %attr(640,root,root) %config(noreplace) /etc/logrotate.d/bacula-dir
@@ -873,9 +731,9 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_postgresql_*
 %attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_catalog_backup
-%attr(755,root,root) %{_libdir}/libbaccats-postgresql-5*.so
+%attr(755,root,root) %{_libdir}/libbaccats-postgresql-7*.so
 
-%ghost %attr(755,root,root) %{_libdir}/libbaccats-5*.so
+%ghost %attr(755,root,root) %{_libdir}/libbaccats-7*.so
 %ghost %{_libexecdir}/%{name}/create_bacula_database
 %ghost %{_libexecdir}/%{name}/drop_bacula_tables
 %ghost %{_libexecdir}/%{name}/drop_bacula_database
@@ -895,9 +753,9 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_mysql_*
 %attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_catalog_backup
-%attr(755,root,root) %{_libdir}/libbaccats-mysql-5*.so
+%attr(755,root,root) %{_libdir}/libbaccats-mysql-7*.so
 
-%ghost %attr(755,root,root) %{_libdir}/libbaccats-5*.so
+%ghost %attr(755,root,root) %{_libdir}/libbaccats-7*.so
 %ghost %{_libexecdir}/%{name}/create_bacula_database
 %ghost %{_libexecdir}/%{name}/drop_bacula_tables
 %ghost %{_libexecdir}/%{name}/drop_bacula_database
@@ -917,9 +775,9 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite3_*
 %attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_catalog_backup
-%attr(755,root,root) %{_libdir}/libbaccats-sqlite3-5*.so
+%attr(755,root,root) %{_libdir}/libbaccats-sqlite3-7*.so
 
-%ghost %attr(755,root,root) %{_libdir}/libbaccats-5*.so
+%ghost %attr(755,root,root) %{_libdir}/libbaccats-7*.so
 %ghost %{_libexecdir}/%{name}/create_bacula_database
 %ghost %{_libexecdir}/%{name}/drop_bacula_tables
 %ghost %{_libexecdir}/%{name}/drop_bacula_database
@@ -971,17 +829,6 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(755,root,root) %{_sbindir}/bconsole
 %{_mandir}/man8/bconsole.8*
 
-%if %{with wx}
-%files console-wx
-%defattr(644,root,root,755)
-%doc LICENSE
-%{_pixmapsdir}/%{name}.png
-%{_desktopdir}/bacula-wx.desktop
-%attr(640,root,bacula) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bwx-console.conf
-%attr(755,root,root) %{_sbindir}/bwx-console
-%{_mandir}/man1/bacula-bwxconsole.1*
-%endif
-
 %if %{with qt}
 %files console-qt
 %defattr(644,root,root,755)
@@ -994,34 +841,6 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(755,root,root) %{_bindir}/bat
 %{_mandir}/man1/bat.1*
 %{_docdir}/%{name}
-%endif
-
-%if %{with gtk}
-%files tray-monitor
-%defattr(644,root,root,755)
-%doc LICENSE
-%attr(755,root,root) %{_sbindir}/bacula-tray-monitor
-#%{_pixmapsdir}/%{name}-tray-monitor.xpm
-#%{_desktopdir}/%{name}-tray-monitor.desktop
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/tray-monitor.conf
-%{_mandir}/man1/bacula-tray-monitor.1*
-%endif
-
-%if %{with rescue}
-%files rescue
-%defattr(644,root,root,755)
-%doc LICENSE
-%dir %{_sysconfdir}/rescue
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rescue/backup.etc.list
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rescue/bacula-fd
-%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rescue/format_floppy
-%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rescue/getdiskinfo
-%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rescue/make_rescue_disk
-%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rescue/restore_bacula
-%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rescue/restore_etc
-%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rescue/run_grub
-%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rescue/run_lilo
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rescue/sfdisk.bz2
 %endif
 
 %if %{with nagios}
