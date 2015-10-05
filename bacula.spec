@@ -73,8 +73,8 @@ BuildRequires:	rpmbuild(macros) >= 1.644
 BuildRequires:	sed >= 4.0
 %{?with_sqlite3:BuildRequires:	sqlite3-devel}
 BuildRequires:	which
-Requires:	systemd-units >= 38
 BuildRequires:	zlib-devel
+Requires:	systemd-units >= 38
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir		/etc/%{name}
@@ -162,6 +162,7 @@ Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
 Requires:	%{name}-common = %{version}-%{release}
 Requires:	bacula(db) = %{version}-%{release}
+Requires:	systemd-units >= 38
 Obsoletes:	bacula-updatedb
 
 %description dir
@@ -257,6 +258,7 @@ Summary(pl.UTF-8):	Usługi Bacula File (klient)
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
 Requires:	%{name}-common = %{version}-%{release}
+Requires:	systemd-units >= 38
 
 %description fd
 Bacula - It comes by night and sucks the vital essence from your
@@ -292,6 +294,7 @@ Summary(pl.UTF-8):	Usługi Bacula Storage
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
 Requires:	%{name}-common = %{version}-%{release}
+Requires:	systemd-units >= 38
 Suggests:	mtx
 Conflicts:	dvd+rw-tools <= 5.21.4.10.8-1
 
