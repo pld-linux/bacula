@@ -2,7 +2,6 @@
 #	- fix libtoolize
 #	- update desktop files, think about su-wrappers for console (with .desktop files)
 #	- fix log file permissions
-#	- check on upgrade (5.0 and 5.2 databases are NOT compatible)
 #
 # Conditional build:
 %if "%{pld_release}" == "ac"
