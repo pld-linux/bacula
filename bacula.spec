@@ -23,12 +23,12 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	7.0.5
-Release:	2
+Version:	7.4.4
+Release:	1
 License:	AGPL v3
 Group:		Networking/Utilities
 Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	b4a99d673f5e1eaae8b257ccc610241f
+# Source0-md5:	aed11c1eef1198ffc76c6fca55cea3ad
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
@@ -495,7 +495,6 @@ touch $RPM_BUILD_ROOT/var/log/bacula/log
 # 5.0 -> 5.2 : 12_to_14
 install -p updatedb/update_*_tables_10_to_11 $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 install -p updatedb/update_*_tables_11_to_12 $RPM_BUILD_ROOT%{_libexecdir}/%{name}
-install -p updatedb/update_*_tables_12_to_14 $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 
 # place for site passwords
 touch $RPM_BUILD_ROOT%{_sysconfdir}/{dir-password,fd-password,sd-password}
@@ -512,7 +511,6 @@ rm $RPM_BUILD_ROOT%{_docdir}/bacula/LICENSE
 rm $RPM_BUILD_ROOT%{_docdir}/bacula/README
 rm $RPM_BUILD_ROOT%{_docdir}/bacula/ReleaseNotes
 rm $RPM_BUILD_ROOT%{_docdir}/bacula/VERIFYING
-rm $RPM_BUILD_ROOT%{_docdir}/bacula/technotes
 
 # startup scripts, those in /etc/rc.d/init.d are better
 rm $RPM_BUILD_ROOT%{_sbindir}/bacula
@@ -683,7 +681,6 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %dir %{_sysconfdir}
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/*-password
 # do not remove bsmtp from files. Fix build if it is not installed.
-%attr(755,root,root) %{_sbindir}/bpluginfo
 %attr(755,root,root) %{_sbindir}/bsmtp
 %attr(755,root,root) %{_sbindir}/btraceback
 %attr(755,root,root) %{_libdir}/libbac-7*.so
@@ -691,7 +688,6 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(755,root,root) %{_libdir}/libbacfind-7*.so
 %attr(755,root,root) %{_libdir}/libbacsql-7*.so
 %{_mandir}/man8/bacula.8*
-%{_mandir}/man8/bpluginfo.8*
 %{_mandir}/man1/bsmtp.1*
 %{_mandir}/man8/btraceback.8*
 %dir %{_libexecdir}/%{name}
