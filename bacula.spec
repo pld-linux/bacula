@@ -44,6 +44,7 @@ Patch1:		%{name}-branding.patch
 Patch2:		%{name}-desktop.patch
 Patch3:		make_catalog_backup-setup-home.patch
 Patch4:		%{name}-no_lockmgr.patch
+Patch5:		x32.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf >= 2.61
@@ -382,6 +383,9 @@ Nagios plugin to check bacula.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%ifarch x32
+%patch4 -p1
+%endif
 
 sed -i -e 's#bindir=.*#bindir=%{_bindir}#g' \
 	src/cats/create_* src/cats/delete_* src/cats/drop_* \

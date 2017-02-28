@@ -1,0 +1,540 @@
+--- bacula-7.4.4/autoconf/bacula-macros/db.m4~	2016-09-29 15:59:30.000000000 +0200
++++ bacula-7.4.4/autoconf/bacula-macros/db.m4	2017-02-28 20:10:56.208362445 +0100
+@@ -12,24 +12,24 @@
+      if test "$withval" = "yes"; then
+         if test -f /usr/local/include/dbi/dbi.h; then
+            DBI_INCDIR=/usr/local/dbi/include
+-           if test -d /usr/local/lib64; then
+-              DBI_LIBDIR=/usr/local/lib64
++           if test -d /usr/local/libx32; then
++              DBI_LIBDIR=/usr/local/libx32
+            else
+               DBI_LIBDIR=/usr/local/lib
+            fi
+            DBI_BINDIR=/usr/local/bin
+         elif test -f /usr/include/dbi/dbi.h; then
+            DBI_INCDIR=/usr/include
+-           if test -d /usr/lib64; then
+-              DBI_LIBDIR=/usr/lib64
++           if test -d /usr/libx32; then
++              DBI_LIBDIR=/usr/libx32
+            else
+               DBI_LIBDIR=/usr/lib
+            fi
+            DBI_BINDIR=/usr/bin
+         elif test -f $prefix/include/dbi/dbi.h; then
+            DBI_INCDIR=$prefix/include
+-           if test -d $prefix/lib64; then
+-              DBI_LIBDIR=$prefix/lib64
++           if test -d $prefix/libx32; then
++              DBI_LIBDIR=$prefix/libx32
+            else
+               DBI_LIBDIR=$prefix/lib
+            fi
+@@ -40,30 +40,30 @@
+         fi
+         if test -d /usr/local/lib/dbd; then
+            DRIVERDIR=/usr/local/lib/dbd
+-           if test -d /usr/local/lib64/dbd; then
+-              DRIVERDIR=/usr/local/lib64/dbd
++           if test -d /usr/local/libx32/dbd; then
++              DRIVERDIR=/usr/local/libx32/dbd
+            else
+               DRIVERDIR=/usr/local/lib/dbd
+            fi
+         elif test -d /usr/lib/dbd; then
+            DRIVERDIR=/usr/lib/dbd
+-           if test -d /usr/lib64/dbd; then
+-              DRIVERDIR=/usr/lib64/dbd
++           if test -d /usr/libx32/dbd; then
++              DRIVERDIR=/usr/libx32/dbd
+            else
+               DRIVERDIR=/usr/lib/dbd
+            fi
+         elif test -d $prefix/lib/dbd; then
+-           if test -d $prefix/lib64/dbd; then
+-              DRIVERDIR=$prefix/lib64/dbd
++           if test -d $prefix/libx32/dbd; then
++              DRIVERDIR=$prefix/libx32/dbd
+            else
+               DRIVERDIR=$prefix/lib/dbd
+            fi
+-        elif test -d /usr/local/lib64/dbd; then
+-           DRIVERDIR=/usr/local/lib64/dbd
+-        elif test -d /usr/lib64/dbd; then
+-           DRIVERDIR=/usr/lib64/dbd
+-        elif test -d $prefix/lib64/dbd; then
+-           DRIVERDIR=$prefix/lib64/dbd
++        elif test -d /usr/local/libx32/dbd; then
++           DRIVERDIR=/usr/local/libx32/dbd
++        elif test -d /usr/libx32/dbd; then
++           DRIVERDIR=/usr/libx32/dbd
++        elif test -d $prefix/libx32/dbd; then
++           DRIVERDIR=$prefix/libx32/dbd
+         else
+            AC_MSG_RESULT(no)
+            AC_MSG_ERROR(Unable to find DBD drivers in standard locations)
+@@ -75,8 +75,8 @@
+            DBI_BINDIR=$withval
+         elif test -f $withval/include/dbi/dbi.h; then
+            DBI_INCDIR=$withval/include
+-           if test -d $withval/lib64; then
+-              DBI_LIBDIR=$withval/lib64
++           if test -d $withval/libx32; then
++              DBI_LIBDIR=$withval/libx32
+            else
+               DBI_LIBDIR=$withval/lib
+            fi
+@@ -88,13 +88,13 @@
+         if test -d $withval/dbd; then
+            DRIVERDIR=$withval/dbd
+         elif test -d $withval/lib/; then
+-           if test -d $withval/lib64/dbd; then
+-              DRIVERDIR=$withval/lib64/dbd
++           if test -d $withval/libx32/dbd; then
++              DRIVERDIR=$withval/libx32/dbd
+            else
+               DRIVERDIR=$withval/lib/dbd
+            fi
+-        elif test -d $withval/lib64/dbd; then
+-           DRIVERDIR=$withval/lib64/dbd
++        elif test -d $withval/libx32/dbd; then
++           DRIVERDIR=$withval/libx32/dbd
+         else
+            AC_MSG_RESULT(no)
+            AC_MSG_ERROR(Invalid DBD driver directory $withval - unable to find DBD drivers under $withval)
+@@ -171,17 +171,17 @@
+            db_prog="mysql"
+            if test -f /usr/local/mysql/bin/mysql; then
+               MYSQL_BINDIR=/usr/local/mysql/bin
+-              if test -f /usr/local/mysql/lib64/mysql/libmysqlclient_r.a \
+-                 -o -f /usr/local/mysql/lib64/mysql/libmysqlclient_r.so; then
+-                 MYSQL_LIBDIR=/usr/local/mysql/lib64/mysql
++              if test -f /usr/local/mysql/libx32/mysql/libmysqlclient_r.a \
++                 -o -f /usr/local/mysql/libx32/mysql/libmysqlclient_r.so; then
++                 MYSQL_LIBDIR=/usr/local/mysql/libx32/mysql
+               else
+                  MYSQL_LIBDIR=/usr/local/mysql/lib/mysql
+               fi
+            elif test -f /usr/bin/mysql; then
+               MYSQL_BINDIR=/usr/bin
+-              if test -f /usr/lib64/mysql/libmysqlclient_r.a \
+-                  -o -f /usr/lib64/mysql/libmysqlclient_r.so; then
+-                  MYSQL_LIBDIR=/usr/lib64/mysql
++              if test -f /usr/libx32/mysql/libmysqlclient_r.a \
++                  -o -f /usr/libx32/mysql/libmysqlclient_r.so; then
++                  MYSQL_LIBDIR=/usr/libx32/mysql
+               elif test -f /usr/lib/mysql/libmysqlclient_r.a \
+                   -o -f /usr/lib/mysql/libmysqlclient_r.so; then
+                   MYSQL_LIBDIR=/usr/lib/mysql
+@@ -190,9 +190,9 @@
+               fi
+            elif test -f /usr/local/bin/mysql; then
+               MYSQL_BINDIR=/usr/local/bin
+-              if test -f /usr/local/lib64/mysql/libmysqlclient_r.a \
+-                  -o -f /usr/local/lib64/mysql/libmysqlclient_r.so; then
+-                  MYSQL_LIBDIR=/usr/local/lib64/mysql
++              if test -f /usr/local/libx32/mysql/libmysqlclient_r.a \
++                  -o -f /usr/local/libx32/mysql/libmysqlclient_r.so; then
++                  MYSQL_LIBDIR=/usr/local/libx32/mysql
+               elif test -f /usr/local/lib/mysql/libmysqlclient_r.a \
+                   -o -f /usr/local/lib/mysql/libmysqlclient_r.so; then
+                   MYSQL_LIBDIR=/usr/local/lib/mysql
+@@ -201,12 +201,12 @@
+               fi
+            elif test -f $withval/bin/mysql; then
+               MYSQL_BINDIR=$withval/bin
+-              if test -f $withval/lib64/mysql/libmysqlclient_r.a \
+-                  -o -f $withval/lib64/mysql/libmysqlclient_r.so; then
+-                  MYSQL_LIBDIR=$withval/lib64/mysql
+-              elif test -f $withval/lib64/libmysqlclient_r.a \
+-                  -o -f $withval/lib64/libmysqlclient_r.so; then
+-                  MYSQL_LIBDIR=$withval/lib64
++              if test -f $withval/libx32/mysql/libmysqlclient_r.a \
++                  -o -f $withval/libx32/mysql/libmysqlclient_r.so; then
++                  MYSQL_LIBDIR=$withval/libx32/mysql
++              elif test -f $withval/libx32/libmysqlclient_r.a \
++                  -o -f $withval/libx32/libmysqlclient_r.so; then
++                  MYSQL_LIBDIR=$withval/libx32
+               elif test -f $withval/lib/libmysqlclient_r.a \
+                   -o -f $withval/lib/libmysqlclient_r.so; then
+                   MYSQL_LIBDIR=$withval/lib/
+@@ -243,26 +243,26 @@
+               POSTGRESQL_LIBDIR=`"$PG_CONFIG" --libdir`
+            elif test -f /usr/local/bin/psql; then
+               POSTGRESQL_BINDIR=/usr/local/bin
+-              if test -d /usr/local/lib64; then
+-                 POSTGRESQL_LIBDIR=/usr/local/lib64
++              if test -d /usr/local/libx32; then
++                 POSTGRESQL_LIBDIR=/usr/local/libx32
+               else
+                  POSTGRESQL_LIBDIR=/usr/local/lib
+               fi
+            elif test -f /usr/bin/psql; then
+               POSTGRESQL_BINDIR=/usr/local/bin
+-              if test -d /usr/lib64/postgresql; then
+-                 POSTGRESQL_LIBDIR=/usr/lib64/postgresql
++              if test -d /usr/libx32/postgresql; then
++                 POSTGRESQL_LIBDIR=/usr/libx32/postgresql
+               elif test -d /usr/lib/postgresql; then
+                  POSTGRESQL_LIBDIR=/usr/lib/postgresql
+-              elif test -d /usr/lib64; then
+-                 POSTGRESQL_LIBDIR=/usr/lib64
++              elif test -d /usr/libx32; then
++                 POSTGRESQL_LIBDIR=/usr/libx32
+               else
+                  POSTGRESQL_LIBDIR=/usr/lib
+               fi
+            elif test -f $withval/bin/psql; then
+               POSTGRESQL_BINDIR=$withval/bin
+-              if test -d $withval/lib64; then
+-                 POSTGRESQL_LIBDIR=$withval/lib64
++              if test -d $withval/libx32; then
++                 POSTGRESQL_LIBDIR=$withval/libx32
+               else
+                  POSTGRESQL_LIBDIR=$withval/lib
+               fi
+@@ -280,22 +280,22 @@
+            db_prog="sqlite3"
+            if test -f /usr/local/bin/sqlite3; then
+               SQLITE_BINDIR=/usr/local/bin
+-              if test -d /usr/local/lib64; then
+-                 SQLITE_LIBDIR=/usr/local/lib64
++              if test -d /usr/local/libx32; then
++                 SQLITE_LIBDIR=/usr/local/libx32
+               else
+                  SQLITE_LIBDIR=/usr/local/lib
+               fi
+            elif test -f /usr/bin/sqlite3; then
+               SQLITE_BINDIR=/usr/bin
+-              if test -d /usr/lib64; then
+-                 SQLITE_LIBDIR=/usr/lib64
++              if test -d /usr/libx32; then
++                 SQLITE_LIBDIR=/usr/libx32
+               else
+                  SQLITE_LIBDIR=/usr/lib
+               fi
+            elif test -f $withval/bin/sqlite3; then
+               SQLITE_BINDIR=$withval/bin
+-              if test -d $withval/lib64; then
+-                 SQLITE_LIBDIR=$withval/lib64
++              if test -d $withval/libx32; then
++                 SQLITE_LIBDIR=$withval/libx32
+               else
+                  SQLITE_LIBDIR=$withval/lib
+               fi
+@@ -362,21 +362,21 @@
+         if test "x${MYSQL_LIBDIR}" = x -o "x${MYSQL_INCDIR}" = x ; then
+            if test -f /usr/local/mysql/include/mysql/mysql.h; then
+               MYSQL_INCDIR=/usr/local/mysql/include/mysql
+-              if test -f /usr/local/mysql/lib64/mysql/libmysqlclient_r.a \
+-                      -o -f /usr/local/mysql/lib64/mysql/libmysqlclient_r.so; then
+-                 MYSQL_LIBDIR=/usr/local/mysql/lib64/mysql
++              if test -f /usr/local/mysql/libx32/mysql/libmysqlclient_r.a \
++                      -o -f /usr/local/mysql/libx32/mysql/libmysqlclient_r.so; then
++                 MYSQL_LIBDIR=/usr/local/mysql/libx32/mysql
+               else
+                  MYSQL_LIBDIR=/usr/local/mysql/lib/mysql
+               fi
+               MYSQL_BINDIR=/usr/local/mysql/bin
+            elif test -f /usr/include/mysql/mysql.h; then
+               MYSQL_INCDIR=/usr/include/mysql
+-              if test -f /usr/lib64/mysql/libmysqlclient_r.a \
+-                      -o -f /usr/lib64/mysql/libmysqlclient_r.so; then
+-                 MYSQL_LIBDIR=/usr/lib64/mysql
+-              elif test -f /usr/lib64/libmysqlclient_r.a \
+-                        -o -f /usr/lib64/libmysqlclient_r.so; then
+-                 MYSQL_LIBDIR=/usr/lib64
++              if test -f /usr/libx32/mysql/libmysqlclient_r.a \
++                      -o -f /usr/libx32/mysql/libmysqlclient_r.so; then
++                 MYSQL_LIBDIR=/usr/libx32/mysql
++              elif test -f /usr/libx32/libmysqlclient_r.a \
++                        -o -f /usr/libx32/libmysqlclient_r.so; then
++                 MYSQL_LIBDIR=/usr/libx32
+               elif test -f /usr/lib/x86_64-linux-gnu/libmysqlclient_r.a \
+                         -o -f /usr/lib/x86_64-linux-gnu/libmysqlclient_r.so; then
+                  MYSQL_LIBDIR=/usr/lib/x86_64-linux-gnu
+@@ -389,27 +389,27 @@
+               MYSQL_BINDIR=/usr/bin
+            elif test -f /usr/include/mysql.h; then
+               MYSQL_INCDIR=/usr/include
+-              if test -f /usr/lib64/libmysqlclient_r.a \
+-                      -o -f /usr/lib64/libmysqlclient_r.so; then
+-                 MYSQL_LIBDIR=/usr/lib64
++              if test -f /usr/libx32/libmysqlclient_r.a \
++                      -o -f /usr/libx32/libmysqlclient_r.so; then
++                 MYSQL_LIBDIR=/usr/libx32
+               else
+                  MYSQL_LIBDIR=/usr/lib
+               fi
+               MYSQL_BINDIR=/usr/bin
+            elif test -f /usr/local/include/mysql/mysql.h; then
+               MYSQL_INCDIR=/usr/local/include/mysql
+-              if test -f /usr/local/lib64/mysql/libmysqlclient_r.a \
+-                      -o -f /usr/local/lib64/mysql/libmysqlclient_r.so; then
+-                 MYSQL_LIBDIR=/usr/local/lib64/mysql
++              if test -f /usr/local/libx32/mysql/libmysqlclient_r.a \
++                      -o -f /usr/local/libx32/mysql/libmysqlclient_r.so; then
++                 MYSQL_LIBDIR=/usr/local/libx32/mysql
+               else
+                  MYSQL_LIBDIR=/usr/local/lib/mysql
+               fi
+               MYSQL_BINDIR=/usr/local/bin
+            elif test -f /usr/local/include/mysql.h; then
+               MYSQL_INCDIR=/usr/local/include
+-              if test -f /usr/local/lib64/libmysqlclient_r.a \
+-                      -o -f /usr/local/lib64/libmysqlclient_r.so; then
+-                 MYSQL_LIBDIR=/usr/local/lib64
++              if test -f /usr/local/libx32/libmysqlclient_r.a \
++                      -o -f /usr/local/libx32/libmysqlclient_r.so; then
++                 MYSQL_LIBDIR=/usr/local/libx32
+               else
+                  MYSQL_LIBDIR=/usr/local/lib
+               fi
+@@ -422,12 +422,12 @@
+      else
+         if test -f $withval/include/mysql/mysql.h; then
+            MYSQL_INCDIR=$withval/include/mysql
+-           if test -f $withval/lib64/mysql/libmysqlclient_r.a \
+-                -o -f $withval/lib64/mysql/libmysqlclient_r.so; then
+-              MYSQL_LIBDIR=$withval/lib64/mysql
+-           elif test -f $withval/lib64/libmysqlclient_r.a \
+-                -o -f $withval/lib64/libmysqlclient_r.so; then
+-              MYSQL_LIBDIR=$withval/lib64
++           if test -f $withval/libx32/mysql/libmysqlclient_r.a \
++                -o -f $withval/libx32/mysql/libmysqlclient_r.so; then
++              MYSQL_LIBDIR=$withval/libx32/mysql
++           elif test -f $withval/libx32/libmysqlclient_r.a \
++                -o -f $withval/libx32/libmysqlclient_r.so; then
++              MYSQL_LIBDIR=$withval/libx32
+            elif test -f $withval/lib/libmysqlclient_r.a \
+                 -o -f $withval/lib/libmysqlclient_r.so; then
+               MYSQL_LIBDIR=$withval/lib
+@@ -437,9 +437,9 @@
+            MYSQL_BINDIR=$withval/bin
+         elif test -f $withval/include/mysql.h; then
+            MYSQL_INCDIR=$withval/include
+-           if test -f $withval/lib64/libmysqlclient_r.a \
+-                -o -f $withval/lib64/libmysqlclient_r.so; then
+-              MYSQL_LIBDIR=$withval/lib64
++           if test -f $withval/libx32/libmysqlclient_r.a \
++                -o -f $withval/libx32/libmysqlclient_r.so; then
++              MYSQL_LIBDIR=$withval/libx32
+            else
+               MYSQL_LIBDIR=$withval/lib
+            fi
+@@ -559,40 +559,40 @@
+         if test "$withval" = "yes"; then
+                 if test -f /usr/local/mysql/include/mysql/mysql.h; then
+                         MYSQL_INCDIR=/usr/local/mysql/include/mysql
+-                        if test -d /usr/local/mysql/lib64/mysql; then
+-                                MYSQL_LIBDIR=/usr/local/mysql/lib64/mysql
++                        if test -d /usr/local/mysql/libx32/mysql; then
++                                MYSQL_LIBDIR=/usr/local/mysql/libx32/mysql
+                         else
+                                 MYSQL_LIBDIR=/usr/local/mysql/lib/mysql
+                         fi
+                         MYSQL_BINDIR=/usr/local/mysql/bin
+                 elif test -f /usr/include/mysql/mysql.h; then
+                         MYSQL_INCDIR=/usr/include/mysql
+-                        if test -d /usr/lib64/mysql; then
+-                                MYSQL_LIBDIR=/usr/lib64/mysql
++                        if test -d /usr/libx32/mysql; then
++                                MYSQL_LIBDIR=/usr/libx32/mysql
+                         else
+                                 MYSQL_LIBDIR=/usr/lib/mysql
+                         fi
+                         MYSQL_BINDIR=/usr/bin
+                 elif test -f /usr/include/mysql.h; then
+                         MYSQL_INCDIR=/usr/include
+-                        if test -d /usr/lib64; then
+-                                MYSQL_LIBDIR=/usr/lib64
++                        if test -d /usr/libx32; then
++                                MYSQL_LIBDIR=/usr/libx32
+                         else
+                                 MYSQL_LIBDIR=/usr/lib
+                         fi
+                         MYSQL_BINDIR=/usr/bin
+                 elif test -f /usr/local/include/mysql/mysql.h; then
+                         MYSQL_INCDIR=/usr/local/include/mysql
+-                        if test -d /usr/local/lib64/mysql; then
+-                                MYSQL_LIBDIR=/usr/local/lib64/mysql
++                        if test -d /usr/local/libx32/mysql; then
++                                MYSQL_LIBDIR=/usr/local/libx32/mysql
+                         else
+                                 MYSQL_LIBDIR=/usr/local/lib/mysql
+                         fi
+                         MYSQL_BINDIR=/usr/local/bin
+                 elif test -f /usr/local/include/mysql.h; then
+                         MYSQL_INCDIR=/usr/local/include
+-                        if test -d /usr/local/lib64; then
+-                                MYSQL_LIBDIR=/usr/local/lib64
++                        if test -d /usr/local/libx32; then
++                                MYSQL_LIBDIR=/usr/local/libx32
+                         else
+                                 MYSQL_LIBDIR=/usr/local/lib
+                         fi
+@@ -604,16 +604,16 @@
+         else
+                 if test -f $withval/include/mysql/mysql.h; then
+                         MYSQL_INCDIR=$withval/include/mysql
+-                        if test -d $withval/lib64/mysql; then
+-                                MYSQL_LIBDIR=$withval/lib64/mysql
++                        if test -d $withval/libx32/mysql; then
++                                MYSQL_LIBDIR=$withval/libx32/mysql
+                         else
+                                 MYSQL_LIBDIR=$withval/lib/mysql
+                         fi
+                         MYSQL_BINDIR=$withval/bin
+                 elif test -f $withval/include/mysql.h; then
+                         MYSQL_INCDIR=$withval/include
+-                        if test -d $withval/lib64; then
+-                                MYSQL_LIBDIR=$withval/lib64
++                        if test -d $withval/libx32; then
++                                MYSQL_LIBDIR=$withval/libx32
+                         else
+                                 MYSQL_LIBDIR=$withval/lib
+                         fi
+@@ -755,24 +755,24 @@
+      if test "$withval" = "yes"; then
+         if test -f /usr/local/include/sqlite3.h; then
+            SQLITE_INCDIR=/usr/local/include
+-           if test -d /usr/local/lib64; then
+-              SQLITE_LIBDIR=/usr/local/lib64
++           if test -d /usr/local/libx32; then
++              SQLITE_LIBDIR=/usr/local/libx32
+            else
+               SQLITE_LIBDIR=/usr/local/lib
+            fi
+            SQLITE_BINDIR=/usr/local/bin
+         elif test -f /usr/include/sqlite3.h; then
+            SQLITE_INCDIR=/usr/include
+-           if test -d /usr/lib64; then
+-              SQLITE_LIBDIR=/usr/lib64
++           if test -d /usr/libx32; then
++              SQLITE_LIBDIR=/usr/libx32
+            else
+               SQLITE_LIBDIR=/usr/lib
+            fi
+            SQLITE_BINDIR=/usr/bin
+         elif test -f $prefix/include/sqlite3.h; then
+            SQLITE_INCDIR=$prefix/include
+-           if test -d $prefix/lib64; then
+-              SQLITE_LIBDIR=$prefix/lib64
++           if test -d $prefix/libx32; then
++              SQLITE_LIBDIR=$prefix/libx32
+            else
+               SQLITE_LIBDIR=$prefix/lib
+            fi
+@@ -788,8 +788,8 @@
+            SQLITE_BINDIR=$withval
+         elif test -f $withval/include/sqlite3.h; then
+            SQLITE_INCDIR=$withval/include
+-           if test -d $withval/lib64; then
+-              SQLITE_LIBDIR=$withval/lib64
++           if test -d $withval/libx32; then
++              SQLITE_LIBDIR=$withval/libx32
+            else
+               SQLITE_LIBDIR=$withval/lib
+            fi
+@@ -870,32 +870,32 @@
+               POSTGRESQL_BINDIR=`"$PG_CONFIG" --bindir`
+           elif test -f /usr/local/include/libpq-fe.h; then
+               POSTGRESQL_INCDIR=/usr/local/include
+-              if test -d /usr/local/lib64; then
+-                 POSTGRESQL_LIBDIR=/usr/local/lib64
++              if test -d /usr/local/libx32; then
++                 POSTGRESQL_LIBDIR=/usr/local/libx32
+               else
+                  POSTGRESQL_LIBDIR=/usr/local/lib
+               fi
+               POSTGRESQL_BINDIR=/usr/local/bin
+           elif test -f /usr/include/libpq-fe.h; then
+               POSTGRESQL_INCDIR=/usr/include
+-              if test -d /usr/lib64; then
+-                 POSTGRESQL_LIBDIR=/usr/lib64
++              if test -d /usr/libx32; then
++                 POSTGRESQL_LIBDIR=/usr/libx32
+               else
+                  POSTGRESQL_LIBDIR=/usr/lib
+               fi
+               POSTGRESQL_BINDIR=/usr/bin
+           elif test -f /usr/include/pgsql/libpq-fe.h; then
+               POSTGRESQL_INCDIR=/usr/include/pgsql
+-              if test -d /usr/lib64/pgsql; then
+-                 POSTGRESQL_LIBDIR=/usr/lib64/pgsql
++              if test -d /usr/libx32/pgsql; then
++                 POSTGRESQL_LIBDIR=/usr/libx32/pgsql
+               else
+                  POSTGRESQL_LIBDIR=/usr/lib/pgsql
+               fi
+               POSTGRESQL_BINDIR=/usr/bin
+           elif test -f /usr/include/postgresql/libpq-fe.h; then
+               POSTGRESQL_INCDIR=/usr/include/postgresql
+-              if test -d /usr/lib64/postgresql; then
+-                 POSTGRESQL_LIBDIR=/usr/lib64/postgresql
++              if test -d /usr/libx32/postgresql; then
++                 POSTGRESQL_LIBDIR=/usr/libx32/postgresql
+               else
+                  POSTGRESQL_LIBDIR=/usr/lib/postgresql
+               fi
+@@ -910,8 +910,8 @@
+           POSTGRESQL_BINDIR=$withval/bin
+       elif test -f $withval/include/postgresql/libpq-fe.h; then
+           POSTGRESQL_INCDIR=$withval/include/postgresql
+-          if test -d $withval/lib64; then
+-              POSTGRESQL_LIBDIR=$withval/lib64
++          if test -d $withval/libx32; then
++              POSTGRESQL_LIBDIR=$withval/libx32
+           else
+               POSTGRESQL_LIBDIR=$withval/lib
+           fi
+--- bacula-7.4.4/autoconf/configure.in~	2017-02-28 20:07:04.000000000 +0100
++++ bacula-7.4.4/autoconf/configure.in	2017-02-28 20:11:43.892643223 +0100
+@@ -277,7 +277,7 @@
+ 	 os_processor=`uname -p 2>/dev/null`
+ 	 case ${os_processor} in
+ 	 x86_64)
+-	    libdir=/usr/lib64
++	    libdir=/usr/libx32
+ 	    ;;
+ 	 *)
+ 	    libdir=/usr/lib
+@@ -443,8 +443,8 @@
+ dnl		for ver in qwt qwt5 qwt-qt4; do
+ dnl		   if test -f ${root}/include/${ver}/qwt.h; then
+ dnl		      QWT_INC="${root}/include/${ver}"
+-dnl		      if test -d ${root}/lib64/; then
+-dnl			 QWT_LDFLAGS="-L${root}/lib64"
++dnl		      if test -d ${root}/libx32/; then
++dnl			 QWT_LDFLAGS="-L${root}/libx32"
+ dnl		      elif test -d ${root}/lib/64/; then
+ dnl			 QWT_LDFLAGS="-L${root}/64"
+ dnl		      else
+@@ -2419,9 +2419,9 @@
+    for dir in ${with_afsdir}/lib \
+ 	      ${with_afsdir}/lib/afs \
+ 	      ${with_afsdir}/lib/openafs \
+-	      ${with_afsdir}/lib64 \
+-	      ${with_afsdir}/lib64/afs \
+-	      ${with_afsdir}/lib64/openafs
++	      ${with_afsdir}/libx32 \
++	      ${with_afsdir}/libx32/afs \
++	      ${with_afsdir}/libx32/openafs
+    do
+       for arch_type in .a .so
+       do
+@@ -2561,10 +2561,10 @@
+ 	     have_acl=yes
+ 	     if test $have_afs = yes; then
+ 		dnl
+-		dnl Because of possible naming conflict with AFS libacl make sure we use the one in /usr/lib64 or /usr/lib !!!
++		dnl Because of possible naming conflict with AFS libacl make sure we use the one in /usr/libx32 or /usr/lib !!!
+ 		dnl
+-		if test -d /usr/lib64/; then
+-		   FDLIBS="-L/usr/lib64 -lacl $FDLIBS"
++		if test -d /usr/libx32/; then
++		   FDLIBS="-L/usr/libx32 -lacl $FDLIBS"
+ 		else
+ 		   FDLIBS="-L/usr/lib -lacl $FDLIBS"
+ 		fi
