@@ -384,7 +384,7 @@ Nagios plugin to check bacula.
 %patch3 -p1
 %patch4 -p1
 %ifarch x32
-%patch4 -p1
+%patch5 -p1
 %endif
 
 sed -i -e 's#bindir=.*#bindir=%{_bindir}#g' \
