@@ -24,7 +24,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	7.4.4
-Release:	1
+Release:	2
 License:	AGPL v3
 Group:		Networking/Utilities
 Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
@@ -460,11 +460,11 @@ install -d $RPM_BUILD_ROOT/etc/{rc.d/init.d,logrotate.d,pam.d,sysconfig} \
 # create copies of make_catalog_backup for specific databases; zeore default one (will be ghost)
 for database in %{databases}; do
 	sed -e "s#default_db_type=.*#default_db_type=${database}#g" \
-		$RPM_BUILD_ROOT%{_libdir}/%{name}/make_catalog_backup \
-		> $RPM_BUILD_ROOT%{_libdir}/%{name}/make_${database}_catalog_backup
-		chmod 755 $RPM_BUILD_ROOT%{_libdir}/%{name}/make_${database}_catalog_backup
+		$RPM_BUILD_ROOT%{_libexecdir}/%{name}/make_catalog_backup \
+		> $RPM_BUILD_ROOT%{_libexecdir}/%{name}/make_${database}_catalog_backup
+		chmod 755 $RPM_BUILD_ROOT%{_libexecdir}/%{name}/make_${database}_catalog_backup
 done
-:> $RPM_BUILD_ROOT%{_libdir}/%{name}/make_catalog_backup
+:> $RPM_BUILD_ROOT%{_libexecdir}/%{name}/make_catalog_backup
 
 # we use db dependant (at compile time) shell script only
 rm $RPM_BUILD_ROOT%{_libexecdir}/%{name}/make_catalog_backup.pl
