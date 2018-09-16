@@ -23,12 +23,12 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	7.4.4
-Release:	3
+Version:	9.2.1
+Release:	1
 License:	AGPL v3
 Group:		Networking/Utilities
 Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	aed11c1eef1198ffc76c6fca55cea3ad
+# Source0-md5:	a0f825a3f083f8f586278f36d12eb5c0
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
@@ -687,10 +687,11 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 # do not remove bsmtp from files. Fix build if it is not installed.
 %attr(755,root,root) %{_sbindir}/bsmtp
 %attr(755,root,root) %{_sbindir}/btraceback
-%attr(755,root,root) %{_libdir}/libbac-7*.so
-%attr(755,root,root) %{_libdir}/libbaccfg-7*.so
-%attr(755,root,root) %{_libdir}/libbacfind-7*.so
-%attr(755,root,root) %{_libdir}/libbacsql-7*.so
+%attr(755,root,root) %{_libdir}/libbac-9*.so
+%attr(755,root,root) %{_libdir}/libbacsd-9*.so
+%attr(755,root,root) %{_libdir}/libbaccfg-9*.so
+%attr(755,root,root) %{_libdir}/libbacfind-9*.so
+%attr(755,root,root) %{_libdir}/libbacsql-9*.so
 %{_mandir}/man8/bacula.8*
 %{_mandir}/man1/bsmtp.1*
 %{_mandir}/man8/btraceback.8*
@@ -713,6 +714,7 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/bacula-dir
 %{systemdunitdir}/bacula-dir.service
 %attr(755,root,root) %{_sbindir}/bacula-dir
+%attr(755,root,root) %{_sbindir}/bdirjson
 %attr(755,root,root) %{_sbindir}/bregex
 %attr(755,root,root) %{_sbindir}/bwild
 %attr(755,root,root) %{_sbindir}/bacula-dbcheck
@@ -733,9 +735,9 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_postgresql_*
 %attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_catalog_backup
-%attr(755,root,root) %{_libdir}/libbaccats-postgresql-7*.so
+%attr(755,root,root) %{_libdir}/libbaccats-postgresql-9*.so
 
-%ghost %attr(755,root,root) %{_libdir}/libbaccats-7*.so
+%ghost %attr(755,root,root) %{_libdir}/libbaccats-9*.so
 %ghost %{_libexecdir}/%{name}/create_bacula_database
 %ghost %{_libexecdir}/%{name}/drop_bacula_tables
 %ghost %{_libexecdir}/%{name}/drop_bacula_database
@@ -755,9 +757,9 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_mysql_*
 %attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_catalog_backup
-%attr(755,root,root) %{_libdir}/libbaccats-mysql-7*.so
+%attr(755,root,root) %{_libdir}/libbaccats-mysql-9*.so
 
-%ghost %attr(755,root,root) %{_libdir}/libbaccats-7*.so
+%ghost %attr(755,root,root) %{_libdir}/libbaccats-9*.so
 %ghost %{_libexecdir}/%{name}/create_bacula_database
 %ghost %{_libexecdir}/%{name}/drop_bacula_tables
 %ghost %{_libexecdir}/%{name}/drop_bacula_database
@@ -777,9 +779,9 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite3_*
 %attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_catalog_backup
-%attr(755,root,root) %{_libdir}/libbaccats-sqlite3-7*.so
+%attr(755,root,root) %{_libdir}/libbaccats-sqlite3-9*.so
 
-%ghost %attr(755,root,root) %{_libdir}/libbaccats-7*.so
+%ghost %attr(755,root,root) %{_libdir}/libbaccats-9*.so
 %ghost %{_libexecdir}/%{name}/create_bacula_database
 %ghost %{_libexecdir}/%{name}/drop_bacula_tables
 %ghost %{_libexecdir}/%{name}/drop_bacula_database
@@ -797,6 +799,7 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/bacula-fd
 %{systemdunitdir}/bacula-fd.service
 %attr(755,root,root) %{_sbindir}/bacula-fd
+%attr(755,root,root) %{_sbindir}/bfdjson
 %attr(755,root,root) %{_libdir}/bpipe-fd.so
 %{_mandir}/man8/bacula-fd.8*
 
@@ -813,10 +816,11 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(755,root,root) %{_sbindir}/bextract
 %attr(755,root,root) %{_sbindir}/bls
 %attr(755,root,root) %{_sbindir}/bscan
+%attr(755,root,root) %{_sbindir}/bsdjson
 %attr(755,root,root) %{_sbindir}/btape
 %attr(755,root,root) %{_libexecdir}/%{name}/mtx-changer
 %attr(755,root,root) %{_libexecdir}/%{name}/disk-changer
-%attr(755,root,root) %{_libexecdir}/%{name}/dvd-handler
+%attr(755,root,root) %{_libexecdir}/%{name}/tapealert
 %{_mandir}/man8/bacula-sd.8*
 %{_mandir}/man8/bcopy.8*
 %{_mandir}/man8/bextract.8*
@@ -829,6 +833,7 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %doc LICENSE
 %attr(640,root,bacula) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bconsole.conf
 %attr(755,root,root) %{_sbindir}/bconsole
+%attr(755,root,root) %{_sbindir}/bbconsjson
 %{_mandir}/man8/bconsole.8*
 
 %if %{with qt}
