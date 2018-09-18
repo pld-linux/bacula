@@ -500,17 +500,6 @@
  	    ;;
  	 *)
  	    libdir=/usr/lib
-@@ -443,8 +443,8 @@
- dnl		for ver in qwt qwt5 qwt-qt4; do
- dnl		   if test -f ${root}/include/${ver}/qwt.h; then
- dnl		      QWT_INC="${root}/include/${ver}"
--dnl		      if test -d ${root}/lib64/; then
--dnl			 QWT_LDFLAGS="-L${root}/lib64"
-+dnl		      if test -d ${root}/libx32/; then
-+dnl			 QWT_LDFLAGS="-L${root}/libx32"
- dnl		      elif test -d ${root}/lib/64/; then
- dnl			 QWT_LDFLAGS="-L${root}/64"
- dnl		      else
 @@ -2419,9 +2419,9 @@
     for dir in ${with_afsdir}/lib \
  	      ${with_afsdir}/lib/afs \
@@ -524,17 +513,15 @@
     do
        for arch_type in .a .so
        do
-@@ -2561,10 +2561,10 @@
- 	     have_acl=yes
- 	     if test $have_afs = yes; then
- 		dnl
--		dnl Because of possible naming conflict with AFS libacl make sure we use the one in /usr/lib64 or /usr/lib !!!
-+		dnl Because of possible naming conflict with AFS libacl make sure we use the one in /usr/libx32 or /usr/lib !!!
- 		dnl
--		if test -d /usr/lib64/; then
--		   FDLIBS="-L/usr/lib64 -lacl $FDLIBS"
-+		if test -d /usr/libx32/; then
-+		   FDLIBS="-L/usr/libx32 -lacl $FDLIBS"
- 		else
- 		   FDLIBS="-L/usr/lib -lacl $FDLIBS"
- 		fi
+@@ -2618,8 +2618,8 @@ if test x$support_acl = xyes -o x$suppor
+ 	 dnl
+ 	 dnl Because of possible naming conflict with AFS libacl make sure we use the one in /usr/lib64 or /usr/lib !!!
+ 	 dnl
+-	    if test -d /usr/lib64/; then
+-	       FDLIBS="-L/usr/lib64 -lacl $FDLIBS"
++	    if test -d /usr/libx32/; then
++	       FDLIBS="-L/usr/libx32 -lacl $FDLIBS"
+ 	    else
+ 	       FDLIBS="-L/usr/lib -lacl $FDLIBS"
+ 	    fi
+
