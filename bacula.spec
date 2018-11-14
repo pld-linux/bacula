@@ -45,6 +45,7 @@ Patch2:		%{name}-desktop.patch
 Patch3:		make_catalog_backup-setup-home.patch
 Patch4:		%{name}-no_lockmgr.patch
 Patch5:		x32.patch
+Patch6:		openssl-1.1.patch
 URL:		https://blog.bacula.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf >= 2.61
@@ -386,6 +387,7 @@ Nagios plugin to check bacula.
 %ifarch x32
 %patch5 -p1
 %endif
+%patch6 -p2
 
 sed -i -e 's#bindir=.*#bindir=%{_bindir}#g' \
 	src/cats/create_* src/cats/delete_* src/cats/drop_* \
