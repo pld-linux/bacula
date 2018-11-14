@@ -23,12 +23,12 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	7.4.4
-Release:	3
+Version:	7.4.7
+Release:	1
 License:	AGPL v3
 Group:		Networking/Utilities
-Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	aed11c1eef1198ffc76c6fca55cea3ad
+Source0:	https://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
+# Source0-md5:	2af99b60bfad7a68af5a66e7348524ed
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
@@ -45,7 +45,7 @@ Patch2:		%{name}-desktop.patch
 Patch3:		make_catalog_backup-setup-home.patch
 Patch4:		%{name}-no_lockmgr.patch
 Patch5:		x32.patch
-URL:		http://www.bacula.org/
+URL:		https://blog.bacula.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf >= 2.61
 BuildRequires:	automake
