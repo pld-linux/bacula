@@ -1,0 +1,15 @@
+diff -dur -x '*~' libs3-20181010.orig/src/request.c libs3-20181010/src/request.c
+--- libs3-20181010.orig/src/request.c	2016-12-14 19:17:36.000000000 +0100
++++ libs3-20181010/src/request.c	2019-03-04 13:10:25.000000000 +0100
+@@ -1701,11 +1701,6 @@
+         return S3StatusConnectionFailed;
+     case CURLE_PARTIAL_FILE:
+         return S3StatusOK;
+-#if LIBCURL_VERSION_NUM >= 0x071101 /* 7.17.1 */
+-    case CURLE_PEER_FAILED_VERIFICATION:
+-#else
+-    case CURLE_SSL_PEER_CERTIFICATE:
+-#endif
+     case CURLE_SSL_CACERT:
+         return S3StatusServerFailedVerification;
+     default:

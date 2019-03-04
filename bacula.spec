@@ -4,31 +4,31 @@
 #	- fix log file permissions
 #
 # Conditional build:
-%if "%{pld_release}" == "ac"
-%bcond_with	qt		# BAT / qt-console Qt4 GUI
-%else
-%bcond_without	qt		# BAT / qt-console Qt4 GUI
-%endif
+%bcond_without	qt			# BAT / qt-console Qt5 GUI
 %bcond_without	mysql			# use MySQL
 %bcond_without	pgsql			# use PostgreSQL
 %bcond_without	sqlite3			# use SQLite3
-%bcond_without	nagios		# build nagios plugin
+%bcond_without	nagios			# build nagios plugin
+%bcond_without	s3			# Amazon S3 cloud backend
 %bcond_with	sqlite3_sync_off	# makes SQLite3 backend much faster, but less reliable
 
 %if %{without sqlite3}
 %undefine       with_sqlite3_sync_off
 %endif
 
-%define	qtver	4.8.4
+# Bacula requires this specific, custom version
+%define		libs3_version	20181010
+
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	9.2.2
+Version:	9.4.2
 Release:	1
 License:	AGPL v3
 Group:		Networking/Utilities
 Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	4655f47bc0e5529186abc407ee9480a5
+# Source0-md5:	376e67b16cfa7254a5717177770233b6
+Source1:	https://www.bacula.org/downloads/libs3-%{libs3_version}.tar.gz
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
@@ -45,24 +45,27 @@ Patch2:		%{name}-desktop.patch
 Patch3:		make_catalog_backup-setup-home.patch
 Patch4:		%{name}-no_lockmgr.patch
 Patch5:		x32.patch
+Patch6:		libs3-curl.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf >= 2.61
 BuildRequires:	automake
+%{?with_s3:BuildRequires:	curl-devel}
 BuildRequires:	gettext-tools
 BuildRequires:	libcap-devel
 BuildRequires:	libtool >= 2:2.2
 BuildRequires:	libwrap-devel
+%{?with_s3:BuildRequires:	libxml2-devel}
 BuildRequires:	ncurses-devel
 BuildRequires:	openssl-devel
 BuildRequires:	pkgconfig
 BuildRequires:	python
 BuildRequires:	python-modules
 %if %{with qt}
-BuildRequires:	QtCore-devel
-BuildRequires:	QtGui-devel
-BuildRequires:	qt4-build >= %{qtver}
-BuildRequires:	qt4-qmake >= %{qtver}
+BuildRequires:	Qt5Core-devel
+BuildRequires:	Qt5Gui-devel
+BuildRequires:	qt5-build
+BuildRequires:	qt5-qmake
 %endif
 %{?with_mysql:BuildRequires:	mysql-devel}
 %{?with_pgsql:BuildRequires:	postgresql-devel}
@@ -220,8 +223,8 @@ Summary(pl.UTF-8):	bat – narzędzie administratora Baculi
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
 Requires:	%{name}-common = %{version}-%{release}
-Requires:	QtCore >= %{qtver}
-Obsoletes:	bacula-console-qt4 < 5.2.13-1
+Requires:	Qt5Core
+Obsoletes:	bacula-console-qt5 < 5.2.13-1
 
 %description console-qt
 Bacula - It comes by night and sucks the vital essence from your
@@ -377,7 +380,7 @@ Nagios plugin to check bacula.
 # provided by various db libraries as a symlink
 
 %prep
-%setup -q
+%setup -q -a 1
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -385,6 +388,11 @@ Nagios plugin to check bacula.
 %patch4 -p1
 %ifarch x32
 %patch5 -p1
+%endif
+%if %{with s3}
+cd libs3-%{libs3_version}
+%patch6 -p1
+cd ..
 %endif
 
 sed -i -e 's#bindir=.*#bindir=%{_bindir}#g' \
@@ -401,9 +409,16 @@ cd autoconf
 cd ..
 %{__autoconf} --prepend-include=$(pwd)/autoconf autoconf/configure.in > configure
 
+%if %{with s3}
+cd libs3-%{libs3_version}
+CFLAGS="%{rpmcflags} -Wno-stringop-overflow" make VERBOSE=1 build/lib/libs3.a
+ln -s ../inc build/include
+cd ..
+%endif
+
 CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
 
-QMAKE=%{_bindir}/qmake-qt4 \
+QMAKE=%{_bindir}/qmake-qt5 \
 %configure \
 	DISTNAME=pld-linux \
 	--with-scriptdir=%{_libexecdir}/%{name} \
@@ -424,6 +439,8 @@ QMAKE=%{_bindir}/qmake-qt4 \
 	%{?with_mysql:--with-mysql} \
 	%{?with_sqlite3:--with-sqlite3} \
 	%{?with_sqlite3_sync_off:--enable-extra-sqlite3-init="pragma synchronous=0;"} \
+	%{!?with_s3:--without-s3} \
+	%{?with_s3:--with-s3=$PWD/libs3-%{libs3_version}/build} \
 	--with-dir-password="#FAKE-dir-password#" \
 	--with-fd-password="#FAKE-fd-password#" \
 	--with-sd-password="#FAKE-sd-password#" \
@@ -434,11 +451,13 @@ QMAKE=%{_bindir}/qmake-qt4 \
 
 %if %{with qt}
 cd src/qt-console
-qmake-qt4 bat.pro
+qmake-qt5 bat.pro
 cd ../..
 %endif
 
-%{__make} 2>&1 | tee log
+%{__make} \
+	%{?with_s3:S3_LIBS="$PWD/libs3-%{libs3_version}/build/lib -ls3 $(pkg-config --libs libcurl libxml2)"} \
+	2>&1 | tee log
 # check for build errors
 grep "Error in" log && exit 1
 
@@ -456,6 +475,14 @@ install -d $RPM_BUILD_ROOT/etc/{rc.d/init.d,logrotate.d,pam.d,sysconfig} \
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
+
+%{__make} -C src/stored install-aligned \
+	DESTDIR=$RPM_BUILD_ROOT
+
+%if %{with s3}
+%{__make} -C src/stored install-cloud \
+	DESTDIR=$RPM_BUILD_ROOT
+%endif
 
 # create copies of make_catalog_backup for specific databases; zeore default one (will be ghost)
 for database in %{databases}; do
@@ -528,8 +555,8 @@ mv $RPM_BUILD_ROOT%{_sbindir}/{,bacula-}dbcheck
 mv $RPM_BUILD_ROOT%{_mandir}/man8/{,bacula-}dbcheck.8.gz
 
 # no -devel files packaged, so this is also useless
-rm $RPM_BUILD_ROOT%{_libdir}/libbac{,cfg,find,sql,cats}.{so,la}
-#rm $RPM_BUILD_ROOT%{_libdir}/libbaccats*.{so,la}
+rm $RPM_BUILD_ROOT%{_libdir}/libbac{,cfg,find,sql,cats,sd}.{so,la}
+rm $RPM_BUILD_ROOT%{_libdir}/bacula-sd-*-driver.so
 %{?with_mysql:rm $RPM_BUILD_ROOT%{_libdir}/libbaccats-mysql.{la,so}}
 %{?with_pgsql:rm $RPM_BUILD_ROOT%{_libdir}/libbaccats-postgresql.{la,so}}
 %{?with_sqlite3:rm $RPM_BUILD_ROOT%{_libdir}/libbaccats-sqlite3.{la,so}}
@@ -818,9 +845,17 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(755,root,root) %{_sbindir}/bscan
 %attr(755,root,root) %{_sbindir}/bsdjson
 %attr(755,root,root) %{_sbindir}/btape
-%attr(755,root,root) %{_libexecdir}/%{name}/mtx-changer
+%attr(755,root,root) %{_libexecdir}/%{name}/baculabackupreport
+%attr(755,root,root) %{_libexecdir}/%{name}/bacula-tray-monitor.desktop
 %attr(755,root,root) %{_libexecdir}/%{name}/disk-changer
+%attr(755,root,root) %{_libexecdir}/%{name}/isworm
+%attr(755,root,root) %{_libexecdir}/%{name}/mtx-changer
 %attr(755,root,root) %{_libexecdir}/%{name}/tapealert
+%attr(755,root,root) %{_libdir}/bacula-sd-aligned-driver-9.*.so
+%if %{with s3}
+%attr(755,root,root) %{_libdir}/bacula-sd-cloud-driver-9.*.so
+%endif
+
 %{_mandir}/man8/bacula-sd.8*
 %{_mandir}/man8/bcopy.8*
 %{_mandir}/man8/bextract.8*
