@@ -29,6 +29,7 @@ Group:		Networking/Utilities
 Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
 # Source0-md5:	376e67b16cfa7254a5717177770233b6
 Source1:	https://www.bacula.org/downloads/libs3-%{libs3_version}.tar.gz
+# Source1-md5:	08fbaea463b12974ebf7f4c2b336c38c
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
