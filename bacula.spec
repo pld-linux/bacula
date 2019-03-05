@@ -225,7 +225,6 @@ Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
 Requires:	%{name}-common = %{version}-%{release}
 Requires:	Qt5Core
-Obsoletes:	bacula-console-qt5 < 5.2.13-1
 
 %description console-qt
 Bacula - It comes by night and sucks the vital essence from your
