@@ -456,7 +456,7 @@ cd ../..
 %endif
 
 %{__make} \
-	%{?with_s3:S3_LIBS="$PWD/libs3-%{libs3_version}/build/lib -ls3 $(pkg-config --libs libcurl libxml2)"} \
+	%{?with_s3:S3_LIBS="$PWD/libs3-%{libs3_version}/build/lib/libs3.a $(pkg-config --libs libcurl libxml-2.0)"} \
 	2>&1 | tee log
 # check for build errors
 grep "Error in" log && exit 1
