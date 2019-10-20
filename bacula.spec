@@ -9,7 +9,7 @@
 %bcond_without	pgsql			# use PostgreSQL
 %bcond_without	sqlite3			# use SQLite3
 %bcond_without	nagios			# build nagios plugin
-%bcond_without	s3			# Amazon S3 cloud backend
+%bcond_with	s3			# Amazon S3 cloud backend
 %bcond_with	sqlite3_sync_off	# makes SQLite3 backend much faster, but less reliable
 
 %if %{without sqlite3}
@@ -23,7 +23,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	9.4.2
-Release:	2
+Release:	3
 License:	AGPL v3
 Group:		Networking/Utilities
 Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
