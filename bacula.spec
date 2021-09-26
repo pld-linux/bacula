@@ -23,7 +23,7 @@ Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
 Version:	9.4.2
-Release:	3
+Release:	4
 License:	AGPL v3
 Group:		Networking/Utilities
 Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
@@ -165,7 +165,7 @@ Summary(pl.UTF-8):	Usługi Bacula Director i Catalog
 Group:		Networking/Utilities
 Requires(post):	sed >= 4.0
 Requires:	%{name}-common = %{version}-%{release}
-Requires:	bacula(db) = %{version}-%{release}
+Requires:	bacula-db = %{version}-%{release}
 Requires:	systemd-units >= 38
 Obsoletes:	bacula-updatedb
 
@@ -329,8 +329,8 @@ Summary(pl.UTF-8):	Sterownik bazy PostgreSQL dla Baculi
 Group:		Networking/Utilities
 Requires(post):	/sbin/ldconfig
 Requires:	%{name}-common = %{version}-%{release}
-Provides:	bacula(db) = %{version}-%{release}
-Obsoletes:	bacula(db)
+Provides:	bacula-db = %{version}-%{release}
+Obsoletes:	bacula-db
 
 %description db-postgresql
 PostgreSQL database driver for Bacula.
@@ -344,8 +344,8 @@ Summary(pl.UTF-8):	Sterownik bazy MySQL dla Baculi
 Group:		Networking/Utilities
 Requires(post):	/sbin/ldconfig
 Requires:	%{name}-common = %{version}-%{release}
-Provides:	bacula(db) = %{version}-%{release}
-Obsoletes:	bacula(db)
+Provides:	bacula-db = %{version}-%{release}
+Obsoletes:	bacula-db
 
 %description db-mysql
 MySQL database driver for Bacula.
@@ -359,8 +359,8 @@ Summary(pl.UTF-8):	Sterownik bazy SQLite dla Baculi
 Group:		Networking/Utilities
 Requires(post):	/sbin/ldconfig
 Requires:	%{name}-common = %{version}-%{release}
-Provides:	bacula(db) = %{version}-%{release}
-Obsoletes:	bacula(db)
+Provides:	bacula-db = %{version}-%{release}
+Obsoletes:	bacula-db
 
 %description db-sqlite3
 SQLite database driver for Bacula.
@@ -418,6 +418,7 @@ cd ..
 
 CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
 
+BUILD_DIR=$(pwd) \
 QMAKE=%{_bindir}/qmake-qt5 \
 %configure \
 	DISTNAME=pld-linux \

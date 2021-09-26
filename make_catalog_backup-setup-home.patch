@@ -1,6 +1,7 @@
---- bacula-5.2.1/src/cats/make_catalog_backup.in~	2011-10-30 13:03:42.000000000 +0100
-+++ bacula-5.2.1/src/cats/make_catalog_backup.in	2011-11-01 17:27:38.863760358 +0100
-@@ -13,12 +13,15 @@
+diff -urNp -x '*.orig' bacula-9.4.2.org/src/cats/make_catalog_backup.in bacula-9.4.2/src/cats/make_catalog_backup.in
+--- bacula-9.4.2.org/src/cats/make_catalog_backup.in	2019-02-04 17:47:31.000000000 +0100
++++ bacula-9.4.2/src/cats/make_catalog_backup.in	2021-09-26 09:47:52.123078492 +0200
+@@ -16,12 +16,15 @@
  #     line arguments and the environment using ps.  Please consult your
  #     MySQL or PostgreSQL manual for secure methods of specifying the
  #     password.
@@ -14,5 +15,5 @@
 +HOME=@working_dir@
 +
  default_db_type=@DEFAULT_DB_TYPE@
+ user=${2:-@db_user@}
  
- #

@@ -1,7 +1,8 @@
---- bacula-5.0.1/scripts/mtx-changer.in~	2010-02-24 17:33:48.000000000 +0200
-+++ bacula-5.0.1/scripts/mtx-changer.in	2010-02-25 11:49:14.545143118 +0200
-@@ -47,13 +47,13 @@
- #
+diff -urNp -x '*.orig' bacula-9.4.2.org/scripts/mtx-changer.in bacula-9.4.2/scripts/mtx-changer.in
+--- bacula-9.4.2.org/scripts/mtx-changer.in	2019-02-04 17:47:31.000000000 +0100
++++ bacula-9.4.2/scripts/mtx-changer.in	2021-09-26 09:47:51.139744008 +0200
+@@ -65,13 +65,13 @@
+ myversion=2
  
  # source our conf file
 -if test ! -f @scriptdir@/mtx-changer.conf ; then
@@ -15,5 +16,5 @@
 -. @scriptdir@/mtx-changer.conf
 +. /etc/bacula/mtx-changer.conf
  
- MTX=@MTX@
- 
+ if test "${version}" != "${myversion}" ; then
+   echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
