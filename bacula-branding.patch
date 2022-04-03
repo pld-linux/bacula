@@ -7,7 +7,7 @@ diff -ur bacula-11.0.6.orig/autoconf/configure.in bacula-11.0.6/autoconf/configu
    ;;
 +pld-linux)
 +   DISTNAME="PLD/Linux"
-+   DISTVER=$(awk ' { print $1 " " $4  } ' /etc/pld-release 2> /dev/null)
++   DISTVER=$(awk ' { print $1 " " $5  } ' /etc/pld-release 2> /dev/null)
 +   TAPEDRIVE="/dev/nst0"
 +   PSCMD="ps -e -o pid,command"
 +   PFILES="${PFILES} \
