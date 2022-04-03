@@ -1,6 +1,6 @@
-diff -urNp -x '*.orig' bacula-9.4.2.org/scripts/mtx-changer.in bacula-9.4.2/scripts/mtx-changer.in
---- bacula-9.4.2.org/scripts/mtx-changer.in	2019-02-04 17:47:31.000000000 +0100
-+++ bacula-9.4.2/scripts/mtx-changer.in	2021-09-26 09:47:51.139744008 +0200
+diff -ur bacula-11.0.6.orig/scripts/mtx-changer.in bacula-11.0.6/scripts/mtx-changer.in
+--- bacula-11.0.6.orig/scripts/mtx-changer.in	2022-03-10 15:57:01.000000000 +0000
++++ bacula-11.0.6/scripts/mtx-changer.in	2022-04-03 11:28:37.710899617 +0000
 @@ -65,13 +65,13 @@
  myversion=2
  

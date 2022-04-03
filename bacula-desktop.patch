@@ -1,12 +1,13 @@
---- bacula-3.0.0/scripts/bat.desktop.in~	2007-04-29 16:48:18.000000000 +0300
-+++ bacula-3.0.0/scripts/bat.desktop.in	2009-04-15 19:11:45.310914865 +0300
+diff -ur bacula-11.0.6.orig/scripts/bat.desktop.in bacula-11.0.6/scripts/bat.desktop.in
+--- bacula-11.0.6.orig/scripts/bat.desktop.in	2022-04-03 11:30:25.924146163 +0000
++++ bacula-11.0.6/scripts/bat.desktop.in	2022-04-03 11:30:42.205183255 +0000
 @@ -1,11 +1,10 @@
  [Desktop Entry]
  Name=Bacula Administration Tool
  Comment=Bacula Director Console
 -Icon=/usr/share/pixmaps/bat_icon.png
-+Icon=bacula
 -Exec=@sbindir@/bat -c @sysconfdir@/bat.conf
++Icon=bacula
 +Exec=@bindir@/bat -c @sysconfdir@/bat.conf
  Terminal=false
  Type=Application

@@ -17,19 +17,19 @@
 %endif
 
 # Bacula requires this specific, custom version
-%define		libs3_version	20181010
+%define		libs3_version	20200523
 
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	9.4.2
-Release:	5
+Version:	11.0.6
+Release:	1
 License:	AGPL v3
 Group:		Networking/Utilities
 Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	376e67b16cfa7254a5717177770233b6
+# Source0-md5:	0e3cd4e29878b09ae4554bae64785736
 Source1:	https://www.bacula.org/downloads/libs3-%{libs3_version}.tar.gz
-# Source1-md5:	08fbaea463b12974ebf7f4c2b336c38c
+# Source1-md5:	ca97bc4133a21981139181ec8571f202
 Source10:	%{name}-dir.init
 Source11:	%{name}-fd.init
 Source12:	%{name}-sd.init
@@ -65,6 +65,7 @@ BuildRequires:	python-modules
 %if %{with qt}
 BuildRequires:	Qt5Core-devel
 BuildRequires:	Qt5Gui-devel
+BuildRequires:	Qt5Widgets-devel
 BuildRequires:	qt5-build
 BuildRequires:	qt5-qmake
 %endif
@@ -717,11 +718,11 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 # do not remove bsmtp from files. Fix build if it is not installed.
 %attr(755,root,root) %{_sbindir}/bsmtp
 %attr(755,root,root) %{_sbindir}/btraceback
-%attr(755,root,root) %{_libdir}/libbac-9*.so
-%attr(755,root,root) %{_libdir}/libbacsd-9*.so
-%attr(755,root,root) %{_libdir}/libbaccfg-9*.so
-%attr(755,root,root) %{_libdir}/libbacfind-9*.so
-%attr(755,root,root) %{_libdir}/libbacsql-9*.so
+%attr(755,root,root) %{_libdir}/libbac-11*.so
+%attr(755,root,root) %{_libdir}/libbacsd-11*.so
+%attr(755,root,root) %{_libdir}/libbaccfg-11*.so
+%attr(755,root,root) %{_libdir}/libbacfind-11*.so
+%attr(755,root,root) %{_libdir}/libbacsql-11*.so
 %{_mandir}/man8/bacula.8*
 %{_mandir}/man1/bsmtp.1*
 %{_mandir}/man8/btraceback.8*
@@ -765,9 +766,9 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_postgresql_*
 %attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_catalog_backup
-%attr(755,root,root) %{_libdir}/libbaccats-postgresql-9*.so
+%attr(755,root,root) %{_libdir}/libbaccats-postgresql-11*.so
 
-%ghost %attr(755,root,root) %{_libdir}/libbaccats-9*.so
+%ghost %attr(755,root,root) %{_libdir}/libbaccats-11*.so
 %ghost %{_libexecdir}/%{name}/create_bacula_database
 %ghost %{_libexecdir}/%{name}/drop_bacula_tables
 %ghost %{_libexecdir}/%{name}/drop_bacula_database
@@ -787,9 +788,9 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_mysql_*
 %attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_catalog_backup
-%attr(755,root,root) %{_libdir}/libbaccats-mysql-9*.so
+%attr(755,root,root) %{_libdir}/libbaccats-mysql-11*.so
 
-%ghost %attr(755,root,root) %{_libdir}/libbaccats-9*.so
+%ghost %attr(755,root,root) %{_libdir}/libbaccats-11*.so
 %ghost %{_libexecdir}/%{name}/create_bacula_database
 %ghost %{_libexecdir}/%{name}/drop_bacula_tables
 %ghost %{_libexecdir}/%{name}/drop_bacula_database
@@ -809,9 +810,9 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite3_*
 %attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_catalog_backup
-%attr(755,root,root) %{_libdir}/libbaccats-sqlite3-9*.so
+%attr(755,root,root) %{_libdir}/libbaccats-sqlite3-11*.so
 
-%ghost %attr(755,root,root) %{_libdir}/libbaccats-9*.so
+%ghost %attr(755,root,root) %{_libdir}/libbaccats-11*.so
 %ghost %{_libexecdir}/%{name}/create_bacula_database
 %ghost %{_libexecdir}/%{name}/drop_bacula_tables
 %ghost %{_libexecdir}/%{name}/drop_bacula_database
@@ -854,9 +855,9 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(755,root,root) %{_libexecdir}/%{name}/isworm
 %attr(755,root,root) %{_libexecdir}/%{name}/mtx-changer
 %attr(755,root,root) %{_libexecdir}/%{name}/tapealert
-%attr(755,root,root) %{_libdir}/bacula-sd-aligned-driver-9.*.so
+%attr(755,root,root) %{_libdir}/bacula-sd-aligned-driver-11.*.so
 %if %{with s3}
-%attr(755,root,root) %{_libdir}/bacula-sd-cloud-driver-9.*.so
+%attr(755,root,root) %{_libdir}/bacula-sd-cloud-driver-11.*.so
 %endif
 
 %{_mandir}/man8/bacula-sd.8*

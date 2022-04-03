@@ -1,7 +1,7 @@
-diff -dur -x '*~' bacula-7.0.5.orig/autoconf/configure.in bacula-7.0.5/autoconf/configure.in
---- bacula-7.0.5.orig/autoconf/configure.in	2014-07-29 18:31:22.000000000 +0200
-+++ bacula-7.0.5/autoconf/configure.in	2015-03-22 13:46:06.462795073 +0100
-@@ -3152,6 +3152,14 @@
+diff -ur bacula-11.0.6.orig/autoconf/configure.in bacula-11.0.6/autoconf/configure.in
+--- bacula-11.0.6.orig/autoconf/configure.in	2022-04-03 11:29:43.383049234 +0000
++++ bacula-11.0.6/autoconf/configure.in	2022-04-03 11:30:02.645093123 +0000
+@@ -3642,6 +3642,14 @@
         platforms/suse/bacula-sd \
         platforms/suse/bacula-dir"
    ;;

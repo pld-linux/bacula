@@ -1,6 +1,6 @@
-diff -durN -x '*~' -x '*.orig' -x '*.rej' bacula-9.4.2.orig/autoconf/bacula-macros/db.m4 bacula-9.4.2/autoconf/bacula-macros/db.m4
---- bacula-9.4.2.orig/autoconf/bacula-macros/db.m4	2019-02-04 17:47:31.000000000 +0100
-+++ bacula-9.4.2/autoconf/bacula-macros/db.m4	2019-03-05 10:55:30.000000000 +0100
+diff -ur bacula-11.0.6.orig/autoconf/bacula-macros/db.m4 bacula-11.0.6/autoconf/bacula-macros/db.m4
+--- bacula-11.0.6.orig/autoconf/bacula-macros/db.m4	2022-04-03 11:32:50.796476244 +0000
++++ bacula-11.0.6/autoconf/bacula-macros/db.m4	2022-04-03 11:33:40.061588489 +0000
 @@ -12,24 +12,24 @@
       if test "$withval" = "yes"; then
          if test -f /usr/local/include/dbi/dbi.h; then
@@ -491,10 +491,10 @@ diff -durN -x '*~' -x '*.orig' -x '*.rej' bacula-9.4.2.orig/autoconf/bacula-macr
            else
                POSTGRESQL_LIBDIR=$withval/lib
            fi
-diff -durN -x '*~' -x '*.orig' -x '*.rej' bacula-9.4.2.orig/autoconf/configure.in bacula-9.4.2/autoconf/configure.in
---- bacula-9.4.2.orig/autoconf/configure.in	2019-03-05 10:53:03.000000000 +0100
-+++ bacula-9.4.2/autoconf/configure.in	2019-03-05 10:54:27.000000000 +0100
-@@ -299,7 +299,7 @@
+diff -ur bacula-11.0.6.orig/autoconf/configure.in bacula-11.0.6/autoconf/configure.in
+--- bacula-11.0.6.orig/autoconf/configure.in	2022-04-03 11:32:50.796476244 +0000
++++ bacula-11.0.6/autoconf/configure.in	2022-04-03 11:33:40.062588492 +0000
+@@ -301,7 +301,7 @@
  	 os_processor=`uname -p 2>/dev/null`
  	 case ${os_processor} in
  	 x86_64)
@@ -503,7 +503,7 @@ diff -durN -x '*~' -x '*.orig' -x '*.rej' bacula-9.4.2.orig/autoconf/configure.i
  	    ;;
  	 *)
  	    libdir=/usr/lib
-@@ -2485,9 +2485,9 @@
+@@ -2669,9 +2669,9 @@
     for dir in ${with_afsdir}/lib \
  	      ${with_afsdir}/lib/afs \
  	      ${with_afsdir}/lib/openafs \
@@ -516,7 +516,7 @@ diff -durN -x '*~' -x '*.orig' -x '*.rej' bacula-9.4.2.orig/autoconf/configure.i
     do
        for arch_type in .a .so
        do
-@@ -2628,8 +2628,8 @@
+@@ -2839,8 +2839,8 @@
  	 dnl
  	 dnl Because of possible naming conflict with AFS libacl make sure we use the one in /usr/lib64 or /usr/lib !!!
  	 dnl

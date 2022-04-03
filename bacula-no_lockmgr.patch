@@ -1,16 +1,16 @@
-diff -dur bacula-5.2.13.orig/src/version.h bacula-5.2.13/src/version.h
---- bacula-5.2.13.orig/src/version.h	2013-02-19 20:21:35.000000000 +0100
-+++ bacula-5.2.13/src/version.h	2013-12-04 20:36:09.987318325 +0100
-@@ -77,9 +77,9 @@
+diff -ur bacula-11.0.6.orig/src/version.h bacula-11.0.6/src/version.h
+--- bacula-11.0.6.orig/src/version.h	2022-04-03 11:31:32.929298827 +0000
++++ bacula-11.0.6/src/version.h	2022-04-03 11:32:34.071438141 +0000
+@@ -87,9 +87,9 @@
   *   it can always be turned on, but we advise to use it only
   *   for debug
   */
--# ifndef _USE_LOCKMGR
--#  define _USE_LOCKMGR
--# endif /* _USE_LOCKMGR */
-+//# ifndef _USE_LOCKMGR
-+//#  define _USE_LOCKMGR
-+//# endif /* _USE_LOCKMGR */
+-# ifndef USE_LOCKMGR
+-#  define USE_LOCKMGR
+-# endif /* USE_LOCKMGR */
++//# ifndef USE_LOCKMGR
++//#  define USE_LOCKMGR
++//# endif /* USE_LOCKMGR */
  /*
   * Enable priority management with the lock manager
   *

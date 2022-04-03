@@ -1,6 +1,6 @@
-diff -urNp -x '*.orig' bacula-9.4.2.org/src/cats/make_catalog_backup.in bacula-9.4.2/src/cats/make_catalog_backup.in
---- bacula-9.4.2.org/src/cats/make_catalog_backup.in	2019-02-04 17:47:31.000000000 +0100
-+++ bacula-9.4.2/src/cats/make_catalog_backup.in	2021-09-26 09:47:52.123078492 +0200
+diff -ur bacula-11.0.6.orig/src/cats/make_catalog_backup.in bacula-11.0.6/src/cats/make_catalog_backup.in
+--- bacula-11.0.6.orig/src/cats/make_catalog_backup.in	2022-04-03 11:30:54.303210821 +0000
++++ bacula-11.0.6/src/cats/make_catalog_backup.in	2022-04-03 11:31:21.121271928 +0000
 @@ -16,12 +16,15 @@
  #     line arguments and the environment using ps.  Please consult your
  #     MySQL or PostgreSQL manual for secure methods of specifying the
