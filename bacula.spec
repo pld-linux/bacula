@@ -74,7 +74,7 @@ BuildRequires:	qt5-qmake
 BuildRequires:	readline-devel
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpm-pythonprov
-BuildRequires:	rpmbuild(macros) >= 1.644
+BuildRequires:	rpmbuild(macros) >= 2.016
 BuildRequires:	sed >= 4.0
 %{?with_sqlite3:BuildRequires:	sqlite3-devel}
 BuildRequires:	which
@@ -406,7 +406,7 @@ CXXFLAGS="%{rpmcxxflags} -Wno-narrowing"
 CFLAGS="%{rpmcflags} -Wno-narrowing"
 
 BUILD_DIR=$(pwd) \
-QMAKE=%{_bindir}/qmake-qt5 \
+QMAKE="%_qt5_qmake" \
 %configure \
 	DISTNAME=pld-linux \
 	PYTHON="%{__python3}" \
@@ -440,7 +440,7 @@ QMAKE=%{_bindir}/qmake-qt5 \
 
 %if %{with qt}
 cd src/qt-console
-qmake-qt5 bat.pro
+%{qmake_qt5} bat.pro
 cd ../..
 %endif
 
