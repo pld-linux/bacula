@@ -223,6 +223,7 @@ interfejs czysto tekstowy.
 Summary:	bat – The Bacula Administration Tool
 Summary(pl.UTF-8):	bat – narzędzie administratora Baculi
 Group:		Networking/Utilities
+Requires(post,postun):	desktop-file-utils
 Requires(post):	sed >= 4.0
 Requires:	%{name}-common = %{version}-%{release}
 Requires:	Qt5Core
@@ -665,6 +666,10 @@ find %{_sysconfdir}/bat.conf* -perm /007 -print0 2>/dev/null | xargs -0 -r chmod
 
 %post console-qt
 %update_configs
+%update_desktop_database_post
+
+%postun console-qt
+%update_desktop_database_postun
 
 %define db_post() \
 /sbin/ldconfig \
