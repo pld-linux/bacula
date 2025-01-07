@@ -26,7 +26,7 @@ Version:	11.0.6
 Release:	2
 License:	AGPL v3
 Group:		Networking/Utilities
-Source0:	http://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
+Source0:	https://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
 # Source0-md5:	0e3cd4e29878b09ae4554bae64785736
 Source1:	https://www.bacula.org/downloads/libs3-%{libs3_version}.tar.gz
 # Source1-md5:	ca97bc4133a21981139181ec8571f202
