@@ -354,6 +354,22 @@ SQLite database driver for Bacula.
 %description db-sqlite3 -l pl.UTF-8
 Sterownik bazy SQLite dla Baculi.
 
+%package plugin-fd-docker
+Summary:	Bacula Docker plugin
+Summary(pl.UTF-8):	Plugin Dockera dla Baculi
+Group:		Networking/Utilities
+Requires:	%{name}-fd = %{version}-%{release}
+Requires:	/usr/bin/docker
+
+%description plugin-fd-docker
+Bacula Docker plugin allows backup of container images and volumes
+without a need to install File Deamon inside containers.
+
+%description plugin-fd-docker -l pl.UTF-8
+Plugin Dockera dla Baculi umożliwia wykonywanie kopii zapasowych
+obrazów kontenera i woluminów bez potrzeby instalowania demona plików
+wewnątrz kontenerów.
+
 %package -n nagios-plugin-check_bacula
 Summary:	Nagios plugin to check bacula
 Group:		Networking
@@ -411,6 +427,7 @@ QMAKE="%_qt5_qmake" \
 %configure \
 	DISTNAME=pld-linux \
 	PYTHON="%{__python3}" \
+	docker_bin=yes \
 	--with-scriptdir=%{_libexecdir}/%{name} \
 	%{?with_qt:--enable-bat} \
 	--disable-conio \
@@ -875,6 +892,10 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %{_mandir}/man1/bat.1*
 %{_docdir}/%{name}
 %endif
+
+%files plugin-fd-docker
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/docker-fd.so
 
 %if %{with nagios}
 %files -n nagios-plugin-check_bacula
