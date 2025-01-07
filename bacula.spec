@@ -60,8 +60,8 @@ BuildRequires:	libwrap-devel
 BuildRequires:	ncurses-devel
 BuildRequires:	openssl-devel
 BuildRequires:	pkgconfig
-BuildRequires:	python
-BuildRequires:	python-modules
+BuildRequires:	python3
+BuildRequires:	python3-modules
 %if %{with qt}
 BuildRequires:	Qt5Core-devel
 BuildRequires:	Qt5Gui-devel
@@ -425,6 +425,7 @@ BUILD_DIR=$(pwd) \
 QMAKE=%{_bindir}/qmake-qt5 \
 %configure \
 	DISTNAME=pld-linux \
+	PYTHON="%{__python3}" \
 	--with-scriptdir=%{_libexecdir}/%{name} \
 	%{?with_qt:--enable-bat} \
 	--disable-conio \
