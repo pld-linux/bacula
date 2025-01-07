@@ -428,6 +428,7 @@ QMAKE="%_qt5_qmake" \
 	DISTNAME=pld-linux \
 	PYTHON="%{__python3}" \
 	docker_bin=yes \
+	--with-plugindir=%{_libdir}/%{name}/plugins \
 	--with-scriptdir=%{_libexecdir}/%{name} \
 	%{?with_qt:--enable-bat} \
 	--disable-conio \
@@ -563,7 +564,7 @@ mv $RPM_BUILD_ROOT%{_mandir}/man8/{,bacula-}dbcheck.8.gz
 
 # no -devel files packaged, so this is also useless
 rm $RPM_BUILD_ROOT%{_libdir}/libbac{,cfg,find,sql,cats,sd}.{so,la}
-rm $RPM_BUILD_ROOT%{_libdir}/bacula-sd-*-driver.so
+rm $RPM_BUILD_ROOT%{_libdir}/%{name}/plugins/bacula-sd-*-driver.so
 %{?with_mysql:rm $RPM_BUILD_ROOT%{_libdir}/libbaccats-mysql.{la,so}}
 %{?with_pgsql:rm $RPM_BUILD_ROOT%{_libdir}/libbaccats-postgresql.{la,so}}
 %{?with_sqlite3:rm $RPM_BUILD_ROOT%{_libdir}/libbaccats-sqlite3.{la,so}}
@@ -727,6 +728,8 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(755,root,root) %{_libdir}/libbaccfg-11*.so
 %attr(755,root,root) %{_libdir}/libbacfind-11*.so
 %attr(755,root,root) %{_libdir}/libbacsql-11*.so
+%dir %{_libdir}/%{name}
+%dir %{_libdir}/%{name}/plugins
 %{_mandir}/man8/bacula.8*
 %{_mandir}/man1/bsmtp.1*
 %{_mandir}/man8/btraceback.8*
@@ -835,7 +838,7 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %{systemdunitdir}/bacula-fd.service
 %attr(755,root,root) %{_sbindir}/bacula-fd
 %attr(755,root,root) %{_sbindir}/bfdjson
-%attr(755,root,root) %{_libdir}/bpipe-fd.so
+%attr(755,root,root) %{_libdir}/%{name}/plugins/bpipe-fd.so
 %{_mandir}/man8/bacula-fd.8*
 
 %files sd
@@ -859,9 +862,9 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(755,root,root) %{_libexecdir}/%{name}/isworm
 %attr(755,root,root) %{_libexecdir}/%{name}/mtx-changer
 %attr(755,root,root) %{_libexecdir}/%{name}/tapealert
-%attr(755,root,root) %{_libdir}/bacula-sd-aligned-driver-11.*.so
+%attr(755,root,root) %{_libdir}/%{name}/plugins/bacula-sd-aligned-driver-11.*.so
 %if %{with s3}
-%attr(755,root,root) %{_libdir}/bacula-sd-cloud-driver-11.*.so
+%attr(755,root,root) %{_libdir}/%{name}/plugins/bacula-sd-cloud-driver-11.*.so
 %endif
 
 %{_mandir}/man8/bacula-sd.8*
@@ -895,7 +898,7 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 
 %files plugin-fd-docker
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/docker-fd.so
+%attr(755,root,root) %{_libdir}/%{name}/plugins/docker-fd.so
 
 %if %{with nagios}
 %files -n nagios-plugin-check_bacula
