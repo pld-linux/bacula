@@ -240,22 +240,6 @@ Bacula - przychodzi nocą i wysysa żywotny ekstrakt z komputerów.
 bat, czyli Bacula Administration Tool, jest graficznym odpowiednikiem
 bconsole, z wieloma dodatkowymi funkcjami.
 
-%package tray-monitor
-Summary:	Bacula Tray Monitor
-Group:		Networking/Utilities
-Requires(post):	sed >= 4.0
-Requires:	%{name}-common = %{version}-%{release}
-
-%description tray-monitor
-Bacula - It comes by night and sucks the vital essence from your
-computers.
-
-The Monitor program is typically an icon in the system tray. However,
-once the icon is expanded into a full window, the administrator or
-user can obtain status information about the Director or the backup
-status on the local workstation or any other Bacula daemon that is
-configured.
-
 %package fd
 Summary:	Bacula File services (Client)
 Summary(pl.UTF-8):	Usługi Bacula File (klient)
@@ -680,9 +664,6 @@ fi
 find %{_sysconfdir}/bat.conf* -perm /007 -print0 2>/dev/null | xargs -0 -r chmod 600 || :
 
 %post console-qt
-%update_configs
-
-%post tray-monitor
 %update_configs
 
 %define db_post() \
