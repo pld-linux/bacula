@@ -481,7 +481,7 @@ install -d $RPM_BUILD_ROOT/etc/{rc.d/init.d,logrotate.d,pam.d,sysconfig} \
 		$RPM_BUILD_ROOT{%{_mandir},%{_bindir},/var/log{,/archive}/bacula} \
 		$RPM_BUILD_ROOT%{systemdunitdir}
 
-%{__make} install \
+%{__make} -j1 install \
 	DESTDIR=$RPM_BUILD_ROOT
 
 %{__make} -C src/stored install-aligned \
