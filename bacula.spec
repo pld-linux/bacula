@@ -383,17 +383,17 @@ Nagios plugin to check bacula.
 
 %prep
 %setup -q -a 1
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
+%patch -P 0 -p1
+%patch -P 1 -p1
+%patch -P 2 -p1
+%patch -P 3 -p1
+%patch -P 4 -p1
 %ifarch x32
-%patch5 -p1
+%patch -P 5 -p1
 %endif
 %if %{with s3}
 cd libs3-%{libs3_version}
-%patch6 -p1
+%patch -P 6 -p1
 cd ..
 %endif
 
