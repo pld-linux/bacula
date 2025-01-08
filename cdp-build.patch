@@ -1,0 +1,60 @@
+--- bacula-15.0.2/autoconf/configure.in.orig	2025-01-08 12:37:21.548924153 +0100
++++ bacula-15.0.2/autoconf/configure.in	2025-01-08 12:38:59.216109814 +0100
+@@ -3665,7 +3665,7 @@
+       if test x$enableval = xyes; then
+          support_cdp=yes
+          FD_PLUGIN_INSTALL="${FD_PLUGIN_INSTALL} install-cdp"
+-         TOOLS_INSTALL="${TOOLS_INSTALL} install-cdp"
++         SUBTOOLS="${SUBTOOLS} cdp-client"
+       elif test x$enableval = xno; then
+          support_cdp=disabled
+       fi
+@@ -3674,7 +3674,7 @@
+ 
+ AC_SUBST(FD_PLUGIN_DIR)
+ AC_SUBST(FD_PLUGIN_INSTALL)
+-AC_SUBST(TOOLS_INSTALL)
++AC_SUBST(SUBTOOLS)
+ 
+ dnl
+ dnl Bacula Pluggable Authentication Modules - Director Plugins
+--- bacula-15.0.2/src/tools/Makefile.in.orig	2024-03-22 10:48:41.000000000 +0100
++++ bacula-15.0.2/src/tools/Makefile.in	2025-01-08 12:43:28.681716784 +0100
+@@ -45,7 +45,8 @@
+ 
+ INSNODIRTOOLS = bsmtp
+ INSDIRTOOLS = bsmtp dbcheck bwild bregex
+-INSTOOLS = $(INS@DIR_TOOLS@) @TOOLS_INSTALL@
++INSTOOLS = $(INS@DIR_TOOLS@)
++SUBTOOLS = @SUBTOOLS@
+ INSTTESTS = breaddir_test bpipe_test tags_test xattr_append_test crypto_test
+ 
+ .SUFFIXES:	.c .o
+@@ -60,6 +61,9 @@
+ all: Makefile $(TOOLS) gigaslam grow
+ 	@echo "==== Make of tools is good ===="
+ 	@echo " "
++	@for tool in $(SUBTOOLS) ; do \
++		$(MAKE) -C $$tool ; \
++	done
+ 
+ ../lib/unittests.o: ../lib/unittests.c
+ 	(cd ../lib ; make unittests.o)
+@@ -261,14 +265,14 @@
+ #	chattr +i $(DESTDIR)$(sbindir)/bsmtp
+ #	chmod 755 $(DESTDIR)$(sbindir)/bsmtp
+ 
+-install-cdp:
+-	$(MAKE) -C cdp-client install
+-
+ # Allow non-root execution of bsmtp for non-root Directors
+ install: $(INSTOOLS)
+ 	@for tool in ${INSTOOLS} ; do \
+ 	   $(LIBTOOL_INSTALL) $(INSTALL_PROGRAM_ALL) $$tool $(DESTDIR)$(sbindir)/$$tool ; \
+ 	done
++	@for tool in $(SUBTOOLS) ; do \
++		$(MAKE) -C $$tool install ; \
++	done
+ #	chattr +i $(DESTDIR)$(sbindir)/bsmtp
+ 
+ install-unittests: $(INSTTESTS)

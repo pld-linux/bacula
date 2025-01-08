@@ -14,5 +14,5 @@ diff -ur bacula-11.0.6.orig/autoconf/configure.in bacula-11.0.6/autoconf/configu
 +       platforms/unknown/Makefile"
 +  ;;
  unknown)
-    DISTVER=unknown
+    DISTVER=unknown_distro_ver
     TAPEDRIVE="/dev/nst0"

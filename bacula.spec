@@ -22,12 +22,12 @@
 Summary:	Bacula - The Network Backup Solution
 Summary(pl.UTF-8):	Bacula - rozwiązanie do wykonywania kopii zapasowych po sieci
 Name:		bacula
-Version:	11.0.6
-Release:	2
+Version:	15.0.2
+Release:	1
 License:	AGPL v3
 Group:		Networking/Utilities
 Source0:	https://downloads.sourceforge.net/bacula/%{name}-%{version}.tar.gz
-# Source0-md5:	0e3cd4e29878b09ae4554bae64785736
+# Source0-md5:	258c6fec54b1b559b9b249e55808acb7
 Source1:	https://www.bacula.org/downloads/libs3-%{libs3_version}.tar.gz
 # Source1-md5:	ca97bc4133a21981139181ec8571f202
 Source10:	%{name}-dir.init
@@ -47,6 +47,7 @@ Patch3:		make_catalog_backup-setup-home.patch
 Patch4:		%{name}-no_lockmgr.patch
 Patch5:		x32.patch
 Patch6:		libs3-curl.patch
+Patch7:		cdp-build.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf >= 2.61
@@ -70,6 +71,7 @@ BuildRequires:	qt5-build
 BuildRequires:	qt5-qmake
 %endif
 %{?with_mysql:BuildRequires:	mysql-devel}
+BuildRequires:	openldap-devel
 %{?with_pgsql:BuildRequires:	postgresql-devel}
 BuildRequires:	readline-devel
 BuildRequires:	rpm >= 4.4.9-56
@@ -79,6 +81,7 @@ BuildRequires:	sed >= 4.0
 %{?with_sqlite3:BuildRequires:	sqlite3-devel}
 BuildRequires:	which
 BuildRequires:	zlib-devel
+BuildRequires:	zstd-devel
 Requires:	systemd-units >= 38
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -354,6 +357,62 @@ SQLite database driver for Bacula.
 %description db-sqlite3 -l pl.UTF-8
 Sterownik bazy SQLite dla Baculi.
 
+%package plugin-dir-ldap
+Summary:	Bacula LDAP plugin
+Summary(pl.UTF-8):	Plugin LDAP dla Baculi
+Group:		Networking/Utilities
+Requires:	%{name}-dir = %{version}-%{release}
+
+%description plugin-dir-ldap
+LDAP plugin handles user authentication against any LDAP Directory
+Server.
+
+%description plugin-dir-ldap -l pl.UTF-8
+Plugin LDAP obsługuje uwierzytelnienie użytkowników przy pomocy
+dowolnego serwera usług katalogowych LDAP.
+
+%package plugin-dir-totp
+Summary:	Bacula TOTP plugin
+Summary(pl.UTF-8):	Plugin TOTP dla Baculi
+Group:		Networking/Utilities
+Requires:	%{name}-dir = %{version}-%{release}
+
+%description plugin-dir-totp
+This plugin adds TOTP (Time based One Time Password) support for
+enabling two-factor authentication of a Console.
+
+%description plugin-dir-totp -l pl.UTF-8
+Ten plugin dodaje wsparcie dla TOTP (jednorazowe hasło oparte na
+czasie) umożliwiając właczenie uwierzytelniania dwuskładnikowego
+Konsoli.
+
+%package plugin-fd-antivirus
+Summary:	Bacula antivirus plugin
+Summary(pl.UTF-8):	Plugin antywirusowy dla Baculi
+Group:		Networking/Utilities
+Requires:	%{name}-fd = %{version}-%{release}
+Suggests:	clamav
+
+%description plugin-fd-antivirus
+Antivirus plugin provides integration between the ClamAV Antivirus
+daemon and Bacula verify jobs.
+
+%description plugin-fd-antivirus -l pl.UTF-8
+Plugin antywirusowy integruje demona antywirusowego ClamAV z zadaniami
+weryfikacji Baculi.
+
+%package plugin-fd-cdp
+Summary:	Bacula Continuous data protection (CDP) plugin
+Summary(pl.UTF-8):	Plugin Continuous data protection (CDP) dla Baculi
+Group:		Networking/Utilities
+Requires:	%{name}-fd = %{version}-%{release}
+
+%description plugin-fd-cdp
+Bacula Continuous data protection (CDP) plugin.
+
+%description plugin-fd-cdp -l pl.UTF-8
+Plugin Continuous data protection (CDP) dla Baculi.
+
 %package plugin-fd-docker
 Summary:	Bacula Docker plugin
 Summary(pl.UTF-8):	Plugin Dockera dla Baculi
@@ -396,12 +455,15 @@ cd libs3-%{libs3_version}
 %patch -P 6 -p1
 cd ..
 %endif
+%patch -P 7 -p1
 
 sed -i -e 's#bindir=.*#bindir=%{_bindir}#g' \
 	src/cats/create_* src/cats/delete_* src/cats/drop_* \
 	src/cats/grant_* src/cats/make_* src/cats/update_*
 sed -i -e 's/@hostname@/--hostname--/' src/*/*.conf.in
 sed -i -e 's/@basename@/--hostname--/' src/*/*.conf.in
+
+%{__sed} -i -e '1s,/usr/bin/env python3,%{__python3},' scripts/{key-manager.py.in,md5tobase64.py}
 
 %build
 cd autoconf
@@ -442,6 +504,10 @@ QMAKE="%_qt5_qmake" \
 	--with-pid-dir=/var/run \
 	--with-subsys-dir=/var/lock/subsys \
 	--with-systemd=%{systemdunitdir} \
+	--with-ldap \
+	--enable-antivirus-plugin \
+	--enable-cdp-plugin \
+	--enable-totp-bpam \
 	--enable-batch-insert \
 	%{?with_pgsql:--with-postgresql} \
 	%{?with_mysql:--with-mysql} \
@@ -568,6 +634,8 @@ rm $RPM_BUILD_ROOT%{_libdir}/%{name}/plugins/bacula-sd-*-driver.so
 %{?with_mysql:rm $RPM_BUILD_ROOT%{_libdir}/libbaccats-mysql.{la,so}}
 %{?with_pgsql:rm $RPM_BUILD_ROOT%{_libdir}/libbaccats-postgresql.{la,so}}
 %{?with_sqlite3:rm $RPM_BUILD_ROOT%{_libdir}/libbaccats-sqlite3.{la,so}}
+
+%{__rm} $RPM_BUILD_ROOT%{_sbindir}/ldaptest
 
 %if %{with nagios}
 install -d $RPM_BUILD_ROOT%{nagiosplugindir}
@@ -723,11 +791,11 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 # do not remove bsmtp from files. Fix build if it is not installed.
 %attr(755,root,root) %{_sbindir}/bsmtp
 %attr(755,root,root) %{_sbindir}/btraceback
-%attr(755,root,root) %{_libdir}/libbac-11*.so
-%attr(755,root,root) %{_libdir}/libbacsd-11*.so
-%attr(755,root,root) %{_libdir}/libbaccfg-11*.so
-%attr(755,root,root) %{_libdir}/libbacfind-11*.so
-%attr(755,root,root) %{_libdir}/libbacsql-11*.so
+%attr(755,root,root) %{_libdir}/libbac-15*.so
+%attr(755,root,root) %{_libdir}/libbacsd-15*.so
+%attr(755,root,root) %{_libdir}/libbaccfg-15*.so
+%attr(755,root,root) %{_libdir}/libbacfind-15*.so
+%attr(755,root,root) %{_libdir}/libbacsql-15*.so
 %dir %{_libdir}/%{name}
 %dir %{_libdir}/%{name}/plugins
 %{_mandir}/man8/bacula.8*
@@ -758,6 +826,7 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(755,root,root) %{_sbindir}/bacula-dbcheck
 %{_mandir}/man8/bacula-dir.8*
 %{_mandir}/man8/bacula-dbcheck.8*
+%{_mandir}/man8/bdirjson.8*
 %{_mandir}/man8/bregex.8*
 %{_mandir}/man8/bwild.8*
 %{_libexecdir}/%{name}/query.sql
@@ -773,9 +842,9 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_postgresql_*
 %attr(755,root,root) %{_libexecdir}/%{name}/make_postgresql_catalog_backup
-%attr(755,root,root) %{_libdir}/libbaccats-postgresql-11*.so
+%attr(755,root,root) %{_libdir}/libbaccats-postgresql-15*.so
 
-%ghost %attr(755,root,root) %{_libdir}/libbaccats-11*.so
+%ghost %attr(755,root,root) %{_libdir}/libbaccats-15*.so
 %ghost %{_libexecdir}/%{name}/create_bacula_database
 %ghost %{_libexecdir}/%{name}/drop_bacula_tables
 %ghost %{_libexecdir}/%{name}/drop_bacula_database
@@ -795,9 +864,9 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_mysql_*
 %attr(755,root,root) %{_libexecdir}/%{name}/make_mysql_catalog_backup
-%attr(755,root,root) %{_libdir}/libbaccats-mysql-11*.so
+%attr(755,root,root) %{_libdir}/libbaccats-mysql-15*.so
 
-%ghost %attr(755,root,root) %{_libdir}/libbaccats-11*.so
+%ghost %attr(755,root,root) %{_libdir}/libbaccats-15*.so
 %ghost %{_libexecdir}/%{name}/create_bacula_database
 %ghost %{_libexecdir}/%{name}/drop_bacula_tables
 %ghost %{_libexecdir}/%{name}/drop_bacula_database
@@ -817,9 +886,9 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_tables
 %attr(755,root,root) %{_libexecdir}/%{name}/update_sqlite3_*
 %attr(755,root,root) %{_libexecdir}/%{name}/make_sqlite3_catalog_backup
-%attr(755,root,root) %{_libdir}/libbaccats-sqlite3-11*.so
+%attr(755,root,root) %{_libdir}/libbaccats-sqlite3-15*.so
 
-%ghost %attr(755,root,root) %{_libdir}/libbaccats-11*.so
+%ghost %attr(755,root,root) %{_libdir}/libbaccats-15*.so
 %ghost %{_libexecdir}/%{name}/create_bacula_database
 %ghost %{_libexecdir}/%{name}/drop_bacula_tables
 %ghost %{_libexecdir}/%{name}/drop_bacula_database
@@ -840,6 +909,7 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(755,root,root) %{_sbindir}/bfdjson
 %attr(755,root,root) %{_libdir}/%{name}/plugins/bpipe-fd.so
 %{_mandir}/man8/bacula-fd.8*
+%{_mandir}/man8/bfdjson.8*
 
 %files sd
 %defattr(644,root,root,755)
@@ -862,9 +932,9 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(755,root,root) %{_libexecdir}/%{name}/isworm
 %attr(755,root,root) %{_libexecdir}/%{name}/mtx-changer
 %attr(755,root,root) %{_libexecdir}/%{name}/tapealert
-%attr(755,root,root) %{_libdir}/%{name}/plugins/bacula-sd-aligned-driver-11.*.so
+%attr(755,root,root) %{_libdir}/%{name}/plugins/bacula-sd-aligned-driver-15.*.so
 %if %{with s3}
-%attr(755,root,root) %{_libdir}/%{name}/plugins/bacula-sd-cloud-driver-11.*.so
+%attr(755,root,root) %{_libdir}/%{name}/plugins/bacula-sd-cloud-driver-15.*.so
 %endif
 
 %{_mandir}/man8/bacula-sd.8*
@@ -872,6 +942,7 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %{_mandir}/man8/bextract.8*
 %{_mandir}/man8/bls.8*
 %{_mandir}/man8/bscan.8*
+%{_mandir}/man8/bsdjson.8*
 %{_mandir}/man8/btape.8*
 
 %files console
@@ -880,6 +951,7 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %attr(640,root,bacula) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bconsole.conf
 %attr(755,root,root) %{_sbindir}/bconsole
 %attr(755,root,root) %{_sbindir}/bbconsjson
+%{_mandir}/man8/bbconsjson.8*
 %{_mandir}/man8/bconsole.8*
 
 %if %{with qt}
@@ -895,6 +967,28 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %{_mandir}/man1/bat.1*
 %{_docdir}/%{name}
 %endif
+
+%files plugin-dir-ldap
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/%{name}/plugins/ldap-dir.so
+
+%files plugin-dir-totp
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_sbindir}/btotp
+%attr(755,root,root) %{_libdir}/%{name}/plugins/totp-dir.so
+
+%files plugin-fd-antivirus
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_sbindir}/get_malware_abuse.ch
+%attr(755,root,root) %{_sbindir}/md5tobase64.py
+%attr(755,root,root) %{_libdir}/%{name}/plugins/antivirus-fd.so
+
+%files plugin-fd-cdp
+%defattr(644,root,root,755)
+%{?with_qt:%attr(640,root,bacula) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bacula-tray-monitor.conf}
+%{?with_qt:%attr(755,root,root) %{_sbindir}/bacula-tray-monitor}
+%attr(755,root,root) %{_sbindir}/cdp-client
+%attr(755,root,root) %{_libdir}/%{name}/plugins/cdp-fd.so
 
 %files plugin-fd-docker
 %defattr(644,root,root,755)
