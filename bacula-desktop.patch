@@ -16,3 +16,19 @@ diff -ur bacula-11.0.6.orig/scripts/bat.desktop.in bacula-11.0.6/scripts/bat.des
 -X-Desktop-File-Install-Version=0.3
 -Categories=System;Application;Utility;X-Red-Hat-Base;
 +Categories=System;Utility;
+--- bacula-15.0.2/scripts/bacula-tray-monitor.desktop.in.orig	2025-02-05 22:52:42.837098589 +0100
++++ bacula-15.0.2/scripts/bacula-tray-monitor.desktop.in	2025-02-05 22:55:11.179641954 +0100
+@@ -1,10 +1,9 @@
+ [Desktop Entry]
+ Name=Bacula Monitor
+ Comment=Notification Tray Monitor
+-Icon=bacula-tray-monitor
+-Exec=@sbindir@/bacula-tray-monitor -c @sysconfdir@/bacula-tray-monitor.conf
++Icon=bacula
++Exec=@bindir@/bacula-tray-monitor -c @sysconfdir@/bacula-tray-monitor.conf
+ Terminal=false
+ Type=Application
+ Encoding=UTF-8
+-X-Desktop-File-Install-Version=0.3
+-Categories=System;Application;Utility;X-Red-Hat-Base;
++Categories=System;Utility;

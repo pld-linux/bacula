@@ -48,6 +48,7 @@ Patch4:		%{name}-no_lockmgr.patch
 Patch5:		x32.patch
 Patch6:		libs3-curl.patch
 Patch7:		cdp-build.patch
+Patch8:		prefer-qt5.patch
 URL:		http://www.bacula.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf >= 2.61
@@ -456,6 +457,7 @@ cd libs3-%{libs3_version}
 cd ..
 %endif
 %patch -P 7 -p1
+%patch -P 8 -p1
 
 sed -i -e 's#bindir=.*#bindir=%{_bindir}#g' \
 	src/cats/create_* src/cats/delete_* src/cats/drop_* \
@@ -523,12 +525,6 @@ QMAKE="%_qt5_qmake" \
 	--with-mon-sd-password="#FAKE-mon-sd-password#" \
 	--with-openssl
 
-%if %{with qt}
-cd src/qt-console
-%{qmake_qt5} bat.pro
-cd ../..
-%endif
-
 %{__make} \
 	%{?with_s3:S3_LIBS="$PWD/libs3-%{libs3_version}/build/lib/libs3.a $(pkg-config --libs libcurl libxml-2.0)"} \
 	2>&1 | tee log
@@ -548,7 +544,8 @@ install -d $RPM_BUILD_ROOT/etc/{rc.d/init.d,logrotate.d,pam.d,sysconfig} \
 		$RPM_BUILD_ROOT%{systemdunitdir}
 
 %{__make} -j1 install \
-	DESTDIR=$RPM_BUILD_ROOT
+	DESTDIR=$RPM_BUILD_ROOT \
+	QINSTALL_PROGRAM='$(INSTALL_PROGRAM)'
 
 %{__make} -C src/stored install-aligned \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -587,8 +584,7 @@ cp -a %{SOURCE19} $RPM_BUILD_ROOT%{systemdunitdir}/bacula-sd.service
 
 %if %{with qt}
 # qmake somewhy does not always create install_bins target. install our own the bin
-rm -f $RPM_BUILD_ROOT%{_sbindir}/bat
-libtool --silent --mode=install install src/qt-console/bat $RPM_BUILD_ROOT%{_bindir}
+mv $RPM_BUILD_ROOT%{_sbindir}/{bat,bacula-tray-monitor} $RPM_BUILD_ROOT%{_bindir}
 cp -a scripts/bacula.png $RPM_BUILD_ROOT%{_pixmapsdir}/bacula.png
 cp -a scripts/bat.desktop $RPM_BUILD_ROOT%{_desktopdir}
 %endif
@@ -986,7 +982,7 @@ ln -sf libbaccats-%{1}-%{version}.so %{_libdir}/libbaccats-%{version}.so || : \
 %files plugin-fd-cdp
 %defattr(644,root,root,755)
 %{?with_qt:%attr(640,root,bacula) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bacula-tray-monitor.conf}
-%{?with_qt:%attr(755,root,root) %{_sbindir}/bacula-tray-monitor}
+%{?with_qt:%attr(755,root,root) %{_bindir}/bacula-tray-monitor}
 %attr(755,root,root) %{_sbindir}/cdp-client
 %attr(755,root,root) %{_libdir}/%{name}/plugins/cdp-fd.so
 
