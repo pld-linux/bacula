@@ -486,8 +486,8 @@ CPPFLAGS="-I/usr/include/ncurses -I%{_includedir}/readline"
 CXXFLAGS="%{rpmcxxflags} -Wno-narrowing"
 CFLAGS="%{rpmcflags} -Wno-narrowing"
 
-BUILD_DIR=$(pwd) \
-QMAKE="%_qt5_qmake" \
+BUILD_DIR=$(pwd); export BUILD_DIR
+QMAKE="%_qt5_qmake"; export QMAKE
 %configure \
 	DISTNAME=pld-linux \
 	PYTHON="%{__python3}" \
